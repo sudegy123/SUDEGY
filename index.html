@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sudegy - جسر التجارة بين مصر والسودان</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    <script src="https://unpkg.com/feather-icons"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#E8491D',
+                        secondary: '#F05A22',
+                        accent: '#D63E12',
+dark: '#1A1A1A',
+                        light: '#F5F5F5',
+                        alibabaOrange: '#FF6A00',
+                        alibabaDark: '#1C1C1C',
+                        alibabaLight: '#F5F5F5'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<!-- Banner Section -->
+<section class="w-full bg-white shadow-sm mb-8">
+  <div class="max-w-xl">
+    <img src="images/لوجو 3.png" alt="Sudegy Banner" class="w-full h-24 object-cover">
+  </div>
+
+<body 
+<!-- Navbar with Search and Category Dropdown -->
+<custom-navbar>
+  <div class="flex flex-col md:flex-row items-center justify-between gap-4 px-4 py-2 bg-white shadow-sm">
+
+    <!-- اللوجو -->
+    <div class="flex items-center gap-4">
+      <a href="index.html">
+        <img src="images/name_user_3716.png" alt="Sudegy Logo" class="h-12 w-auto">
+      </a>
+    </div>
+
+    <!-- شريط البحث + الفئات -->
+    <div class="flex items-center gap-2 flex-grow w-full md:w-auto">
+      
+        <select class="border border-gray-300 rounded-lg px-3 py-2 text-sm w-full focus:outline-none focus:ring-2 focus:ring-primary">
+  <option selected disabled>اختر فئة المنتج</option>
+
+  <optgroup label="الزراعة والأغذية">
+    <option>الخضراوات والتحضيرات</option>
+    <option>العصارات والمستخلصات</option>
+    <option>أطعمة مبردة</option>
+    <option>الفواكه والبطيخ</option>
+    <option>الأطعمة المعلبة</option>
+    <option>الأعلاف، العلف الأخضر</option>
+    <option>السكر والحلويات</option>
+    <option>المكسرات والبذور</option>
+    <option>محليات غذائية</option>
+    <option>التوابل والبهارات</option>
+  </optgroup>
+
+  <optgroup label="الملابس والإكسسوارات">
+    <option>أحذية</option>
+    <option>ملابس رجالية</option>
+    <option>ملابس نسائية</option>
+    <option>إكسسوارات الموضة</option>
+  </optgroup>
+
+  <optgroup label="الفنون والحرف اليدوية">
+    <option>لوحات فنية</option>
+    <option>هدايا يدوية</option>
+    <option>زينة موسمية</option>
+  </optgroup>
+
+  <optgroup label="السيارات والدراجات وقطع الغيار">
+    <option>إطارات</option>
+    <option>قطع غيار</option>
+    <option>دراجات نارية</option>
+  </optgroup>
+
+  <optgroup label="الحقائب وعلب الهدايا">
+    <option>حقائب ظهر</option>
+    <option>علب هدايا</option>
+    <option>حقائب سفر</option>
+  </optgroup>
+
+  <optgroup label="الكيماويات">
+    <option>مواد صناعية</option>
+    <option>مواد تنظيف</option>
+    <option>مبيدات زراعية</option>
+  </optgroup>
+
+  <optgroup label="منتجات الكمبيوتر">
+    <option>لوحات مفاتيح</option>
+    <option>بطاقات ذاكرة</option>
+    <option>أجهزة تخزين</option>
+  </optgroup>
+
+  <optgroup label="مواد البناء والديكور">
+    <option>بلاط</option>
+    <option>دهانات</option>
+    <option>أبواب ونوافذ</option>
+  </optgroup>
+
+  <optgroup label="الالكترونيات الاستهلاكية">
+    <option>هواتف</option>
+    <option>سماعات</option>
+    <option>أجهزة ذكية</option>
+  </optgroup>
+
+  <optgroup label="الأجهزة الكهربائية والإلكترونية">
+    <option>ثلاجات</option>
+    <option>غسالات</option>
+    <option>مكيفات</option>
+  </optgroup>
+
+  <optgroup label="الأثاث">
+    <option>غرف نوم</option>
+    <option>كنب</option>
+    <option>مكاتب</option>
+  </optgroup>
+
+  <optgroup label="المستلزمات الطبية والصحة">
+    <option>كمامات</option>
+    <option>معدات طبية</option>
+    <option>أدوية ومكملات</option>
+  </optgroup>
+
+  <optgroup label="المعدات والمكونات الصناعية">
+    <option>مضخات</option>
+    <option>محركات</option>
+    <option>أدوات صناعية</option>
+  </optgroup>
+
+  <optgroup label="العدادات والأدوات">
+    <option>عدادات كهرباء</option>
+    <option>أدوات قياس</option>
+    <option>أجهزة فحص</option>
+  </optgroup>
+
+  <optgroup label="الصناعات الخفيفة والمنتجات اليومية">
+    <option>مناديل صحية</option>
+    <option>أدوات مطبخ</option>
+    <option>منتجات تنظيف</option>
+  </optgroup>
+</select>
+
+
+<!-- شريط البحث -->
+<input type="text" placeholder="ابحث عن منتج..." class="w-full md:w-90 border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary">
+</div>
+
+<!-- زر التسجيل + اللغة -->
+<div class="flex items-center gap-4">
+  <a href="user-profile.html" class="bg-primary text-white font-bold py-2 px-4 rounded-lg hover:bg-orange-600 transition duration-300">
+    تسجيل جديد
+  </a>
+
+  <div slot="language-switcher">
+    <button id="language-toggle" class="flex items-center text-dark hover:text-primary transition">
+      <span class="mr-1">English</span>
+      <i data-feather="globe" class="w-4 h-4"></i>
+    </button>
+  </div>
+</div>
+
+</div>
+
+</custom-navbar>
+<!-- Modern Trade Counter Banner -->
+<section class="w-full bg-gradient-to-r from-green-700 via-green-500 to-green-400 text-white py-8 px-4 shadow-xl rounded-lg mt-6">
+  <div class="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 text-center md:text-start">
+    
+    <!-- Left: Title and Info -->
+    <div>
+      <h2 class="text-3xl md:text-4xl font-extrabold flex items-center gap-2 mb-2">
+        💹 <span>حجم التجارة بين مصر والسودان الآن</span>
+      </h2>
+      <p id="trade-date" class="text-sm md:text-base opacity-90 mb-1">
+        بتاريخ: 16 نوفمبر 2025
+      </p>
+      <p class="text-xs md:text-sm opacity-80">
+        يتم تحديث الرقم تلقائيًا كل ثانية ليعكس النشاط التجاري اللحظي
+      </p>
+    </div>
+
+    <!-- Right: Live Counter -->
+    <div class="text-4xl md:text-5xl font-bold flex items-center gap-2">
+      ⏱️ <span id="counter-value">1,465,344,000</span> <span class="text-white text-xl">دولار</span>
+    </div>
+  </div>
+</section>
+
+<script>
+  // الرقم الحالي (تقدير منتصف نوفمبر 2025)
+  let value = 1465344000;
+  let perSecond = 53;
+
+  // تحديث مستمر كل ثانية
+  setInterval(() => {
+    value += perSecond;
+    document.getElementById('counter-value').textContent = value.toLocaleString();
+  }, 1000);
+
+  // عرض التاريخ الحالي تلقائيًا
+  const today = new Date();
+  const options = { year: 'numeric', month: 'long', day: 'numeric' };
+  document.getElementById('trade-date').textContent = "بتاريخ: " + today.toLocaleDateString('ar-EG', options);
+</script>
+
+</custom-navbar>
+</custom-navbar>
+    <main class="container mx-auto px-4 py-4">
+      <div class="flex justify-center gap-4 mb-6 flex-wrap">
+        <a href="#" class="bg-primary text-white px-6 py-2 rounded-lg">الكل</a>
+        <a href="#" class="bg-white text-dark px-6 py-2 rounded-lg border hover:bg-primary/10">آلات ومعدات</a>
+        <a href="#" class="bg-white text-dark px-6 py-2 rounded-lg border hover:bg-primary/10">مواد خام</a>
+        <a href="#" class="bg-white text-dark px-6 py-2 rounded-lg border hover:bg-primary/10">طاقة</a>
+        <a href="#" class="bg-white text-dark px-6 py-2 rounded-lg border hover:bg-primary/10">تجارة عامة</a>
+        <a href="#" class="bg-white text-dark px-6 py-2 rounded-lg border hover:bg-primary/10">مواد غذائية</a>
+        <a href="#" class="bg-white text-dark px-6 py-2 rounded-lg border hover:bg-primary/10">منسوجات</a>
+        <a href="#" class="bg-white text-dark px-6 py-2 rounded-lg border hover:bg-primary/10">مواد بناء</a>
+        <a href="#" class="bg-white text-dark px-6 py-2 rounded-lg border hover:bg-primary/10">منتجات بترولية</a>
+        <a href="#" class="bg-white text-dark px-6 py-2 rounded-lg border hover:bg-primary/10">أدوية ومواد طبية</a>
+      </div>
+<product-grid></product-grid>
+<!-- Hero Section -->
+        <section class="flex flex-col md:flex-row items-center justify-between gap-8 mb-16">
+            <div class="md:w-1/2">
+                <h1 class="text-4xl md:text-5xl font-bold text-gray-800 mb-4">
+                    <span class="text-primary">Sudegy</span> — جسر التجارة بين مصر والسودان
+                </h1>
+                <p class="text-lg text-gray-600 mb-8">
+                    المنصة الأولى لتجارة الحبوب, المواد الغذائية, الآلات, المنتجات البترولية وكل أنواع التجارة بين مصر والسودان
+                </p>
+<div class="flex flex-col sm:flex-row gap-4">
+                    <a href="join.html" class="bg-primary hover:bg-orange-700 text-white font-bold py-3 px-6 rounded-lg text-center transition duration-300">
+                        ابدأ الآن مجانًا
+                    </a>
+                    <a href="#how-it-works" class="border border-primary text-primary font-bold py-3 px-6 rounded-lg text-center transition duration-300">
+                        كيف يعمل
+                    </a>
+                </div>
+            </div>
+            <div class="md:w-1/2 relative">
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-white p-4 rounded-xl shadow-md transform rotate-3">
+                    <img src="images/bag-sesame-light.jpg" alt="سمسم من السودان" class="w-full h-40 object-cover rounded-lg">
+                    <p class="mt-2 text-center text-gray-700">سمسم سوداني عالي الجودة</p>
+</div>
+                    <div class="bg-white p-4 rounded-xl shadow-md transform -rotate-2 mt-8">
+                    <img src="images/تمور.jpg" alt="تمور من السودان" class="w-full h-40 object-cover rounded-lg">
+                    <p class="mt-2 text-center text-gray-700">تمور الشروق </p>
+</div>
+                    <div class="bg-white p-4 rounded-xl shadow-md transform rotate-1">
+                    <img src="images/لحم.jpg" alt="لحوم مجمدة" class="w-full h-40 object-cover rounded-lg">
+                    <p class="mt-2 text-center text-gray-700">لحوم سواكني  مجمدة</p>
+</div>
+                    <div class="bg-white p-4 rounded-xl shadow-md transform -rotate-3 mt-8">
+                    <img src="images/17190442771544.jpg" alt="عسل طبيعي" class="w-full h-40 object-cover rounded-lg">
+                    <p class="mt-2 text-center text-gray-700">عسل قصب السكر الاسود</p>
+</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- How It Works -->
+        <section id="how-it-works" class="mb-16">
+            <h2 class="text-3xl font-bold text-center text-gray-800 mb-12">كيف يعمل الموقع؟</h2>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="bg-white p-6 rounded-xl shadow-md text-center">
+                    <div class="bg-primary/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i data-feather="search" class="text-primary w-8 h-8"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">ابحث أو أضف إعلانك</h3>
+                    <p class="text-gray-600">سجل حسابك وأضف منتجاتك أو ابحث عن ما تحتاجه</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-md text-center">
+                    <div class="bg-primary/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i data-feather="message-square" class="text-primary w-8 h-8"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">تواصل مباشرة</h3>
+                    <p class="text-gray-600">تواصل مع المورد أو المشتري عبر المنصة</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-md text-center">
+                    <div class="bg-primary/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i data-feather="check-circle" class="text-primary w-8 h-8"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">تحقق وادفع بأمان</h3>
+                    <p class="text-gray-600">نضمن وصول الشحنة وندعم وسائل دفع آمنة</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA Section -->
+        <section class="bg-primary/5 p-8 rounded-xl mb-16">
+            <div class="text-center">
+                <h2 class="text-2xl md:text-3xl font-bold text-gray-800 mb-4">جرب منصة Sudegy الآن</h2>
+                <p class="text-gray-600 mb-6">أول إعلان لك مجاني تمامًا!</p>
+                <a href="join.html" class="inline-block bg-primary hover:bg-orange-700 text-white font-bold py-3 px-8 rounded-lg transition duration-300">
+                    Join Free Trial - أول إعلان مجاني
+                </a>
+            </div>
+        </section>
+    </main>
+
+    <custom-footer></custom-footer>
+    <script src="components/navbar.js"></script>
+    <script src="components/footer.js"></script>
+    <script src="components/product-grid.js"></script>
+    <script src="script.js"></script>
+<script>feather.replace();</script>
+<script src="https://huggingface.co/deepsite/deepsite-badge.js"></script>
+</body>
+</html>

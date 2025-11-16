@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>حسابي - Sudegy</title>
+  <link rel="stylesheet" href="style.css"/>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+</head>
+<body class="bg-gray-100">
+
+  <!-- Banner Section -->
+  <section class="w-full bg-white shadow-sm mb-8">
+    <div class="max-w-5xl mx-auto px-4">
+      <img src="images/لوجو 3.png" alt="Sudegy Banner" class="w-full h-24 object-contain">
+    </div>
+  </section>
+
+  <!-- Navbar -->
+  <custom-navbar>
+    <div slot="language-switcher" class="ml-4">
+      <button id="language-toggle" class="flex items-center text-gray-700 hover:text-blue-600 transition">
+        <span class="mr-1">English</span>
+        <i data-feather="globe" class="w-4 h-4"></i>
+      </button>
+    </div>
+  </custom-navbar>
+
+  <!-- Main Content -->
+  <main class="container mx-auto px-4 py-8">
+    <div class="max-w-5xl mx-auto">
+      <div class="flex flex-col md:flex-row gap-8">
+        
+        <!-- Sidebar -->
+        <aside class="md:w-1/3">
+          <div class="bg-white rounded-xl shadow-md p-6 sticky top-24">
+            <div class="text-center mb-6">
+              <!-- صورة التاجر -->
+              <div class="w-24 h-24 rounded-full overflow-hidden mx-auto mb-4 border-4 border-yellow-400 shadow-md">
+                <img src="images/افتار.jpg" alt="صورة التاجر" class="w-full h-full object-cover">
+              </div>
+              <!-- الاسم + الدرع الذهبي -->
+              <h3 class="text-xl font-bold flex items-center justify-center gap-2">
+                محمد أحمد
+                <i data-feather="shield" class="w-5 h-5 text-yellow-500" title="حساب موثوق"></i>
+              </h3>
+              <p class="text-gray-600">تاجر موثوق</p>
+            </div>
+
+            <nav class="space-y-2">
+              <a href="user-profile.html" class="flex items-center gap-3 p-3 rounded-lg bg-blue-50 text-blue-700">
+                <i data-feather="user" class="w-5 h-5"></i>
+                <span>الملف الشخصي</span>
+              </a>
+              <a href="#mohamed-products" class="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100">
+                <i data-feather="shopping-bag" class="w-5 h-5"></i>
+                <span>منتجاتي</span>
+              </a>
+              <a href="user-messages.html" class="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100">
+                <i data-feather="message-square" class="w-5 h-5"></i>
+                <span>الرسائل</span>
+              </a>
+              <a href="user-settings.html" class="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100">
+                <i data-feather="settings" class="w-5 h-5"></i>
+                <span>الإعدادات</span>
+              </a>
+              <a href="index.html" class="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100 text-red-500">
+                <i data-feather="log-out" class="w-5 h-5"></i>
+                <span>تسجيل الخروج</span>
+              </a>
+            </nav>
+          </div>
+        </aside>
+
+        <!-- Profile Content -->
+        <section class="md:w-2/3 space-y-6">
+          
+          <!-- Profile Info -->
+          <div class="bg-white rounded-xl shadow-md p-6">
+            <div class="flex justify-between items-center mb-6">
+              <h2 class="text-2xl font-bold">الملف الشخصي</h2>
+              <a href="user-profile-edit.html" class="text-blue-600 flex items-center gap-2 hover:text-blue-700">
+                <i data-feather="edit" class="w-4 h-4"></i>
+                <span>تعديل</span>
+              </a>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <!-- المعلومات الأساسية -->
+              <div>
+                <h3 class="text-lg font-semibold mb-2">المعلومات الأساسية</h3>
+                <div class="space-y-3">
+                  <div>
+                    <p class="text-gray-500 text-sm">الاسم الكامل</p>
+                    <p class="font-medium">محمد أحمد عبدالله</p>
+                  </div>
+                  <div>
+                    <p class="text-gray-500 text-sm">البريد الإلكتروني</p>
+                    <p class="font-medium">mohamed@example.com</p>
+                  </div>
+                  <div>
+                    <p class="text-gray-500 text-sm">رقم الهاتف</p>
+                    <p class="font-medium">+201234567890</p>
+                  </div>
+                  <div>
+                    <p class="text-gray-500 text-sm">موقع المنشأة</p>
+                    <p class="font-medium">الخرطوم – السودان</p>
+                  </div>
+                  <div>
+                    <p class="text-gray-500 text-sm">رقم المنشأة</p>
+                    <p class="font-medium">+249123456789</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- معلومات التاجر -->
+              <div>
+                <h3 class="text-lg font-semibold mb-2">معلومات التاجر</h3>
+                <div class="space-y-3">
+                  <div>
+                    <p class="text-gray-500 text-sm">نوع الحساب</p>
+                    <p class="font-medium">تاجر</p>
+                  </div>
+                  <div>
+                    <p class="text-gray-500 text-sm">تاريخ التسجيل</p>
+                    <p class="font-medium">15 يناير 2023</p>
+                  </div>
+                  <div>
+                    <p class="text-gray-500 text-sm">عدد المنتجات</p>
+                    <p class="font-medium">24 منتج</p>
+                  </div>
+                  <div>
+                    <p class="text-gray-500 text-sm">عدد العمليات</p>
+                    <p class="font-medium">35 عملية</p>
+                  </div>
+                  <div>
+                    <p class="text-gray-500 text-sm">السجل التجاري</p>
+                    <p class="font-medium">123456789</p>
+                  </div>
+                  <div>
+                    <p class="text-gray-500 text-sm">الرقم الضريبي</p>
+                    <p class="font-medium">987654321</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Products with actions -->
+          <section id="mohamed-products" class="bg-white rounded-xl shadow-md p-6"><!-- قسم المنتجات -->
+            <section id="mohamed-products" class="bg-white rounded-xl shadow-md p-6">
+              <h2 class="text-xl font-bold mb-4">منتجات محمد أحمد</h2>
+              <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                
+                <!-- منتج السمسم -->
+                <div class="border rounded-lg p-3 hover:shadow-md transition flex flex-col">
+                  <img src="images/bag-sesame-light.jpg" alt="سمسم سوداني" class="w-full h-32 object-cover rounded-md mb-2">
+                  <h4 class="font-medium">سمسم سوداني ممتاز</h4>
+                  <p class="text-sm text-gray-500 mb-3">12,000 جنيه/طن</p>
+                  <div class="mt-auto flex gap-2">
+                    <button class="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition request-btn" data-product="سمسم سوداني ممتاز">طلب المنتج</button>
+                    <button class="flex-1 bg-gray-200 text-gray-800 py-2 rounded-lg hover:bg-gray-300 transition details-btn"
+                      data-name="سمسم سوداني ممتاز"
+                      data-desc="سمسم طبيعي عالي الجودة، نسبة الزيت فيه 52%، يستخدم في صناعة الطحينة والزيوت."
+                      data-origin="السودان - ولاية القضارف"
+                      data-price="12,000 جنيه/طن"
+                      data-specs="رطوبة أقل من 7%، خالي من الشوائب بنسبة 99%">
+                      عرض التفاصيل
+                    </button>
+                  </div>
+                </div>
+            
+                <!-- منتج التمور -->
+                <div class="border rounded-lg p-3 hover:shadow-md transition flex flex-col">
+                  <img src="images/تمور.jpg" alt="تمور" class="w-full h-32 object-cover rounded-md mb-2">
+                  <h4 class="font-medium">تمور بلدية مغلفة</h4>
+                  <p class="text-sm text-gray-500 mb-3">8,500 جنيه/طن</p>
+                  <div class="mt-auto flex gap-2">
+                    <button class="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition request-btn" data-product="تمور بلدية مغلفة">طلب المنتج</button>
+                    <button class="flex-1 bg-gray-200 text-gray-800 py-2 rounded-lg hover:bg-gray-300 transition details-btn"
+                      data-name="تمور بلدية مغلفة"
+                      data-desc="تمور طبيعية مجففة، مغلفة بشكل صحي، غنية بالسكريات الطبيعية والطاقة."
+                      data-origin="السودان - الشمالية"
+                      data-price="8,500 جنيه/طن"
+                      data-specs="رطوبة أقل من 15%، خالية من المواد الحافظة">
+                      عرض التفاصيل
+                    </button>
+                  </div>
+                </div>
+            
+                <!-- منتج الكركديه -->
+                <div class="border rounded-lg p-3 hover:shadow-md transition flex flex-col">
+                  <img src="images/كركدي.jpg" alt="كركديه" class="w-full h-32 object-cover rounded-md mb-2">
+                  <h4 class="font-medium">كركديه نقي ومجفف</h4>
+                  <p class="text-sm text-gray-500 mb-3">6,000 جنيه/طن</p>
+                  <div class="mt-auto flex gap-2">
+                    <button class="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition request-btn" data-product="كركديه نقي ومجفف">طلب المنتج</button>
+                    <button class="flex-1 bg-gray-200 text-gray-800 py-2 rounded-lg hover:bg-gray-300 transition details-btn"
+                      data-name="كركديه نقي ومجفف"
+                      data-desc="كركديه طبيعي مجفف، لون أحمر قوي، يستخدم في المشروبات والمستحضرات الطبيعية."
+                      data-origin="السودان - ولاية النيل الأزرق"
+                      data-price="6,000 جنيه/طن"
+                      data-specs="خالي من المبيدات، نسبة نقاء 98%">
+                      عرض التفاصيل
+                    </button>
+                  </div>
+                </div>
+            
+              </div>
+            </section>
+            
+            <!-- مودال تفاصيل المنتج -->
+            <div id="details-modal" class="fixed inset-0 bg-black/40 hidden items-center justify-center p-4 z-50">
+              <div class="bg-white w-full max-w-md rounded-xl shadow-lg p-6">
+                <div class="flex items-center justify-between mb-4">
+                  <h3 id="details-name" class="text-lg font-bold">تفاصيل المنتج</h3>
+                  <button id="close-details" class="text-gray-500 hover:text-gray-700">
+                    <i data-feather="x" class="w-5 h-5"></i>
+                  </button>
+                </div>
+                <p id="details-desc" class="text-gray-600 mb-3"></p>
+                <p><span class="font-semibold">بلد المنشأ:</span> <span id="details-origin"></span></p>
+                <p><span class="font-semibold">السعر:</span> <span id="details-price"></span></p>
+                <p><span class="font-semibold">المواصفات:</span> <span id="details-specs"></span></p>
+              </div>
+            </div>
+            
+            <script>
+              feather.replace();
+            
+              const detailsButtons = document.querySelectorAll('.details-btn');
+              const detailsModal = document.getElementById('details-modal');
+              const closeDetails = document.getElementById('close-details');
+            
+              const detailsName = document.getElementById('details-name');
+              const detailsDesc = document.getElementById('details-desc');
+              const detailsOrigin = document.getElementById('details-origin');
+              const detailsPrice = document.getElementById('details-price');
+              const detailsSpecs = document.getElementById('details-specs');
+            
+              detailsButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                  detailsName.textContent = btn.dataset.name;
+                  detailsDesc.textContent = btn.dataset.desc;
+                  detailsOrigin.textContent = btn.dataset.origin;
+                  detailsPrice.textContent = btn.dataset.price;
+                  detailsSpecs.textContent = btn.dataset.specs;
+                  detailsModal.classList.remove('hidden');
+                  detailsModal.classList.add('flex');
+                });
+              });
+            
+              closeDetails.addEventListener('click', () => {
+                detailsModal.classList.add('hidden');
+                detailsModal.classList.remove('flex');
+              });
+            
+              detailsModal.addEventListener('click', (e) => {
+                if (e.target === detailsModal) {
+                  detailsModal.classList.add('hidden');
+                  detailsModal.classList.remove('flex');
+                }
+              });
+            </script>
+            
+
+  <!-- Modal: طلب المنتج -->
+  <div id="request-modal" class="fixed inset-0 bg-black/40 hidden items-center justify-center p-4 z-50">
+    <div class="bg-white w-full max-w-md rounded-xl shadow-lg p-6">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-lg font-bold">طلب المنتج</h3>
+        <button id="close-modal" class="text-gray-500 hover:text-gray-700">
+          <i data-feather="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <form id="request-form" class="space-y-4">
+        <div>
+          <label class="block text-sm text-gray-600 mb-1">اسم المنتج</label>
+          <input id="product-name" type="text" class="w-full border rounded-lg px-3 py-2 bg-gray-50" readonly>
+        </div>
+        <div>
+          <label class="block text-sm text-gray-600 mb-1">الكمية المطلوبة (طن)</label>
+          <input type="number" min="1" class="w-full border rounded-lg px-3 py-2" placeholder="مثال: 10">
+        </div>
+        <div>
+          <label class="block text-sm text-gray-600 mb-1">ملاحظات</label>
+          <textarea class="w-full border rounded-lg px-3 py-2" rows="3" placeholder="أكتب أي تفاصيل إضافية..."></textarea>
+        </div>
+        <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition">
+          إرسال الطلب
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script>
+    // تفعيل أيقونات فيذر
+    feather.replace();
+
+    // فتح المودال مع تمرير اسم المنتج
+    const requestButtons = document.querySelectorAll('.request-btn');
+    const modal = document.getElementById('request-modal');
+    const closeModal = document.getElementById('close-modal');
+    const productNameInput = document.getElementById('product-name');
+    const requestForm = document.getElementById('request-form');
+
+    requestButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const productName = btn.getAttribute('data-product') || 'منتج';
+        productNameInput.value = productName;
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+      });
+    });
+
+    // إغلاق المودال
+    closeModal.addEventListener('click', () => {
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    });
+
+    // إغلاق عند الضغط خارج المحتوى
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+      }
+    });
+
+    // إرسال النموذج (محاكاة)
+    requestForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      alert('تم إرسال الطلب بنجاح، سنقوم بالتواصل معك قريبًا.');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+      requestForm.reset();
+    });
+  </script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>الرسائل - Sudegy</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+</head>
+<body class="bg-gray-100">
+
+  <main class="container mx-auto px-4 py-8">
+    <div class="bg-white rounded-xl shadow-md p-6">
+      <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
+        <i data-feather="message-square" class="w-5 h-5 text-blue-600"></i>
+        الرسائل
+      </h2>
+
+      <div class="flex gap-6">
+        
+        <!-- قائمة المحادثات -->
+        <div class="w-1/3 border-r pr-4 space-y-3">
+          <div class="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100 cursor-pointer bg-blue-50">
+            <img src="images/user1.jpg" alt="أحمد" class="w-10 h-10 rounded-full object-cover">
+            <div>
+              <p class="font-medium">أحمد علي</p>
+              <p class="text-sm text-gray-500">السلام عليكم، عندي استفسار...</p>
+            </div>
+            <span class="ml-auto text-xs text-gray-400">10:30 ص</span>
+          </div>
+          <div class="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100 cursor-pointer">
+            <img src="images/user2.jpg" alt="سارة" class="w-10 h-10 rounded-full object-cover">
+            <div>
+              <p class="font-medium">سارة محمد</p>
+              <p class="text-sm text-gray-500">تم استلام الطلب ✅</p>
+            </div>
+            <span class="ml-auto text-xs text-gray-400">أمس</span>
+          </div>
+        </div>
+
+        <!-- نافذة المحادثة -->
+        <div class="w-2/3 flex flex-col">
+          <!-- الرسائل -->
+          <div class="flex-1 space-y-4 mb-4 overflow-y-auto max-h-96">
+            <!-- رسالة واردة -->
+            <div class="flex items-start gap-2">
+              <img src="images/user1.jpg" alt="أحمد" class="w-8 h-8 rounded-full object-cover">
+              <div class="bg-gray-100 p-3 rounded-lg max-w-xs">
+                <p>السلام عليكم، هل متوفر السمسم البلدي بكميات كبيرة؟</p>
+                <span class="text-xs text-gray-400">اليوم - 10:30 ص</span>
+              </div>
+            </div>
+            <!-- رسالة مرسلة -->
+            <div class="flex items-start gap-2 justify-end">
+              <div class="bg-blue-600 text-white p-3 rounded-lg max-w-xs">
+                <p>وعليكم السلام، نعم متوفر 50 طن جاهز للتصدير.</p>
+                <span class="text-xs text-gray-200">اليوم - 10:35 ص</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- مربع كتابة رسالة جديدة -->
+          <div class="flex items-center gap-2">
+            <input type="text" placeholder="اكتب رسالتك هنا..." class="flex-1 border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <button class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition flex items-center gap-2">
+              <i data-feather="send" class="w-4 h-4"></i>
+              إرسال
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>feather.replace();</script>
+
+<!-- Company & Products Description -->
+<div class="bg-white rounded-xl shadow-md p-6">
+  <h2 class="text-xl font-bold mb-4">عن الشركة</h2>
+  <p class="text-gray-600 leading-relaxed mb-6">
+    شركة محمد أحمد للتجارة العامة هي منشأة سودانية تأسست عام 2020، متخصصة في تصدير المنتجات الزراعية والغذائية من السودان إلى مصر ودول الجوار.
+    تلتزم الشركة بتقديم منتجات عالية الجودة بأسعار تنافسية، مع ضمان الشفافية والاحترافية في التعاملات التجارية.
+    تشمل أنشطتها تصدير السمسم، الفول السوداني، التمور، الكركديه، والبهارات، وتستهدف أسواق مصر، السعودية، الإمارات، وبعض دول أوروبا.
+  </p>
+
+  <h2 class="text-xl font-bold mb-4">عن المنتجات</h2>
+  <p class="text-gray-600 leading-relaxed">
+    جميع المنتجات طبيعية 100% وتخضع لعمليات فرز وتعبئة دقيقة لضمان الجودة.
+    السمسم السوداني يستخدم في الصناعات الغذائية والزيوت، التمور مغلفة بشكل صحي وجاهزة للتصدير،
+    الكركديه نقي ومجفف للمشروبات، الفول السوداني متوفر محمص أو خام حسب الطلب،
+    والبهارات مثل الكمون والكسبرة والزنجبيل تأتي من مزارع محلية موثوقة.
+  </p>
+</div>
