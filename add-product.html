@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>أضف منتج — SudEgy</title>
+
+  <!-- Tailwind for quick beautiful UI + fallback to local style.css -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="/mnt/data/style.css">
+
+  <style>
+    /* small helpers to make the page elegant even without the local CSS */
+    :root{--primary:#057a55;--muted:#6b7280}
+    .glass { background: rgba(255,255,255,0.72); backdrop-filter: blur(6px); }
+    .field-label{font-size:.95rem;color:var(--muted)}
+    .btn-primary{background:var(--primary);color:white}
+    @media (min-width:1024px){ .form-card{padding:2.25rem} }
+  </style>
+</head>
+
+<body class="bg-gradient-to-b from-gray-50 to-white min-h-screen text-gray-800">
+  <!-- NAVBAR -->
+  <header class="shadow-sm bg-white sticky top-0 z-30">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+      <a href="index.html" class="flex items-center gap-3">
+        <img src="/mnt/data/74e00dd8-1676-4f9c-97b6-123bc3ab2d02.png" alt="SudEgy" class="h-10 w-10 rounded-md object-cover" />
+        <div class="text-lg font-semibold">SudEgy</div>
+      </a>
+
+      <nav class="flex items-center gap-3">
+        <a href="index.html" class="px-3 py-2 rounded-md hover:bg-gray-100">الرئيسية</a>
+        <a href="add-product.html" class="px-3 py-2 rounded-md btn-primary">أضف منتج</a>
+        <a href="messages.html" class="px-3 py-2 rounded-md hover:bg-gray-100">الرسائل</a>
+        <a href="user-profile.html" class="px-3 py-2 rounded-md hover:bg-gray-100">حسابي</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- HERO + FORM -->
+  <main class="max-w-6xl mx-auto px-4 py-10 grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+    <section class="lg:col-span-2">
+      <div class="form-card glass rounded-2xl shadow p-6">
+        <h1 class="text-2xl font-extrabold mb-3">أضف منتجك إلى SudEgy</h1>
+        <p class="text-sm text-gray-600 mb-6">أدخل معلومات المنتج بدقّة. يمكنك إضافة صورة الآن (ستُرفع إلى Cloudinary) أو تركها لاحقًا.</p>
+
+        <form id="productForm" class="space-y-5" autocomplete="off">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="field-label">اسم المنتج</label>
+              <input id="prod-name" required class="mt-1 block w-full border rounded-lg px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-green-200" placeholder="مثال: سمسم ممتاز" />
+            </div>
+
+            <div>
+              <label class="field-label">السعر</label>
+              <input id="prod-price" class="mt-1 block w-full border rounded-lg px-3 py-2" placeholder="مثال: 12000 جنيه/طن" />
+            </div>
+          </div>
+
+          <div>
+            <label class="field-label">وصف موجز</label>
+            <textarea id="prod-desc" rows="4" class="mt-1 w-full border rounded-lg px-3 py-2" placeholder="وصف قصير يوضّح حالة المنتج، تاريخ الحصاد، الجودة"></textarea>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <label class="field-label">البلد</label>
+              <input id="prod-origin" class="mt-1 block w-full border rounded-lg px-3 py-2" placeholder="مثال: السودان" />
+            </div>
+            <div>
+              <label class="field-label">الكمية</label>
+              <input id="prod-qty" type="number" min="0" class="mt-1 block w-full border rounded-lg px-3 py-2" placeholder="الكمية بالطن" />
+            </div>
+            <div>
+              <label class="field-label">فئة</label>
+              <select id="prod-category" class="mt-1 block w-full border rounded-lg px-3 py-2">
+                <option value="grain">حبوب</option>
+                <option value="oil">زيوت</option>
+                <option value="fert">أسمدة</option>
+                <option value="other">أخرى</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label class="field-label">صورة المنتج (اختياري)</label>
+            <input id="prod-image" type="file" accept="image/*" class="mt-1 block w-full" />
+            <p class="text-xs text-gray-500 mt-2">صيغ مدعومة: JPG, PNG. سيتم رفع الصورة تلقائياً إلى Cloudinary.</p>
+          </div>
+
+          <div class="flex items-center gap-4">
+            <button id="submitBtn" class="btn-primary px-5 py-2 rounded-lg font-medium">أضف المنتج</button>
+            <button id="previewBtn" type="button" class="px-4 py-2 border rounded-lg">معاينة</button>
+            <div id="status" class="text-sm text-gray-600"></div>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- PREVIEW & GUIDES -->
+    <aside class="space-y-6">
+      <div class="rounded-2xl p-4 glass shadow">
+        <h3 class="font-semibold mb-2">معاينة المنتج</h3>
+        <div id="previewCard" class="bg-white rounded-lg p-3 border text-center">
+          <div id="previewImg" class="h-44 mb-3 bg-gray-50 rounded-md flex items-center justify-center text-sm text-gray-400">لا توجد صورة</div>
+          <div id="previewName" class="font-medium">—</div>
+          <div id="previewPrice" class="text-sm text-gray-500">—</div>
+          <div id="previewOrigin" class="text-xs text-gray-400">—</div>
+          <div id="previewDesc" class="mt-2 text-xs text-gray-600">—</div>
+        </div>
+      </div>
+
+      <div class="rounded-2xl p-4 bg-white shadow">
+        <h4 class="font-semibold mb-2">نصائح سريعة</h4>
+        <ul class="text-sm text-gray-600 space-y-2">
+          <li>التقط صوراً واضحة وبإضاءة جيدة.</li>
+          <li>اذكر الوزن أو الكمية بدقة.</li>
+          <li>ضع تفاصيل الشحنة (إذا متاح) في الوصف.</li>
+        </ul>
+      </div>
+
+      <div class="rounded-2xl p-4 bg-white shadow">
+        <h4 class="font-semibold mb-2">رابط مفيد</h4>
+        <a href="#" id="manageUploads" class="text-sm text-green-600">عرض الصور والمرفوعات</a>
+      </div>
+    </aside>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="mt-12 py-6 bg-white border-t">
+    <div class="max-w-6xl mx-auto px-4 text-sm text-gray-500">© SudEgy — منصة ربط السوق السوداني والمصري. صمّمته بحب.</div>
+  </footer>
+
+  <!-- SCRIPTS -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+
+  <script>
+    // ---------------- CONFIG ----------------
+    // ضع هنا config مشروعك (أو جهّزه في ملف مركزي وتضمّنه قبل هذا السكربت)
+    const firebaseConfig = {
+      apiKey: "AIzaSyBvnFMuXY_d5PKrKV-4Vp_fYyKD2c428Yw",
+      authDomain: "sudegy-4c4e5.firebaseapp.com",
+      projectId: "sudegy-4c4e5",
+      storageBucket: "sudegy-4c4e5.appspot.com",
+      messagingSenderId: "865758231874",
+      appId: "1:865758231874:web:d1959356198ca1f809dcdb"
+    };
+
+    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    // Cloudinary settings
+    const cloudName = 'dd9m8ypgl';
+    const uploadPreset = 'unsigned_preset';
+
+    // DOM
+    const form = document.getElementById('productForm');
+    const statusEl = document.getElementById('status');
+    const previewImg = document.getElementById('previewImg');
+    const previewName = document.getElementById('previewName');
+    const previewPrice = document.getElementById('previewPrice');
+    const previewOrigin = document.getElementById('previewOrigin');
+    const previewDesc = document.getElementById('previewDesc');
+
+    // Preview logic
+    document.getElementById('prod-image').addEventListener('change', (e)=>{
+      const f = e.target.files[0];
+      if (!f) { previewImg.innerHTML = 'لا توجد صورة'; return; }
+      const url = URL.createObjectURL(f);
+      previewImg.innerHTML = `<img src="${url}" alt="preview" class="h-full w-full object-cover rounded-md">`;
+    });
+
+    document.getElementById('previewBtn').addEventListener('click', (e)=>{
+      e.preventDefault();
+      previewName.textContent = document.getElementById('prod-name').value || '—';
+      previewPrice.textContent = document.getElementById('prod-price').value || '—';
+      previewOrigin.textContent = document.getElementById('prod-origin').value || '—';
+      previewDesc.textContent = document.getElementById('prod-desc').value || '—';
+      window.scrollTo({top:0,behavior:'smooth'});
+    });
+
+    // Upload to Cloudinary
+    async function uploadToCloudinary(file, onProgress){
+      if (!file) return '';
+      statusEl.textContent = 'جاري رفع الصورة...';
+      const url = `https://api.cloudinary.com/v1_1/${cloudName}/upload`;
+      const fd = new FormData();
+      fd.append('file', file);
+      fd.append('upload_preset', uploadPreset);
+
+      const xhr = new XMLHttpRequest();
+      return new Promise((resolve, reject)=>{
+        xhr.open('POST', url);
+        xhr.upload.onprogress = (e)=>{
+          if (e.lengthComputable && onProgress) onProgress(Math.round((e.loaded/e.total)*100));
+        };
+        xhr.onload = ()=>{
+          if (xhr.status >= 200 && xhr.status < 300){
+            const res = JSON.parse(xhr.responseText);
+            resolve(res.secure_url);
+            return;
+          }
+          reject(new Error('فشل الرفع: ' + xhr.responseText));
+        };
+        xhr.onerror = ()=> reject(new Error('شبكة: فشل الرفع'));
+        xhr.send(fd);
+      });
+    }
+
+    // Form submission
+    form.addEventListener('submit', async (e)=>{
+      e.preventDefault();
+      statusEl.textContent = '';
+
+      try {
+        const user = auth.currentUser;
+        if (!user) {
+          alert('يجب تسجيل الدخول أولاً');
+          return location.href = 'login.html';
+        }
+
+        const name = document.getElementById('prod-name').value.trim();
+        if (!name) throw new Error('الرجاء إدخال اسم المنتج');
+        const desc = document.getElementById('prod-desc').value.trim();
+        const price = document.getElementById('prod-price').value.trim();
+        const origin = document.getElementById('prod-origin').value.trim();
+        const qty = parseFloat(document.getElementById('prod-qty').value) || 0;
+        const category = document.getElementById('prod-category').value;
+        const file = document.getElementById('prod-image').files[0];
+
+        let imageUrl = '';
+        if (file) {
+          // show progress
+          const progressText = document.createElement('span');
+          progressText.className = 'text-sm text-gray-600';
+          statusEl.appendChild(progressText);
+          const url = await uploadToCloudinary(file,(p)=>{ progressText.textContent = `تحميل ${p}%`; });
+          imageUrl = url;
+        }
+
+        statusEl.textContent = 'جاري حفظ المنتج...';
+        await db.collection('products').add({
+          name, desc, price, origin, qty, category,
+          image: imageUrl, owner: user.uid, ownerEmail: user.email || null,
+          created_at_local: Date.now()
+        });
+
+        statusEl.textContent = 'تم إضافة المنتج بنجاح ✔';
+        form.reset();
+        previewImg.innerHTML = 'لا توجد صورة';
+
+      } catch (err) {
+        console.error(err);
+        alert('فشل الإضافة: ' + (err.message || err));
+        statusEl.textContent = '';
+      }
+    });
+
+    // Optional: handle auth state to show/hide elements
+    auth.onAuthStateChanged(u=>{
+      if (!u) {
+        // not logged in
+      }
+    });
+
+  </script>
+</body>
+</html>

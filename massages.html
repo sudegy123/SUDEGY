@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <title>الرسائل - SudEgy</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-[#fff9f4]">
+  <div data-include="partials/header.html"></div>
+
+  <main class="max-w-6xl mx-auto px-4 py-8">
+    <h1 class="text-xl font-bold mb-4">الرسائل</h1>
+
+    <div class="grid md:grid-cols-3 gap-4">
+      <!-- قائمة المحادثات -->
+      <div class="bg-white rounded-xl shadow p-3">
+        <h2 class="text-sm font-bold mb-2">المحادثات</h2>
+        <div class="divide-y text-sm">
+          <button class="w-full text-right py-2 hover:bg-gray-50">
+            مورد: شركة زاد للصناعات الغذائية
+            <div class="text-[11px] text-gray-500">آخر رسالة: أمس</div>
+          </button>
+          <button class="w-full text-right py-2 hover:bg-gray-50">
+            تاجر: مؤسسة النيل للتجارة
+            <div class="text-[11px] text-gray-500">آخر رسالة: منذ ساعة</div>
+          </button>
+        </div>
+      </div>
+
+      <!-- منطقة المحادثة -->
+      <div class="bg-white rounded-xl shadow p-3 md:col-span-2 flex flex-col">
+        <div class="border-b pb-2 mb-2 text-sm font-bold">
+          شركة زاد للصناعات الغذائية
+        </div>
+
+        <div class="flex-1 overflow-y-auto space-y-2 text-sm mb-3">
+          <div class="bg-gray-100 rounded-lg px-3 py-2 self-start max-w-[80%]">
+            السلام عليكم، نحتاج عرض أسعار لكمية 20 طن من السمسم.
+          </div>
+          <div class="bg-orange-500 text-white rounded-lg px-3 py-2 self-end max-w-[80%]">
+            وعليكم السلام، سيتم إرسال العرض المفصل خلال دقائق، هل الشحن إلى بورتسودان؟
+          </div>
+        </div>
+
+        <form class="flex gap-2 text-sm">
+          <input type="text"
+                 placeholder="اكتب رسالتك..."
+                 class="flex-1 border rounded-md px-3 py-2">
+          <button type="submit"
+                  class="px-4 py-2 bg-orange-500 text-white rounded-md">
+            إرسال
+          </button>
+        </form>
+      </div>
+    </div>
+  </main>
+
+  <div data-include="partials/footer.html"></div>
+  <script src="include-html.js"></script>
+</body>
+</html>

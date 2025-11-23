@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <title>إنشاء حساب - SudEgy</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 flex items-center justify-center h-screen">
+  <div class="bg-white p-6 rounded-xl shadow-md w-full max-w-md">
+    <h2 class="text-2xl font-bold text-center mb-4">إنشاء حساب جديد</h2>
+    <form id="registerForm" class="space-y-4">
+      <div>
+        <label class="text-sm">البريد الإلكتروني</label>
+        <input id="reg-email" type="email" class="w-full border px-3 py-2 rounded-lg">
+      </div>
+      <div>
+        <label class="text-sm">كلمة المرور</label>
+        <input id="reg-password" type="password" class="w-full border px-3 py-2 rounded-lg">
+      </div>
+      <button type="submit" class="w-full bg-green-600 text-white py-2 rounded-lg">إنشاء حساب</button>
+    </form>
+    <p class="text-center mt-4 text-sm">عندك حساب؟ <a href="login.html" class="text-blue-600">سجل دخول</a></p>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyBvnFMuXY_d5PKrKV-4Vp_fYyKD2c428Yw",
+      authDomain: "sudegy-4c4e5.firebaseapp.com",
+      projectId: "sudegy-4c4e5",
+      storageBucket: "sudegy-4c4e5.appspot.com",
+      messagingSenderId: "865758231874",
+      appId: "1:865758231874:web:d1959356198ca1f809dcdb"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    console.log("Firebase compat loaded ✔ (register)");
+
+    const registerForm = document.getElementById('registerForm');
+    registerForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('reg-email').value;
+      const password = document.getElementById('reg-password').value;
+      try {
+        const userCred = await auth.createUserWithEmailAndPassword(email, password);
+        // حفظ المستخدم في Firestore
+        await db.collection('users').doc(userCred.user.uid).set({
+          email: email,
+          created_at: Date.now()
+        });
+        alert('تم إنشاء الحساب!');
+        window.location.href = 'login.html';
+      } catch (err) {
+        alert('خطأ: ' + err.message);
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <title>عروض اليوم - SudEgy</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-[#fff9f4]">
+  <div data-include="partials/header.html"></div>
+
+  <main class="max-w-7xl mx-auto px-4 py-8">
+    <div class="flex items-center justify-between mb-4">
+      <h1 class="text-xl font-bold">عروض اليوم</h1>
+      <span class="text-xs text-gray-500">عروض خاصة لفترة محدودة</span>
+    </div>
+
+    <div id="offers-grid"
+         class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+      <!-- هنعيد استخدام نفس المنتجات من script.js -->
+    </div>
+  </main>
+
+  <div data-include="partials/footer.html"></div>
+  <script src="include-html.js"></script>
+  <script src="script.js"></script>
+  <script>
+    // نملأ شبكة العروض باستخدام نفس بيانات products
+    document.addEventListener('DOMContentLoaded', () => {
+      const grid = document.getElementById('offers-grid');
+      if (!grid || !window.products) return;
+
+      // نختار شوية منتجات كأنها عليها خصومات
+      const list = window.products.slice(0, 12);
+      grid.innerHTML = '';
+      list.forEach(p => {
+        const div = document.createElement('div');
+        div.className = 'product-card';
+        div.innerHTML = `
+          <div class="h-24 overflow-hidden mb-2">
+            <img src="${p.image}" alt="${p.name}">
+          </div>
+          <div class="text-[13px] font-semibold text-gray-800 line-clamp-2">${p.name}</div>
+          <div class="text-[11px] text-gray-500 mt-1">${p.price}</div>
+          <span class="inline-block mt-1 text-[10px] px-2 py-0.5 rounded-full bg-green-100 text-green-700">
+            عرض اليوم
+          </span>
+        `;
+        grid.appendChild(div);
+      });
+    });
+  </script>
+</body>
+</html>

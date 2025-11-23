@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <title>الفئات - SudEgy</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-[#fff9f4]">
+  <div data-include="partials/header.html"></div>
+
+  <main class="max-w-7xl mx-auto px-4 py-8">
+    <h1 class="text-xl font-bold mb-4">كل الفئات</h1>
+
+    <div id="categories-list" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <!-- من السكربت -->
+    </div>
+  </main>
+
+  <div data-include="partials/footer.html"></div>
+  <script src="include-html.js"></script>
+  <script src="script.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const container = document.getElementById('categories-list');
+      if (!container || !window.products) return;
+
+      const cats = [...new Set(window.products.map(p => p.category))];
+      container.innerHTML = '';
+
+      cats.forEach(cat => {
+        const box = document.createElement('div');
+        box.className = 'bg-white rounded-xl shadow p-4 flex flex-col gap-2';
+        box.innerHTML = `
+          <div class="text-sm font-bold text-gray-800">${cat}</div>
+          <div class="text-xs text-gray-500">منتجات متنوعة ضمن فئة ${cat} بين مصر والسودان.</div>
+          <button class="mt-1 self-start px-3 py-1 text-xs rounded-md bg-orange-500 text-white">
+            مشاهدة المنتجات
+          </button>
+        `;
+        container.appendChild(box);
+      });
+    });
+  </script>
+</body>
+</html>

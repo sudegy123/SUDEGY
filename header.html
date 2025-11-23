@@ -1,0 +1,97 @@
+<header class="bg-white shadow-sm sticky top-0 z-50 w-full">
+  <!-- البانر العرضي: لوجو + جملة + زر لغة -->
+  <div class="border-b bg-white">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-6">
+
+      <!-- يمين: لوجو + جملة -->
+      <div class="flex items-center gap-3">
+        <!-- تأكد مسار صورة اللوجو -->
+        <img src="images/لوجو 3.png"
+             onerror="this.src='images/لوجو 1.png'"
+             alt="SudEgy Logo"
+             class="h-12 w-12 rounded-xl object-cover border border-orange-400/70 shadow-sm" />
+        <div class="flex flex-col">
+          <span class="text-xl font-extrabold text-gray-900 tracking-tight">SudEgy</span>
+          <span class="text-xs text-gray-500 mt-0.5">
+            أول منصّة ربط بين السودان ومصر
+          </span>
+        </div>
+      </div>
+
+      <!-- يسار: زر اللغة + أزرار الدخول -->
+      <div class="flex items-center gap-3 text-sm">
+
+        <!-- زر تغيير اللغة -->
+        <button id="btn-language"
+                class="px-3 py-1.5 rounded-full border border-gray-300 text-gray-700 text-xs
+                       hover:bg-gray-100 transition">
+          AR / EN
+        </button>
+
+        <!-- ضيوف: دخول / تسجيل (يتم التحكم بها عن طريق common.js) -->
+        <a id="nav-login"
+           href="login.html"
+           class="hidden md:inline-block text-gray-600 hover:text-orange-600">
+          دخول
+        </a>
+        <span class="hidden md:inline-block text-gray-300">|</span>
+        <a id="nav-register"
+           href="register.html"
+           class="hidden md:inline-block text-gray-600 hover:text-orange-600">
+          تسجيل جديد
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- شريط التصفح + أزرار المستخدم -->
+  <div class="bg-gradient-to-l from-orange-50 via-white to-sky-50">
+    <div class="max-w-7xl mx-auto px-4 py-2.5 flex items-center justify-between gap-4">
+
+      <!-- روابط أساسية -->
+      <nav class="flex items-center gap-4 text-sm font-medium text-gray-700">
+        <a href="index.html" class="hover:text-orange-600">الرئيسية</a>
+        <a href="offers.html" class="hover:text-orange-600">عروض اليوم</a>
+        <a href="categories.html" class="hover:text-orange-600">الفئات</a>
+      </nav>
+
+      <!-- أزرار حساب المستخدم -->
+      <div class="flex items-center gap-2 text-xs md:text-sm">
+
+        <a id="nav-add"
+           href="add-product.html"
+           class="hidden px-3 py-1.5 rounded-full bg-orange-500 text-white font-semibold
+                  hover:bg-orange-600 transition">
+          أضف منتج
+        </a>
+
+        <a href="user-dashboard.html"
+           class="px-3 py-1.5 rounded-full border border-gray-300 text-gray-700
+                  hover:bg-white/70 transition">
+          لوحة التحكم
+        </a>
+
+        <a id="nav-profile"
+           href="user-profile.html"
+           class="hidden px-3 py-1.5 rounded-full border border-gray-300 text-gray-700
+                  hover:bg-white/70 transition">
+          حسابي
+        </a>
+
+        <a id="nav-messages"
+           href="messages.html"
+           class="hidden px-3 py-1.5 rounded-full border border-gray-300 text-gray-700
+                  hover:bg-white/70 transition">
+          الرسائل
+        </a>
+
+        <button id="nav-logout"
+                class="hidden px-3 py-1.5 rounded-full border border-red-400 text-red-600
+                       hover:bg-red-50 transition">
+          خروج
+        </button>
+      </div>
+
+    </div>
+  </div>
+</header>
