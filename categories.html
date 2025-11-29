@@ -2,47 +2,182 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="utf-8">
-  <title>الفئات - SudEgy</title>
+  <title>الفئات — SudEgy</title>
   <meta name="viewport" content="width=device-width,initial-scale=1">
-
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="style.css">
+  <style>
+    /* إضافات محلية للصفحة */
+    .category-card { transition: transform .22s, box-shadow .22s; }
+    .category-card:hover { transform: translateY(-6px); box-shadow: 0 16px 30px rgba(0,0,0,0.08); }
+    .logo-img { height: 44px; width: auto; }
+    .small-badge { font-size: 11px; padding: 4px 8px; border-radius: 999px; background: rgba(232,73,29,0.08); color: #E8491D; }
+  </style>
 </head>
 <body class="bg-[#fff9f4]">
-  <div data-include="partials/header.html"></div>
 
-  <main class="max-w-7xl mx-auto px-4 py-8">
-    <h1 class="text-xl font-bold mb-4">كل الفئات</h1>
+  <!-- ========== HEADER (مضمن اللوجو) ========== -->
+  <header class="bg-white shadow-sm sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
+      <a href="index.html" class="flex items-center gap-3">
+        <!-- ضع هنا مسار لوجو الموقع -->
+        <img src="images/name_user_3716.png" alt="SudEgy" class="logo-img">
+        <div>
+          <div class="text-lg font-bold text-gray-800">SudEgy</div>
+          <div class="text-xs text-gray-500">جسر التجارة بين مصر والسودان</div>
+        </div>
+      </a>
 
-    <div id="categories-list" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-      <!-- من السكربت -->
+      <div class="flex-1 max-w-2xl">
+        <input id="searchMain" type="search" placeholder="ابحث عن فئة أو منتج..." class="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary">
+      </div>
+
+      <div class="flex items-center gap-3">
+        <a href="join.html" class="bg-primary text-white font-bold py-2 px-4 rounded-lg shadow">سجّل الآن</a>
+        <a href="user-profile.html" class="border border-gray-200 rounded-lg px-3 py-2">حسابي</a>
+      </div>
     </div>
+  </header>
+
+  <!-- ========== MAIN ========== -->
+  <main class="max-w-7xl mx-auto px-4 py-8">
+
+    <h1 class="text-2xl font-bold mb-4">كل الفئات</h1>
+    <p class="text-sm text-gray-600 mb-6">اختر فئة لتصفح المنتجات — الروابط تؤدي إلى صفحة الفئة الحقيقية (category.html) مع إرسـال اسم الفئة في الاستعلام.</p>
+
+    <!-- زر فلترة سريعة (أمثلة خيارات أكثر) -->
+    <div class="flex flex-wrap gap-2 mb-6">
+      <a href="category.html?category=الكل" class="px-4 py-2 rounded-lg bg-primary text-white text-sm">الكل</a>
+      <a href="category.html?category=الزراعة" class="px-4 py-2 rounded-lg bg-white border text-sm">الزراعة</a>
+      <a href="category.html?category=الاغذية" class="px-4 py-2 rounded-lg bg-white border text-sm">الأغذية</a>
+      <a href="category.html?category=التعبئة والتغليف" class="px-4 py-2 rounded-lg bg-white border text-sm">التعبئة</a>
+      <a href="category.html?category=المعدات" class="px-4 py-2 rounded-lg bg-white border text-sm">المعدات</a>
+      <a href="category.html?category=المنسوجات" class="px-4 py-2 rounded-lg bg-white border text-sm">المنسوجات</a>
+      <a href="category.html?category=البناء" class="px-4 py-2 rounded-lg bg-white border text-sm">بناء ومواد</a>
+      <a href="category.html?category=اللوجستيك" class="px-4 py-2 rounded-lg bg-white border text-sm">لوجستيك</a>
+      <a href="category.html?category=الالكترونيات" class="px-4 py-2 rounded-lg bg-white border text-sm">إلكترونيات</a>
+      <a href="category.html?category=الخدمات" class="px-4 py-2 rounded-lg bg-white border text-sm">خدمات ووساطة</a>
+    </div>
+
+    <!-- شبكة الفئات (أرجعناها لطريقة التصميم الأول) -->
+    <div id="categories-list" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <!-- سيتم توليد الكروت عبر JavaScript -->
+    </div>
+
   </main>
 
-  <div data-include="partials/footer.html"></div>
-  <script src="include-html.js"></script>
-  <script src="script.js"></script>
+  <!-- ========== FOOTER (مضمَّن اللوجو) ========== -->
+  <footer class="bg-gray-900 text-white py-8 mt-8">
+    <div class="max-w-7xl mx-auto px-4 grid md:grid-cols-3 gap-6">
+      <div class="flex items-center gap-3">
+        <img src="images/name_user_3716.png" alt="SudEgy" class="h-10">
+        <div>
+          <div class="font-bold">SudEgy</div>
+          <div class="text-gray-400 text-sm">جسر التجارة بين مصر والسودان</div>
+        </div>
+      </div>
+      <div>
+        <h4 class="font-semibold mb-2">روابط</h4>
+        <ul class="text-gray-400 text-sm space-y-1">
+          <li><a href="index.html">الرئيسية</a></li>
+          <li><a href="categories.html">الفئات</a></li>
+          <li><a href="contact.html">اتصل بنا</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="font-semibold mb-2">تواصل</h4>
+        <p class="text-gray-400 text-sm">info@sudegy.example</p>
+        <p class="text-gray-400 text-sm">+201234567890</p>
+      </div>
+    </div>
+    <div class="text-center text-gray-500 text-sm mt-6">© 2025 SudEgy</div>
+  </footer>
+
+  <!-- ========== SCRIPTS ========== -->
+  <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+  <script>feather.replace();</script>
+
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const container = document.getElementById('categories-list');
-      if (!container || !window.products) return;
+    // قائمة فئات أولية (مزيج من الفئات من التصميم الأول + خيارات إضافية شائعة)
+    const categories = [
+      "الزراعة", "الأغذية", "التعبئة والتغليف", "المعدات والآلات", "الشحن واللوجستيات",
+      "المنسوجات والملابس", "مواد البناء", "الالكترونيات", "الكيماويات", "المستلزمات الطبية",
+      "منتجات بترولية", "مكونات صناعية", "خدمات تجارية", "التحف والحرف اليدوية",
+      "المواد الخام", "الأعلاف", "المكسرات والبذور", "التمور والفواكه", "القطن", "الماشية واللحوم"
+    ];
 
-      const cats = [...new Set(window.products.map(p => p.category))];
-      container.innerHTML = '';
+    // تفاصيل عرضية لكل فئة (وصف صغير + أيقونة feather)
+    const catMeta = {
+      "الزراعة": {desc: "حبوب، بذور زيتية، محاصيل تصديرية", icon: "shopping-bag"},
+      "الأغذية": {desc: "منتجات مطحون، معلبات، عسل، كركديه", icon: "coffee"},
+      "التعبئة والتغليف": {desc: "علب، أكياس، مواد تعبئة وتغليف", icon: "package"},
+      "المعدات والآلات": {desc: "ماكينات صناعية، مضخات، محركات", icon: "settings"},
+      "الشحن واللوجستيات": {desc: "شحن بري وبحري، تخليص جمركي", icon: "truck"},
+      "المنسوجات والملابس": {desc: "أقمشة، ملابس جاهزة، أحذية", icon: "globe"},
+      "مواد البناء": {desc: "حديد، أسمنت، بلاط ودهانات", icon: "tool"},
+      "الالكترونيات": {desc: "هواتف، سماعات، قطع غيار إلكترونية", icon: "cpu"},
+      "الكيماويات": {desc: "مواد تنظيف، مواد صناعية", icon: "droplet"},
+      "المستلزمات الطبية": {desc: "معدات طبية، كمامات، مستلزمات صحة", icon: "heart"},
+      "منتجات بترولية": {desc: "زيوت صناعية ومشتقات", icon: "cloud"},
+      "مكونات صناعية": {desc: "قطع غيار ومكونات خطوط انتاج", icon: "layers"},
+      "خدمات تجارية": {desc: "خدمات وساطة، استشارات، شحن", icon: "briefcase"},
+      "التحف والحرف اليدوية": {desc: "سجاد، منتجات تراثية، هدايا", icon: "gift"},
+      "المواد الخام": {desc: "خام لعمليات التصنيع المختلفة", icon: "archive"},
+      "الأعلاف": {desc: "أعلاف ومخلفات زراعية للحيوانات", icon: "leaf"},
+      "المكسرات والبذور": {desc: "سمسم، فول سوداني، بذور متنوعة", icon: "seed"},
+      "التمور والفواكه": {desc: "تمور، فواكه مجففة", icon: "star"},
+      "القطن": {desc: "قطن خام وصناعة الغزل", icon: "hash"},
+      "الماشية واللحوم": {desc: "ماشية حية ولحوم مجمدة للتصدير", icon: "activity"}
+    };
 
-      cats.forEach(cat => {
-        const box = document.createElement('div');
-        box.className = 'bg-white rounded-xl shadow p-4 flex flex-col gap-2';
-        box.innerHTML = `
-          <div class="text-sm font-bold text-gray-800">${cat}</div>
-          <div class="text-xs text-gray-500">منتجات متنوعة ضمن فئة ${cat} بين مصر والسودان.</div>
-          <button class="mt-1 self-start px-3 py-1 text-xs rounded-md bg-orange-500 text-white">
-            مشاهدة المنتجات
-          </button>
-        `;
-        container.appendChild(box);
+    // ابني الكروت في الـ DOM
+    const container = document.getElementById('categories-list');
+    categories.forEach(cat => {
+      const meta = catMeta[cat] || {desc: '', icon: 'grid'};
+      const box = document.createElement('div');
+      box.className = 'bg-white rounded-xl shadow p-5 category-card flex flex-col gap-3';
+      // رابط ال زر يرسل لصفحة category.html مع query param
+      const href = 'category.html?category=' + encodeURIComponent(cat);
+      box.innerHTML = `
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <div class="bg-orange-50 p-3 rounded-xl">
+              <i data-feather="${meta.icon}" class="w-6 h-6 text-orange-500"></i>
+            </div>
+            <div>
+              <div class="text-lg font-bold text-gray-800">${cat}</div>
+              <div class="text-xs text-gray-500">${meta.desc}</div>
+            </div>
+          </div>
+          <div class="text-right">
+            <span class="small-badge">شائع</span>
+          </div>
+        </div>
+        <div class="mt-3 flex gap-2">
+          <a href="${href}" class="flex-1 text-center px-3 py-2 rounded-md bg-orange-500 text-white">مشاهدة المنتجات</a>
+          <a href="search.html?category=${encodeURIComponent(cat)}" class="flex-1 text-center px-3 py-2 rounded-md border">بحث متقدم</a>
+        </div>
+      `;
+      container.appendChild(box);
+    });
+
+    // Search رئيسي يفلتر الفئات باسمه
+    const searchMain = document.getElementById('searchMain');
+    searchMain.addEventListener('input', () => {
+      const q = (searchMain.value || '').trim().toLowerCase();
+      const cards = Array.from(container.children);
+      cards.forEach(card => {
+        const text = card.textContent.toLowerCase();
+        card.style.display = text.includes(q) ? '' : 'none';
       });
     });
+
+    // تفعيل feather icons بعد إنشاء العناصر
+    feather.replace();
+
+    // جعل أزرار 'مشاهدة المنتجات' تفتح في صفحة حقيقية (مثال)
+    // ملاحظة: تأكد وجود file category.html للتعامل مع query param
   </script>
+
 </body>
 </html>
