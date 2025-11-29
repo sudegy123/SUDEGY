@@ -1,72 +1,134 @@
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="utf-8">
-  <title>الفئات — SudEgy</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta charset="utf-8" />
+  <title>الفئات — SudEgy (حيوية)</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="style.css">
   <style>
-    /* إضافات محلية للصفحة */
-    .category-card { transition: transform .22s, box-shadow .22s; }
-    .category-card:hover { transform: translateY(-6px); box-shadow: 0 16px 30px rgba(0,0,0,0.08); }
-    .logo-img { height: 44px; width: auto; }
-    .small-badge { font-size: 11px; padding: 4px 8px; border-radius: 999px; background: rgba(232,73,29,0.08); color: #E8491D; }
+    :root{
+      --brand:#E8491D;
+      --brand-2:#F05A22;
+      --muted:#6B7280;
+      --card:#ffffff;
+      --glass: rgba(255,255,255,0.6);
+    }
+
+    /* صفحة */
+    body{background: linear-gradient(180deg,#fffaf6 0%, #fff6f0 100%); font-family: 'Tajawal', system-ui, sans-serif;}
+
+    /* HEADER */
+    header {backdrop-filter: blur(6px); background: linear-gradient(90deg, rgba(255,255,255,0.9), rgba(255,255,255,0.85)); box-shadow: 0 6px 18px rgba(20,20,20,0.06);}
+    .logo-img{height:44px;}
+    .search-input{
+      border-radius:12px; box-shadow: 0 6px 18px rgba(14,14,14,0.06);
+      transition: box-shadow .18s, transform .12s;
+    }
+    .search-input:focus{transform: translateY(-2px); box-shadow: 0 18px 40px rgba(14,14,14,0.08); outline: none;}
+
+    /* GRID */
+    #categories-list{ display:grid; grid-template-columns: repeat(1,1fr); gap:18px; }
+    @media(min-width:640px){ #categories-list{grid-template-columns: repeat(2,1fr);} }
+    @media(min-width:1024px){ #categories-list{grid-template-columns: repeat(3,1fr);} }
+
+    /* CARD */
+    .category-card{
+      position:relative; overflow:hidden; border-radius:16px; padding:18px; min-height:140px;
+      transition: transform .35s cubic-bezier(.2,.9,.3,1), box-shadow .35s;
+      background: linear-gradient(135deg, rgba(255,255,255,0.6), rgba(255,255,255,0.4));
+      backdrop-filter: blur(6px);
+      display:flex; flex-direction:column; justify-content:space-between;
+    }
+    .category-card:hover{ transform: translateY(-10px) scale(1.01); box-shadow: 0 30px 60px rgba(16,24,40,0.12); }
+
+    /* BG image faint */
+    .category-card .bg-thumb{ position:absolute; right: -30px; top:-20px; width:220px; height:220px; opacity:.12; filter: blur(1px); transform: rotate(10deg); }
+
+    /* ICON CIRCLE */
+    .cat-icon{
+      width:56px; height:56px; border-radius:12px; display:grid; place-items:center;
+      background:linear-gradient(180deg, rgba(255,255,255,0.85), rgba(255,255,255,0.6));
+      box-shadow: 0 6px 18px rgba(16,24,40,0.06);
+    }
+
+    /* TAGS & BADGE */
+    .badge { background: linear-gradient(90deg,var(--brand),var(--brand-2)); color:#fff; padding:6px 10px; border-radius:999px; font-weight:600; font-size:13px; box-shadow: 0 6px 18px rgba(232,73,29,0.12); }
+    .count-bubble{ background: #fff; padding:6px 8px; border-radius:999px; font-size:12px; color:var(--brand); box-shadow: 0 6px 20px rgba(14,20,40,0.06); }
+
+    /* ACTIONS */
+    .cat-actions a{ padding:9px 12px; border-radius:10px; font-weight:600; transition: transform .12s; }
+    .cat-actions a:hover{ transform: translateY(-4px); }
+
+    /* reveal on scroll */
+    .reveal { opacity:0; transform: translateY(20px) scale(.995); transition: all .7s cubic-bezier(.2,.9,.25,1); }
+    .reveal.visible { opacity:1; transform: translateY(0) scale(1); }
+
+    /* autocomplete list */
+    .suggestions { position:absolute; z-index:60; background:#fff; width:100%; border-radius:10px; box-shadow: 0 10px 30px rgba(10,10,10,0.08); max-height:260px; overflow:auto; }
+    .suggestions button{ width:100%; text-align:right; padding:10px 12px; border-bottom:1px solid #f3f4f6; background:transparent; }
+
+    /* micro animations */
+    @keyframes pulseBadge{
+      0%{ transform: scale(1); opacity:1 }
+      50%{ transform: scale(1.04); opacity:.9 }
+      100%{ transform: scale(1); opacity:1 }
+    }
+    .pulse { animation: pulseBadge 2.6s ease-in-out infinite; }
+
   </style>
 </head>
-<body class="bg-[#fff9f4]">
+<body class="antialiased">
 
-  <!-- ========== HEADER (مضمن اللوجو) ========== -->
-  <header class="bg-white shadow-sm sticky top-0 z-40">
-    <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
+  <!-- HEADER -->
+  <header class="sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto flex items-center gap-4 px-4 py-3">
       <a href="index.html" class="flex items-center gap-3">
-        <!-- ضع هنا مسار لوجو الموقع -->
         <img src="images/name_user_3716.png" alt="SudEgy" class="logo-img">
         <div>
-          <div class="text-lg font-bold text-gray-800">SudEgy</div>
+          <div class="font-bold text-lg text-gray-800">SudEgy</div>
           <div class="text-xs text-gray-500">جسر التجارة بين مصر والسودان</div>
         </div>
       </a>
 
-      <div class="flex-1 max-w-2xl">
-        <input id="searchMain" type="search" placeholder="ابحث عن فئة أو منتج..." class="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary">
+      <div class="relative flex-1 mx-4">
+        <input id="searchMain" class="w-full search-input px-4 py-3" placeholder="ابحث عن فئة أو منتج — جرّب: سمسم، صمغ عربي، دقيق..." />
+        <div id="suggestBox" class="suggestions hidden rounded-md mt-1"></div>
       </div>
 
       <div class="flex items-center gap-3">
-        <a href="join.html" class="bg-primary text-white font-bold py-2 px-4 rounded-lg shadow">سجّل الآن</a>
-        <a href="user-profile.html" class="border border-gray-200 rounded-lg px-3 py-2">حسابي</a>
+        <a href="join.html" class="px-4 py-2 badge">سجّل الآن</a>
+        <a href="user-profile.html" class="px-3 py-2 rounded-md border">حسابي</a>
       </div>
     </div>
   </header>
 
-  <!-- ========== MAIN ========== -->
+  <!-- MAIN -->
   <main class="max-w-7xl mx-auto px-4 py-8">
 
-    <h1 class="text-2xl font-bold mb-4">كل الفئات</h1>
-    <p class="text-sm text-gray-600 mb-6">اختر فئة لتصفح المنتجات — الروابط تؤدي إلى صفحة الفئة الحقيقية (category.html) مع إرسـال اسم الفئة في الاستعلام.</p>
-
-    <!-- زر فلترة سريعة (أمثلة خيارات أكثر) -->
-    <div class="flex flex-wrap gap-2 mb-6">
-      <a href="category.html?category=الكل" class="px-4 py-2 rounded-lg bg-primary text-white text-sm">الكل</a>
-      <a href="category.html?category=الزراعة" class="px-4 py-2 rounded-lg bg-white border text-sm">الزراعة</a>
-      <a href="category.html?category=الاغذية" class="px-4 py-2 rounded-lg bg-white border text-sm">الأغذية</a>
-      <a href="category.html?category=التعبئة والتغليف" class="px-4 py-2 rounded-lg bg-white border text-sm">التعبئة</a>
-      <a href="category.html?category=المعدات" class="px-4 py-2 rounded-lg bg-white border text-sm">المعدات</a>
-      <a href="category.html?category=المنسوجات" class="px-4 py-2 rounded-lg bg-white border text-sm">المنسوجات</a>
-      <a href="category.html?category=البناء" class="px-4 py-2 rounded-lg bg-white border text-sm">بناء ومواد</a>
-      <a href="category.html?category=اللوجستيك" class="px-4 py-2 rounded-lg bg-white border text-sm">لوجستيك</a>
-      <a href="category.html?category=الالكترونيات" class="px-4 py-2 rounded-lg bg-white border text-sm">إلكترونيات</a>
-      <a href="category.html?category=الخدمات" class="px-4 py-2 rounded-lg bg-white border text-sm">خدمات ووساطة</a>
+    <div class="flex items-start justify-between mb-6 gap-6">
+      <div>
+        <h1 class="text-3xl font-extrabold">الفئات — اكتشف منتجات بين مصر والسودان</h1>
+        <p class="text-sm text-gray-600 mt-1">تصميم حي وتفاعلي — مرر لترى الحركة، وابحث فوراً عن فئتك.</p>
+      </div>
+      <div class="text-right">
+        <div class="text-xs text-gray-500">الفئات الشائعة</div>
+        <div class="flex gap-2 mt-2">
+          <button class="tag" data-cat="المكسرات والبذور">المكسرات</button>
+          <button class="tag" data-cat="التمور والفواكه">التمور</button>
+          <button class="tag" data-cat="الماكينات">الماكينات</button>
+        </div>
+      </div>
     </div>
 
-    <!-- شبكة الفئات (أرجعناها لطريقة التصميم الأول) -->
-    <div id="categories-list" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-      <!-- سيتم توليد الكروت عبر JavaScript -->
+    <!-- GRID -->
+    <div id="categories-list" class="grid gap-6">
+      <!-- تولد JS -->
     </div>
 
   </main>
 
-  <!-- ========== FOOTER (مضمَّن اللوجو) ========== -->
+  <!-- FOOTER -->
   <footer class="bg-gray-900 text-white py-8 mt-8">
     <div class="max-w-7xl mx-auto px-4 grid md:grid-cols-3 gap-6">
       <div class="flex items-center gap-3">
@@ -93,91 +155,126 @@
     <div class="text-center text-gray-500 text-sm mt-6">© 2025 SudEgy</div>
   </footer>
 
-  <!-- ========== SCRIPTS ========== -->
+  <!-- SCRIPTS -->
   <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
   <script>feather.replace();</script>
 
   <script>
-    // قائمة فئات أولية (مزيج من الفئات من التصميم الأول + خيارات إضافية شائعة)
+    // قائمة الفئات (موسّعة) — نفس الفئات اللي عندك + تنظيم للعرض
     const categories = [
-      "الزراعة", "الأغذية", "التعبئة والتغليف", "المعدات والآلات", "الشحن واللوجستيات",
-      "المنسوجات والملابس", "مواد البناء", "الالكترونيات", "الكيماويات", "المستلزمات الطبية",
-      "منتجات بترولية", "مكونات صناعية", "خدمات تجارية", "التحف والحرف اليدوية",
-      "المواد الخام", "الأعلاف", "المكسرات والبذور", "التمور والفواكه", "القطن", "الماشية واللحوم"
+"الزراعة","الخضراوات والتحضيرات","العصارات والمستخلصات","أطعمة مبردة","الفواكه والبطيخ","الأطعمة المعلبة",
+"الأعلاف، العلف الأخضر","السكر والحلويات","المكسرات والبذور","محليات غذائية","التوابل والبهارات",
+"الملابس والإكسسوارات","أحذية","ملابس رجالية","ملابس نسائية","إكسسوارات الموضة",
+"الفنون والحرف اليدوية","لوحات فنية","هدايا يدوية","زينة موسمية",
+"السيارات وقطع الغيار","إطارات","قطع غيار","دراجات نارية",
+"الحقائب وعلب الهدايا","حقائب ظهر","علب هدايا","حقائب سفر",
+"الكيماويات","مواد صناعية","مواد تنظيف","مبيدات زراعية",
+"منتجات الكمبيوتر","لوحات مفاتيح","بطاقات ذاكرة","أجهزة تخزين",
+"مواد البناء والديكور","بلاط","دهانات","أبواب ونوافذ",
+"الالكترونيات الاستهلاكية","هواتف","سماعات","أجهزة ذكية",
+"الأجهزة الكهربائية","ثلاجات","غسالات","مكيفات",
+"الأثاث","غرف نوم","كنب","مكاتب",
+"المستلزمات الطبية","كمامات","معدات طبية","أدوية ومكملات",
+"المعدات الصناعية","مضخات","محركات","أدوات صناعية",
+"العدادات والأدوات","عدادات كهرباء","أدوات قياس","أجهزة فحص",
+"منتجات يومية","مناديل صحية","أدوات مطبخ","منتجات تنظيف",
+"المواد الخام","القطن","الصمغ العربي","السمسم","الماشية واللحوم","التمور والفواكه"
     ];
 
-    // تفاصيل عرضية لكل فئة (وصف صغير + أيقونة feather)
-    const catMeta = {
-      "الزراعة": {desc: "حبوب، بذور زيتية، محاصيل تصديرية", icon: "shopping-bag"},
-      "الأغذية": {desc: "منتجات مطحون، معلبات، عسل، كركديه", icon: "coffee"},
-      "التعبئة والتغليف": {desc: "علب، أكياس، مواد تعبئة وتغليف", icon: "package"},
-      "المعدات والآلات": {desc: "ماكينات صناعية، مضخات، محركات", icon: "settings"},
-      "الشحن واللوجستيات": {desc: "شحن بري وبحري، تخليص جمركي", icon: "truck"},
-      "المنسوجات والملابس": {desc: "أقمشة، ملابس جاهزة، أحذية", icon: "globe"},
-      "مواد البناء": {desc: "حديد، أسمنت، بلاط ودهانات", icon: "tool"},
-      "الالكترونيات": {desc: "هواتف، سماعات، قطع غيار إلكترونية", icon: "cpu"},
-      "الكيماويات": {desc: "مواد تنظيف، مواد صناعية", icon: "droplet"},
-      "المستلزمات الطبية": {desc: "معدات طبية، كمامات، مستلزمات صحة", icon: "heart"},
-      "منتجات بترولية": {desc: "زيوت صناعية ومشتقات", icon: "cloud"},
-      "مكونات صناعية": {desc: "قطع غيار ومكونات خطوط انتاج", icon: "layers"},
-      "خدمات تجارية": {desc: "خدمات وساطة، استشارات، شحن", icon: "briefcase"},
-      "التحف والحرف اليدوية": {desc: "سجاد، منتجات تراثية، هدايا", icon: "gift"},
-      "المواد الخام": {desc: "خام لعمليات التصنيع المختلفة", icon: "archive"},
-      "الأعلاف": {desc: "أعلاف ومخلفات زراعية للحيوانات", icon: "leaf"},
-      "المكسرات والبذور": {desc: "سمسم، فول سوداني، بذور متنوعة", icon: "seed"},
-      "التمور والفواكه": {desc: "تمور، فواكه مجففة", icon: "star"},
-      "القطن": {desc: "قطن خام وصناعة الغزل", icon: "hash"},
-      "الماشية واللحوم": {desc: "ماشية حية ولحوم مجمدة للتصدير", icon: "activity"}
+    // صور مصغرة للفئات (مكانياً — غير ضروري لكن يعطي حيوية)
+    const thumbs = {
+      "الزراعة":"images/field-thumb.jpg",
+      "السمسم":"images/bag-sesame-light.jpg",
+      "الصمغ العربي":"images/gum-arabic.jpg",
+      "التمور والفواكه":"images/تمور.jpg",
+      "القطن":"images/cotton.jpg",
+      "الماكينات":"images/machine-thumb.jpg",
+      "المكسرات والبذور":"images/nuts-thumb.jpg",
+      "الماشية واللحوم":"images/livestock.jpg",
+      "الدقيق":"images/flour.jpg",
+      "السكر":"images/sugar.jpg"
     };
 
-    // ابني الكروت في الـ DOM
+    // توليد الكروت — كل كرت داخله زر يفتح category.html?category=
     const container = document.getElementById('categories-list');
-    categories.forEach(cat => {
-      const meta = catMeta[cat] || {desc: '', icon: 'grid'};
-      const box = document.createElement('div');
-      box.className = 'bg-white rounded-xl shadow p-5 category-card flex flex-col gap-3';
-      // رابط ال زر يرسل لصفحة category.html مع query param
-      const href = 'category.html?category=' + encodeURIComponent(cat);
-      box.innerHTML = `
-        <div class="flex items-center justify-between">
+
+    categories.forEach((cat, i) => {
+      // randomize color gradient for حيوية
+      const hue = 12 + (i * 17) % 360;
+      const grad = `linear-gradient(135deg, hsla(${hue},80%,60%,0.12), hsla(${(hue+40)%360},80%,60%,0.06))`;
+      const thumb = thumbs[cat] || Object.values(thumbs)[i % Object.keys(thumbs).length];
+
+      const el = document.createElement('article');
+      el.className = 'category-card reveal';
+      el.style.backgroundImage = grad;
+      el.innerHTML = `
+        <img class="bg-thumb" src="${thumb}" alt="${cat}" loading="lazy" />
+        <div class="flex items-start justify-between">
           <div class="flex items-center gap-3">
-            <div class="bg-orange-50 p-3 rounded-xl">
-              <i data-feather="${meta.icon}" class="w-6 h-6 text-orange-500"></i>
-            </div>
+            <div class="cat-icon"><i data-feather="grid" class="w-5 h-5 text-orange-500"></i></div>
             <div>
               <div class="text-lg font-bold text-gray-800">${cat}</div>
-              <div class="text-xs text-gray-500">${meta.desc}</div>
+              <div class="text-xs text-gray-500 mt-1">اكتشف الموردين والمنتجات في فئة ${cat}</div>
             </div>
           </div>
-          <div class="text-right">
-            <span class="small-badge">شائع</span>
+          <div class="text-left flex flex-col items-end gap-2">
+            <div class="count-bubble pulse"> <span class="text-xs">0 إعلانات</span></div>
+            <div class="text-xs text-gray-400">شائع الآن</div>
           </div>
         </div>
-        <div class="mt-3 flex gap-2">
-          <a href="${href}" class="flex-1 text-center px-3 py-2 rounded-md bg-orange-500 text-white">مشاهدة المنتجات</a>
-          <a href="search.html?category=${encodeURIComponent(cat)}" class="flex-1 text-center px-3 py-2 rounded-md border">بحث متقدم</a>
+
+        <div class="mt-4 flex gap-2 cat-actions">
+          <a href="category.html?category=${encodeURIComponent(cat)}" class="bg-white text-sm text-gray-800 w-1/2 text-center">مشاهدة المنتجات</a>
+          <a href="search.html?category=${encodeURIComponent(cat)}" class="border border-white/30 text-sm w-1/2 text-center text-white">بحث متقدم</a>
         </div>
       `;
-      container.appendChild(box);
+      container.appendChild(el);
     });
 
-    // Search رئيسي يفلتر الفئات باسمه
+    // Reveal on scroll (IntersectionObserver)
+    const obs = new IntersectionObserver((entries)=>{
+      entries.forEach(ent=>{
+        if(ent.isIntersecting) ent.target.classList.add('visible');
+      });
+    }, {threshold:0.12});
+    document.querySelectorAll('.reveal').forEach(n => obs.observe(n));
+
+    // Autocomplete suggestions
     const searchMain = document.getElementById('searchMain');
-    searchMain.addEventListener('input', () => {
-      const q = (searchMain.value || '').trim().toLowerCase();
-      const cards = Array.from(container.children);
-      cards.forEach(card => {
-        const text = card.textContent.toLowerCase();
-        card.style.display = text.includes(q) ? '' : 'none';
+    const suggestBox = document.getElementById('suggestBox');
+    function showSuggestions(q){
+      const ql = q.trim().toLowerCase();
+      if(!ql){ suggestBox.classList.add('hidden'); return; }
+      const matches = categories.filter(c=> c.toLowerCase().includes(ql)).slice(0,8);
+      if(matches.length===0){ suggestBox.classList.add('hidden'); return; }
+      suggestBox.innerHTML = matches.map(m => `<button type="button" class="text-right" data-cat="${m}">${m}</button>`).join('');
+      suggestBox.classList.remove('hidden');
+    }
+    searchMain.addEventListener('input', (e)=> showSuggestions(e.target.value));
+    // click suggestion
+    suggestBox.addEventListener('click', (ev)=>{
+      const btn = ev.target.closest('button[data-cat]');
+      if(!btn) return;
+      const cat = btn.dataset.cat;
+      window.location.href = 'category.html?category=' + encodeURIComponent(cat);
+    });
+    // close suggestions on outside click
+    document.addEventListener('click', (e)=>{ if(!e.target.closest('#suggestBox') && !e.target.closest('#searchMain')) suggestBox.classList.add('hidden'); });
+
+    // tags quick open
+    document.querySelectorAll('.tag').forEach(t=>{
+      t.addEventListener('click', ()=> location.href = 'category.html?category=' + encodeURIComponent(t.dataset.cat));
+    });
+
+    // tiny parallax on mousemove for bg-thumbs
+    document.addEventListener('mousemove', (e)=>{
+      document.querySelectorAll('.bg-thumb').forEach((img, idx)=>{
+        const x = (e.clientX / window.innerWidth - 0.5) * (idx%2 ? -20 : 20);
+        const y = (e.clientY / window.innerHeight - 0.5) * 20;
+        img.style.transform = `translate(${x}px, ${y}px) rotate(${(idx%3)*4}deg)`;
       });
     });
 
-    // تفعيل feather icons بعد إنشاء العناصر
-    feather.replace();
-
-    // جعل أزرار 'مشاهدة المنتجات' تفتح في صفحة حقيقية (مثال)
-    // ملاحظة: تأكد وجود file category.html للتعامل مع query param
   </script>
-
 </body>
 </html>
