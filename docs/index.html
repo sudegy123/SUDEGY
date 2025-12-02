@@ -1,1 +1,349 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>SudEgy - منصة التجارة بين مصر والسودان</title>
 
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body { font-family: 'Cairo', sans-serif; }
+  </style>
+</head>
+<body class="bg-[#fff9f4]">
+
+  <!-- HEADER -->
+  <!-- لاحظ: استخدمنا header.html مباشرة (نفس الملف اللي عندك) -->
+  <div data-include="header.html"></div>
+
+  <!-- Modern Trade Counter Banner -->
+<section class="max-w-7xl mx-auto px-4 mt-4">
+  <div class="w-full bg-gradient-to-r from-green-700 via-green-500 to-green-400 text-white py-8 px-4 shadow-xl rounded-lg">
+    <div class="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 text-center md:text-start">
+      
+      <!-- Left: Title and Info -->
+      <div>
+        <h2 class="text-3xl md:text-4xl font-extrabold flex items-center gap-2 mb-2">
+          💹 <span>حجم التجارة بين مصر والسودان الآن</span>
+        </h2>
+        <p id="trade-date" class="text-sm md:text-base opacity-90 mb-1">
+          بتاريخ: 16 نوفمبر 2025
+        </p>
+        <p class="text-xs md:text-sm opacity-80">
+          يتم تحديث الرقم تلقائيًا كل ثانية ليعكس النشاط التجاري اللحظي
+        </p>
+      </div>
+
+      <!-- Right: Live Counter -->
+      <div class="text-4xl md:text-5xl font-bold flex items-center gap-2">
+        ⏱️ <span id="counter-value">1,465,344,000</span>
+        <span class="text-white text-xl">دولار</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- شريط البحث + الفئات -->
+<section class="max-w-7xl mx-auto px-4 mt-4">
+  <div class="search-box flex flex-col md:flex-row items-center gap-3 w-full">
+
+    <!-- حقل البحث (كبير) + قائمة الفئات (صغيرة) -->
+    <div class="flex items-center gap-2 flex-grow w-full">
+      
+      <!-- حقل البحث -->
+      <input
+        id="search-input"
+        type="text"
+        placeholder="ابحث عن منتج، مورد، فئة..."
+        class="flex-grow border border-gray-300 rounded-lg px-3 py-2 text-sm
+               focus:outline-none focus:ring-2 focus:ring-orange-400"
+      />
+
+      <!-- قائمة الفئات (صغيرة) -->
+      <select
+        id="category-select"
+        class="border border-gray-300 rounded-lg px-3 py-2 text-sm
+               w-32 md:w-40 flex-shrink-0 focus:outline-none focus:ring-2 focus:ring-orange-400">
+
+        <option selected disabled>اختر فئة المنتج</option>
+
+        <optgroup label="الزراعة والأغذية">
+          <option>الخضراوات والتحضيرات</option>
+          <option>العصارات والمستخلصات</option>
+          <option>أطعمة مبردة</option>
+          <option>الفواكه والبطيخ</option>
+          <option>الأطعمة المعلبة</option>
+          <option>الأعلاف، العلف الأخضر</option>
+          <option>السكر والحلويات</option>
+          <option>المكسرات والبذور</option>
+          <option>محليات غذائية</option>
+          <option>التوابل والبهارات</option>
+        </optgroup>
+
+        <optgroup label="الملابس والإكسسوارات">
+          <option>أحذية</option>
+          <option>ملابس رجالية</option>
+          <option>ملابس نسائية</option>
+          <option>إكسسوارات الموضة</option>
+        </optgroup>
+
+        <optgroup label="الفنون والحرف اليدوية">
+          <option>لوحات فنية</option>
+          <option>هدايا يدوية</option>
+          <option>زينة موسمية</option>
+        </optgroup>
+
+        <optgroup label="السيارات وقطع الغيار">
+          <option>إطارات</option>
+          <option>قطع غيار</option>
+          <option>دراجات نارية</option>
+        </optgroup>
+
+        <optgroup label="الحقائب وعلب الهدايا">
+          <option>حقائب ظهر</option>
+          <option>علب هدايا</option>
+          <option>حقائب سفر</option>
+        </optgroup>
+
+        <optgroup label="الكيماويات">
+          <option>مواد صناعية</option>
+          <option>مواد تنظيف</option>
+          <option>مبيدات زراعية</option>
+        </optgroup>
+
+        <optgroup label="منتجات الكمبيوتر">
+          <option>لوحات مفاتيح</option>
+          <option>بطاقات ذاكرة</option>
+          <option>أجهزة تخزين</option>
+        </optgroup>
+
+        <optgroup label="مواد البناء والديكور">
+          <option>بلاط</option>
+          <option>دهانات</option>
+          <option>أبواب ونوافذ</option>
+        </optgroup>
+
+        <optgroup label="الالكترونيات الاستهلاكية">
+          <option>هواتف</option>
+          <option>سماعات</option>
+          <option>أجهزة ذكية</option>
+        </optgroup>
+
+        <optgroup label="الأجهزة الكهربائية">
+          <option>ثلاجات</option>
+          <option>غسالات</option>
+          <option>مكيفات</option>
+        </optgroup>
+
+        <optgroup label="الأثاث">
+          <option>غرف نوم</option>
+          <option>كنب</option>
+          <option>مكاتب</option>
+        </optgroup>
+
+        <optgroup label="المستلزمات الطبية">
+          <option>كمامات</option>
+          <option>معدات طبية</option>
+          <option>أدوية ومكملات</option>
+        </optgroup>
+
+        <optgroup label="المعدات الصناعية">
+          <option>مضخات</option>
+          <option>محركات</option>
+          <option>أدوات صناعية</option>
+        </optgroup>
+
+        <optgroup label="العدادات والأدوات">
+          <option>عدادات كهرباء</option>
+          <option>أدوات قياس</option>
+          <option>أجهزة فحص</option>
+        </optgroup>
+
+        <optgroup label="منتجات يومية">
+          <option>مناديل صحية</option>
+          <option>أدوات مطبخ</option>
+          <option>منتجات تنظيف</option>
+        </optgroup>
+
+      </select>
+    </div>
+
+    <!-- زر البحث -->
+    <button
+      id="search-button"
+      class="w-full md:w-auto px-5 py-2 bg-orange-500 text-white rounded-lg text-sm font-semibold hover:bg-orange-600">
+      بحث
+    </button>
+
+  </div>
+<!-- بنر الإعلانات (يساعد في توضيح هدف المنصة) -->
+<section class="max-w-7xl mx-auto px-4 mt-4">
+  <div class="promo-banner overflow-hidden rounded-2xl px-6 py-6 text-center text-white font-semibold text-lg md:text-xl shadow-lg">
+    <span id="promo-text">SudEgy تربط التاجر السوداني بالمورد المصري في منصة واحدة آمنة وموثوقة.</span>
+  </div>
+</section>
+
+
+  <!-- بنر المنتجات المختارة (9 منتجات تتغير كل 3 ثواني) -->
+  <section class="max-w-7xl mx-auto px-4 mt-6">
+    <div class="flex items-center justify-between mb-3">
+      <h2 class="text-lg font-bold text-gray-800">
+        المنتجات الأكثر طلباً
+      </h2>
+      <a href="offers.html" class="text-xs text-orange-600 hover:underline">
+        مشاهدة كل العروض
+      </a>
+    </div>
+    <div class="slider-wrapper">
+      <div id="featured-slider" class="slider-items">
+        <!-- يتم تعبئتها من script.js -->
+      </div>
+      <div class="mt-2 text-[11px] text-gray-500 text-left">
+        يتم تدوير المنتجات كل 3 ثواني لجعل الصفحة حية وممتعة ✨
+      </div>
+    </div>
+  </section>
+
+  <!-- شبكة المنتجات -->
+<section class="max-w-7xl mx-auto px-4 mt-6 mb-10">
+  <div class="flex items-center justify-between mb-3">
+    <h3 class="text-lg font-bold text-gray-800">المنتجات المتاحة حالياً</h3>
+    <a href="add-product.html" class="text-xs text-orange-600 hover:underline">
+      هل أنت تاجر؟ أضف منتجك الآن
+    </a>
+  </div>
+
+  <div id="product-grid"
+       class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+    <!-- الكروت هتيجي من script.js -->
+  </div>
+</section>
+  <product-grid></product-grid>
+<!-- Hero Section -->
+        <section class="flex flex-col md:flex-row items-center justify-between gap-8 mb-16">
+            <div class="md:w-1/2">
+                <h1 class="text-4xl md:text-5xl font-bold text-gray-800 mb-4">
+                    <span class="text-primary">Sudegy</span> — جسر التجارة بين مصر والسودان
+                </h1>
+                <p class="text-lg text-gray-600 mb-8">
+                    المنصة الأولى لتجارة الحبوب, المواد الغذائية, الآلات, المنتجات البترولية وكل أنواع التجارة بين مصر والسودان
+                </p>
+<div class="flex flex-col sm:flex-row gap-4">
+                    <a href="join.html" class="bg-primary hover:bg-orange-700 text-white font-bold py-3 px-6 rounded-lg text-center transition duration-300">
+                        ابدأ الآن مجانًا
+                    </a>
+                    <a href="#how-it-works" class="border border-primary text-primary font-bold py-3 px-6 rounded-lg text-center transition duration-300">
+                        كيف يعمل
+                    </a>
+                </div>
+            </div>
+            <div class="md:w-1/2 relative">
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-white p-4 rounded-xl shadow-md transform rotate-3">
+                    <img src="images/bag-sesame-light.jpg" alt="سمسم من السودان" class="w-full h-40 object-cover rounded-lg">
+                    <p class="mt-2 text-center text-gray-700">سمسم سوداني عالي الجودة</p>
+</div>
+                    <div class="bg-white p-4 rounded-xl shadow-md transform -rotate-2 mt-8">
+                    <img src="images/تمور.jpg" alt="تمور من السودان" class="w-full h-40 object-cover rounded-lg">
+                    <p class="mt-2 text-center text-gray-700">تمور الشروق </p>
+</div>
+                    <div class="bg-white p-4 rounded-xl shadow-md transform rotate-1">
+                    <img src="images/لحم.jpg" alt="لحوم مجمدة" class="w-full h-40 object-cover rounded-lg">
+                    <p class="mt-2 text-center text-gray-700">لحوم سواكني  مجمدة</p>
+</div>
+                    <div class="bg-white p-4 rounded-xl shadow-md transform -rotate-3 mt-8">
+                    <img src="images/17190442771544.jpg" alt="عسل طبيعي" class="w-full h-40 object-cover rounded-lg">
+                    <p class="mt-2 text-center text-gray-700">عسل قصب السكر الاسود</p>
+</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- How It Works -->
+        <section id="how-it-works" class="mb-16">
+            <h2 class="text-3xl font-bold text-center text-gray-800 mb-12">كيف يعمل الموقع؟</h2>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="bg-white p-6 rounded-xl shadow-md text-center">
+                    <div class="bg-primary/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i data-feather="search" class="text-primary w-8 h-8"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">ابحث أو أضف إعلانك</h3>
+                    <p class="text-gray-600">سجل حسابك وأضف منتجاتك أو ابحث عن ما تحتاجه</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-md text-center">
+                    <div class="bg-primary/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i data-feather="message-square" class="text-primary w-8 h-8"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">تواصل مباشرة</h3>
+                    <p class="text-gray-600">تواصل مع المورد أو المشتري عبر المنصة</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-md text-center">
+                    <div class="bg-primary/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i data-feather="check-circle" class="text-primary w-8 h-8"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">تحقق وادفع بأمان</h3>
+                    <p class="text-gray-600">نضمن وصول الشحنة وندعم وسائل دفع آمنة</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA Section -->
+        <section class="bg-primary/5 p-8 rounded-xl mb-16">
+            <div class="text-center">
+                <h2 class="text-2xl md:text-3xl font-bold text-gray-800 mb-4">جرب منصة Sudegy الآن</h2>
+                <p class="text-gray-600 mb-6">أول إعلان لك مجاني تمامًا!</p>
+                <a href="join.html" class="inline-block bg-primary hover:bg-orange-700 text-white font-bold py-3 px-8 rounded-lg transition duration-300">
+                    Join Free Trial - أول إعلان مجاني
+                </a>
+            </div>
+        </section>
+    </main>
+
+  <!-- شبكة المنتجات -->
+  <section class="max-w-7xl mx-auto px-4 mt-6 mb-10">
+    <div class="flex items-center justify-between mb-3">
+      <h3 class="text-lg font-bold text-gray-800">كل المنتجات</h3>
+      <a href="add-product.html" class="text-xs text-orange-600 hover:underline">
+        هل أنت تاجر؟ أضف منتجك الآن
+      </a>
+    </div>
+    <div id="product-grid"
+         class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+      <!-- من السكربت -->
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <div data-include="footer.html"></div>
+
+  <!-- SCRIPTS -->
+  <!-- أولاً: common.js عشان يعرّف setupNavbar -->
+  <!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+
+<!-- Firebase v8 (التي يستخدمها common.js) -->
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
+
+<script>
+  // تهيئة Firebase (مرة واحدة فقط)
+  const firebaseConfig = {
+    apiKey: "AIzaSyBvnFMuXY_d5PKrKV-4Vp_fYyKD2c428Yw",
+    authDomain: "sudegy-4c4e5.firebaseapp.com",
+    projectId: "sudegy-4c4e5",
+    storageBucket: "sudegy-4c4e5.appspot.com",
+    messagingSenderId: "865758231874",
+    appId: "1:865758231874:web:d1959356198ca1f809dcdb"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+</script>
+
+<!-- تحميل الكود الأساسي -->
+<script src="common.js"></script>
+<script src="include-html.js"></script>
+<script src="script.js"></script>
