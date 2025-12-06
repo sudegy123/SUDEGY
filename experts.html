@@ -1,0 +1,481 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Sudegy — Experts Directory (Demo)</title>
+<link rel="icon" href="#" />
+<style>
+  /* ---------- Brand colors ---------- */
+  :root{
+    --brand-orange:#ff6a00;
+    --brand-navy:#0b2a56;
+    --muted:#f7f6f4;
+    --card-bg:#ffffff;
+    --shadow: 0 6px 18px rgba(11,42,86,0.08);
+    --radius:14px;
+    --gap:18px;
+    --mono: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  }
+
+  /* ---------- Reset & layout ---------- */
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;
+    font-family:var(--mono);
+    background:linear-gradient(90deg,#fff 0%, #fffaf5 40%, #fff1e6 100%);
+    color:#112;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+    padding:28px;
+  }
+
+  .container{
+    max-width:1150px;
+    margin:0 auto;
+  }
+
+  header{
+    display:flex;
+    gap:20px;
+    align-items:center;
+    margin-bottom:22px;
+  }
+  .logo{
+    display:flex;
+    gap:12px;
+    align-items:center;
+  }
+  .logo-mark{
+    width:56px;
+    height:56px;
+    background:var(--brand-orange);
+    border-radius:12px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:white;
+    font-weight:700;
+    font-size:22px;
+    box-shadow: var(--shadow);
+  }
+  .brand-title{
+    line-height:1;
+  }
+  .brand-title h1{
+    margin:0;
+    color:var(--brand-navy);
+    font-size:22px;
+    font-weight:700;
+  }
+  .brand-title p{
+    margin:0;
+    color:#5a6270;
+    font-size:13px;
+  }
+
+  /* ---------- toolbar ---------- */
+  .toolbar{
+    display:flex;
+    gap:12px;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:18px;
+  }
+  .controls{
+    display:flex;
+    gap:12px;
+    align-items:center;
+    flex-wrap:wrap;
+  }
+  .search {
+    display:flex;
+    align-items:center;
+    background:white;
+    border-radius:10px;
+    padding:8px 10px;
+    box-shadow: var(--shadow);
+    gap:8px;
+  }
+  .search input{
+    border:0;
+    outline:0;
+    font-size:14px;
+    min-width:220px;
+  }
+  .filter-select{
+    background:var(--brand-navy);
+    color:white;
+    padding:9px 12px;
+    border-radius:10px;
+    border: none;
+    font-weight:600;
+    cursor:pointer;
+  }
+  .cta{
+    background:var(--brand-orange);
+    color:white;
+    border:none;
+    padding:10px 16px;
+    border-radius:10px;
+    cursor:pointer;
+    font-weight:700;
+    box-shadow: var(--shadow);
+  }
+
+  /* ---------- grid ---------- */
+  .grid{
+    display:grid;
+    grid-template-columns: repeat(3,1fr);
+    gap:var(--gap);
+  }
+  @media (max-width:980px){ .grid{ grid-template-columns: repeat(2,1fr);} }
+  @media (max-width:640px){ .grid{ grid-template-columns: 1fr;} .search input{min-width:120px;} }
+
+  /* ---------- card ---------- */
+  .card{
+    background:var(--card-bg);
+    border-radius:16px;
+    padding:14px;
+    box-shadow:var(--shadow);
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+  }
+  .avatar{
+    width:100%;
+    height:150px;
+    border-radius:10px;
+    background:#f0f4f8 center/cover no-repeat;
+    display:flex;
+    align-items:flex-end;
+    justify-content:flex-start;
+    padding:10px;
+  }
+  .avatar img{ width:64px; height:64px; border-radius:10px; border:4px solid white; box-shadow:0 6px 20px rgba(11,42,86,0.08); background:white }
+  .title{
+    font-weight:700;
+    color:var(--brand-navy);
+    font-size:18px;
+    margin-top:4px;
+  }
+  .subtitle{
+    font-size:13px;
+    color:#6b7280;
+  }
+
+  .meta{
+    display:flex;
+    gap:8px;
+    align-items:center;
+    margin-top:6px;
+    flex-wrap:wrap;
+  }
+  .years{
+    background:#fff2e6;
+    color:var(--brand-orange);
+    padding:6px 8px;
+    border-radius:8px;
+    font-weight:700;
+    font-size:13px;
+  }
+  .rating{ display:flex; gap:4px; align-items:center; font-size:13px; color:#f59e0b }
+  .badge{
+    background:#eef6ff;
+    color:var(--brand-navy);
+    padding:6px 8px;
+    border-radius:8px;
+    font-weight:600;
+    font-size:12px;
+  }
+
+  .desc{ color:#4b5563; font-size:13px; margin-top:8px; min-height:36px }
+
+  .actions{
+    margin-top:auto;
+    display:flex;
+    gap:8px;
+    align-items:center;
+    justify-content:space-between;
+  }
+  .contact-btn{
+    background:linear-gradient(180deg,var(--brand-orange), #ff4b00);
+    color:white;
+    border:none;
+    padding:10px 12px;
+    border-radius:12px;
+    cursor:pointer;
+    font-weight:700;
+    box-shadow: 0 6px 18px rgba(255,106,0,0.18);
+  }
+  .ghost{
+    background:transparent;
+    border:1px solid #e6e9ee;
+    padding:8px 10px;
+    border-radius:10px;
+    font-weight:600;
+    color:#475569;
+    cursor:pointer;
+  }
+
+  /* ---------- modal ---------- */
+  .modal-backdrop{
+    position:fixed;
+    inset:0;
+    background:rgba(4,8,22,0.45);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    z-index:1000;
+    padding:24px;
+  }
+  .modal{
+    width:min(880px,98%);
+    max-height:92vh;
+    overflow:auto;
+    background:white;
+    border-radius:12px;
+    padding:18px;
+    box-shadow: 0 30px 80px rgba(2,6,23,0.5);
+  }
+  .modal .row{ display:flex; gap:14px; align-items:flex-start; }
+  .modal .left{ width:220px; }
+  .modal .left img{ width:100%; border-radius:10px; }
+  .modal .right{ flex:1; }
+  .cert-list{ display:flex; gap:10px; flex-wrap:wrap; margin-top:12px; }
+  .cert{ width:120px; height:80px; background:#f7f7f9; border-radius:8px; display:flex; align-items:center; justify-content:center; color:#7a8794; font-weight:700; font-size:12px; border:1px dashed #e6e8ea }
+
+  .close-x{ background:transparent; border:0; font-size:18px; cursor:pointer; color:#394149; }
+
+  /* ---------- tiny ---------- */
+  .small {font-size:12px; color:#6b7280}
+  footer{ margin-top:28px; color:#6b7280; font-size:13px; text-align:center }
+</style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo">
+        <div class="logo-mark">S</div>
+        <div class="brand-title">
+          <h1>Sudegy</h1>
+          <p>Experts & Services between Egypt & Sudan</p>
+        </div>
+      </div>
+      <div style="margin-left:auto" class="small">Demo • Dynamic cards • Experimental</div>
+    </header>
+
+    <div class="toolbar">
+      <div class="controls">
+        <div class="search" role="search" aria-label="search experts">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M21 21l-4.35-4.35" stroke="#9AA6B2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="11" cy="11" r="6" stroke="#9AA6B2" stroke-width="2"/></svg>
+          <input id="q" placeholder="Search by name, skill, place..." />
+        </div>
+
+        <select id="filter" class="filter-select" aria-label="Filter by category">
+          <option value="">All categories</option>
+          <option value="agriculture">Agriculture</option>
+          <option value="business">Business</option>
+          <option value="software">Software</option>
+          <option value="training">Training</option>
+          <option value="accounting">Accounting</option>
+        </select>
+      </div>
+
+      <div>
+        <button class="cta" id="add-demo">Add demo expert</button>
+      </div>
+    </div>
+
+    <main>
+      <section id="results" class="grid" aria-live="polite">
+        <!-- cards generated by JS -->
+      </section>
+    </main>
+
+    <footer>Sudegy — Prototype directory • &copy; <span id="year"></span></footer>
+  </div>
+
+  <!-- Modal -->
+  <div id="modal" class="modal-backdrop" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="modal" role="document">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <div style="font-weight:800;font-size:18px;color:var(--brand-navy)">Expert details</div>
+        <button class="close-x" id="closeModal" title="Close">✕</button>
+      </div>
+
+      <div class="row">
+        <div class="left">
+          <img id="modal-avatar" src="" alt="avatar"/>
+          <div style="margin-top:10px" class="small"><strong id="modal-name">Name</strong></div>
+          <div class="small" id="modal-role">Role</div>
+        </div>
+        <div class="right">
+          <div style="font-weight:700;font-size:16px" id="modal-head">About</div>
+          <div style="margin-top:8px;color:#475569" id="modal-desc">Long description...</div>
+          <div style="margin-top:12px;display:flex;gap:10px;align-items:center">
+            <div class="years" id="modal-years">5 Years</div>
+            <div class="badge" id="modal-country">Egypt</div>
+            <div class="rating" id="modal-rating">★★★★★</div>
+          </div>
+
+          <div style="margin-top:14px;display:flex;gap:10px">
+            <button class="contact-btn" id="modal-contact">Contact</button>
+            <button class="ghost" id="modal-download">View certificates</button>
+          </div>
+
+          <div style="margin-top:14px">
+            <div style="font-weight:700;margin-bottom:8px">Certificates</div>
+            <div class="cert-list" id="modal-certs">
+              <!-- certs -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+/*
+  Demo data + rendering logic.
+  - The page generates cards from `experts` array
+  - Search and filter are live
+  - Clicking Contact opens modal (demo)
+*/
+
+const experts = [
+  { id:1, name:'Mahmoud', role:'Business Consultant', years:7, country:'EG', category:'business', rating:5, avatar:'https://i.pravatar.cc/150?img=32', desc:'Business strategy, market entry and trade facilitation between Egypt & Sudan.', certs:[ 'DOI-17770701', 'ISO-9001' ] },
+  { id:2, name:'Ahmed', role:'Agricultural Expert', years:9, country:'EG', category:'agriculture', rating:5, avatar:'https://i.pravatar.cc/150?img=12', desc:'Crop rotation, irrigation and export-ready farm protocols.', certs:[ 'AgriCert-2020' ] },
+  { id:3, name:'Aisha', role:'Agricultural Expert', years:6, country:'SD', category:'agriculture', rating:4.8, avatar:'https://i.pravatar.cc/150?img=45', desc:'Post-harvest handling and cold chain advisory.', certs:[ 'PostHarvest-101' ] },
+  { id:4, name:'Badir', role:'Accounting & Taxes', years:5, country:'EG', category:'accounting', rating:4.2, avatar:'https://i.pravatar.cc/150?img=28', desc:'SME accounting, VAT & cross-border invoicing.', certs:[ 'CPA-EG' ] },
+  { id:5, name:'Mustafa', role:'Programming & Development', years:12, country:'EG', category:'software', rating:5, avatar:'https://i.pravatar.cc/150?img=3', desc:'Web & mobile systems, payment integration and logistics APIs.', certs:[ 'Dev-Pro', 'AWS-Architect' ] },
+  { id:6, name:'Karim', role:'Training & Capacity Building', years:8, country:'SD', category:'training', rating:4.7, avatar:'https://i.pravatar.cc/150?img=15', desc:'Design and delivery of vocational training programs.', certs:[ 'Trainer-Intl' ] }
+];
+
+const grid = document.getElementById('results');
+const q = document.getElementById('q');
+const filter = document.getElementById('filter');
+const yearEl = document.getElementById('year');
+yearEl.textContent = new Date().getFullYear();
+
+function starHtml(rating){
+  const full = Math.round(rating);
+  return '★'.repeat(full) + '☆'.repeat(Math.max(0,5-full));
+}
+
+function renderCard(expert){
+  const div = document.createElement('article');
+  div.className = 'card';
+  div.setAttribute('data-id', expert.id);
+  div.innerHTML = `
+    <div class="avatar" style="background-image:url('https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=1400&q=60'); background-size:cover; background-position:center;">
+      <img src="${expert.avatar}" alt="${expert.name}" />
+    </div>
+    <div class="title">${expert.name}</div>
+    <div class="subtitle">${expert.role}</div>
+    <div class="meta">
+      <div class="years">${expert.years}+ yrs</div>
+      <div class="rating" title="${expert.rating}">${starHtml(expert.rating)}</div>
+      <div class="badge">${expert.country}</div>
+    </div>
+    <div class="desc">${expert.desc}</div>
+    <div class="actions">
+      <button class="contact-btn" data-id="${expert.id}">Contact</button>
+      <button class="ghost" data-id="${expert.id}">View</button>
+    </div>
+  `;
+  return div;
+}
+
+function populate(list){
+  grid.innerHTML = '';
+  if(list.length === 0){
+    grid.innerHTML = `<div style="grid-column:1/-1;padding:40px;background:#fff;border-radius:12px;text-align:center;color:#6b7280">No experts found.</div>`;
+    return;
+  }
+  const frag = document.createDocumentFragment();
+  list.forEach(e => frag.appendChild(renderCard(e)));
+  grid.appendChild(frag);
+}
+
+/* initial */
+populate(experts);
+
+/* search + filter */
+function applyFilters(){
+  const qv = q.value.trim().toLowerCase();
+  const fv = filter.value;
+  let out = experts.filter(e=>{
+    const matchesQ = qv === '' || (e.name.toLowerCase().includes(qv) || e.role.toLowerCase().includes(qv) || e.desc.toLowerCase().includes(qv));
+    const matchesF = fv === '' || e.category === fv;
+    return matchesQ && matchesF;
+  });
+  populate(out);
+}
+
+q.addEventListener('input', applyFilters);
+filter.addEventListener('change', applyFilters);
+
+/* modal logic */
+const modal = document.getElementById('modal');
+const closeModal = document.getElementById('closeModal');
+
+function openModal(id){
+  const e = experts.find(x=>x.id==id);
+  if(!e) return;
+  document.getElementById('modal-avatar').src = e.avatar;
+  document.getElementById('modal-name').textContent = e.name;
+  document.getElementById('modal-role').textContent = e.role;
+  document.getElementById('modal-head').textContent = e.role + ' • ' + e.name;
+  document.getElementById('modal-desc').textContent = e.desc;
+  document.getElementById('modal-years').textContent = e.years + ' Years';
+  document.getElementById('modal-country').textContent = e.country;
+  document.getElementById('modal-rating').textContent = starHtml(e.rating);
+  const certs = document.getElementById('modal-certs');
+  certs.innerHTML = '';
+  (e.certs || []).forEach(c=>{
+    const d = document.createElement('div');
+    d.className = 'cert';
+    d.textContent = c;
+    certs.appendChild(d);
+  });
+
+  // contact button open email draft (demo)
+  document.getElementById('modal-contact').onclick = ()=>{
+    const subject = encodeURIComponent('Sudegy Contact — ' + e.name);
+    const body = encodeURIComponent('Hello ' + e.name + ',%0D%0A%0D%0AI am contacting you regarding a service request.%0D%0A%0D%0AThanks.');
+    window.location.href = `mailto:expert@example.com?subject=${subject}&body=${body}`;
+  };
+
+  modal.style.display = 'flex';
+  modal.setAttribute('aria-hidden','false');
+}
+
+closeModal.addEventListener('click',()=>{ modal.style.display='none'; modal.setAttribute('aria-hidden','true'); });
+
+/* delegate clicks on cards */
+grid.addEventListener('click', (ev)=>{
+  const btn = ev.target.closest('button');
+  if(!btn) return;
+  const id = btn.getAttribute('data-id');
+  if(!id) return;
+  if(btn.classList.contains('contact-btn')){
+    openModal(id);
+  } else {
+    openModal(id);
+  }
+});
+
+/* small: add demo expert */
+document.getElementById('add-demo').addEventListener('click',()=>{
+  const newId = Date.now() % 100000;
+  const demo = { id:newId, name:'New Expert', role:'Consultant', years:3, country:'EG', category:'business', rating:4.5, avatar:'https://i.pravatar.cc/150?img=66', desc:'Demo expert added for preview.', certs:['DemoCert'] };
+  experts.unshift(demo);
+  populate(experts);
+  // quick highlight scroll
+  setTimeout(()=>{ document.querySelector(`[data-id="${newId}"]`).scrollIntoView({behavior:'smooth', block:'center'}); },120);
+});
+</script>
+</body>
+</html>
