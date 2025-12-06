@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>الخصوصية والحماية القانونية — SudEgy</title>
+  <meta name="description" content="إشعار حماية الملكية الفكرية لشركة SudEgy، شهادة التسجيل، طرق التحقق، وإجراءات الإبلاغ عن الانتهاكات." />
+
+  <!-- رابط التنسيق الرئيسي للموقع -->
+  <link rel="stylesheet" href="style.css">
+
+  <!-- أنماط مخصصة للصفحة (تكميلية لملف style.css) -->
+  <style>
+    /* --- لغة وأساس --- */
+    :root{
+      --brand:#ff6a00;
+      --navy:#0b2a56;
+      --muted:#6b7280;
+      --card-bg:#fff;
+      --glass: rgba(255,255,255,0.8);
+    }
+    html,body{height:100%;margin:0;font-family:'Tajawal',system-ui,-apple-system,"Segoe UI",Roboto,Arial;color:#111;background:linear-gradient(180deg,#fffaf6 0%, #fff 100%)}
+    /* إصلاح شعار الهيدر */
+    header img.logo-fixed{ width:48px !important; height:48px !important; object-fit:cover; }
+
+    /* ===== حاوية رئيسية ===== */
+    .container {
+      max-width:1200px;
+      margin:38px auto;
+      padding:0 18px;
+    }
+
+    /* ===== هيرو احترافي ===== */
+    .hero {
+      display:flex;
+      gap:20px;
+      align-items:center;
+      justify-content:space-between;
+      background: linear-gradient(90deg, rgba(255,106,0,0.06), rgba(11,42,86,0.02));
+      border-radius:14px;
+      padding:22px;
+      border:1px solid rgba(11,42,86,0.04);
+      box-shadow:0 10px 30px rgba(11,42,86,0.04);
+      margin-bottom:22px;
+    }
+    .hero .left{
+      max-width:70%;
+    }
+    .hero h1{ margin:0;font-size:22px;color:var(--navy);font-weight:800 }
+    .hero p{ margin:6px 0 0;color:var(--muted) }
+
+    .hero .cta{
+      display:flex;gap:10px;align-items:center;
+    }
+    .btn {
+      display:inline-flex;align-items:center;gap:8px;
+      padding:10px 14px;border-radius:10px;border:none;font-weight:700;cursor:pointer;
+      box-shadow:0 6px 18px rgba(11,42,86,0.06);
+    }
+    .btn-primary { background:var(--brand); color:#fff }
+    .btn-outline { background:#fff;border:1px solid rgba(11,42,86,0.06); color:var(--navy) }
+
+    /* ===== بطاقة المحتوى الرئيسية ===== */
+    .card {
+      background:var(--card-bg);
+      border-radius:12px;
+      padding:22px;
+      box-shadow:0 12px 30px rgba(11,42,86,0.04);
+      border:1px solid rgba(11,42,86,0.04);
+    }
+
+    /* ===== شبكة الشهادة والأزرار ===== */
+    .grid {
+      display:grid;
+      grid-template-columns: 340px 1fr;
+      gap:20px;
+      align-items:start;
+    }
+    .cert-thumb img {
+      width:100%;
+      border-radius:10px;
+      border:1px solid #eee;
+      box-shadow:0 8px 24px rgba(11,42,86,0.06);
+      display:block;
+    }
+
+    .meta .meta-row{ margin-bottom:10px;color:var(--muted);line-height:1.6 }
+    .meta .meta-row strong{ color:var(--navy); font-weight:700; margin-left:8px }
+
+    .actions { margin-top:8px; display:flex; gap:8px; flex-wrap:wrap }
+    .pill { display:inline-block;padding:8px 12px;border-radius:999px;background:#f3f4f6;color:#111;border:1px solid #eee;font-weight:700 }
+
+    /* ===== أقسام قابلة للطي (accordion) ===== */
+    .accordion { margin-top:18px }
+    .acc-item { border-top:1px dashed rgba(11,42,86,0.06); padding:12px 0 }
+    .acc-head { display:flex;justify-content:space-between;align-items:center;cursor:pointer }
+    .acc-head h3{ margin:0;font-size:15px;color:var(--navy);font-weight:700 }
+    .acc-body { margin-top:10px;color:var(--muted);line-height:1.8; display:none }
+
+    /* ===== ملاحظات قانونية ===== */
+    .notice { background:linear-gradient(90deg,#fff8f0,#fff); border-left:4px solid var(--brand); padding:14px;border-radius:8px; color:var(--muted); margin-top:14px }
+
+    /* responsive */
+    @media (max-width:900px){
+      .grid{ grid-template-columns: 1fr; }
+      .hero{flex-direction:column;align-items:flex-start}
+      .hero .left{max-width:100%}
+    }
+  </style>
+</head>
+
+<body>
+  <!-- الهيدر يتم تحميله من ملف header.html (نفس القالب) -->
+  <div include-html="header.html"></div>
+
+  <main class="container" role="main" aria-labelledby="pageTitle">
+    <section class="hero" aria-hidden="false">
+      <div class="left">
+        <h1 id="pageTitle">الخصوصية والحماية القانونية — حقوق ملكية فكرية</h1>
+        <p>نحن نعتز بحماية حقوقنا الفكرية. هذه الصفحة توضح حالة الحماية، شهادة التسجيل، وكيف يمكنك التحقق أو الإبلاغ عن أي انتهاك.</p>
+      </div>
+
+      <div class="cta" role="group" aria-label="أوامر سريعة">
+        <button class="btn btn-primary" onclick="window.print()" aria-label="طباعة الصفحة">
+          طباعة / حفظ PDF
+        </button>
+        <a class="btn btn-outline" href="mailto:legal@sudegy.example" aria-label="مراسلة الفريق القانوني">
+          اتصل بالفريق القانوني
+        </a>
+      </div>
+    </section>
+
+    <section class="card" aria-labelledby="certHeading">
+      <h2 id="certHeading" style="margin:0 0 12px;color:var(--navy);font-weight:800">شهادة التسجيل وبيانات الحماية</h2>
+
+      <p class="notice" role="note">
+        تُعرض هنا نسخة من شهادة تسجيل الملكية الفكرية والمؤشرات القانونية المتعلقة بالمحتوى.
+        أي استخدام غير مرخص للمحتوى يعرض صاحبه لإجراءات قانونية.
+      </p>
+
+      <div class="grid" role="region" aria-label="شهادة وبيانات">
+        <div class="cert-thumb" aria-hidden="false">
+          <!-- استخدم صورة الشهادة الموجودة ضمن ملفات المشروع. :contentReference[oaicite:4]{index=4} -->
+          <img src="images/certificate.jpg" alt="شهادة تسجيل الملكية الفكرية — SudEgy">
+        </div>
+
+        <div class="meta" role="article">
+          <div class="meta-row"><strong>مصدر التسجيل:</strong> منصة توثيق دولية (Zenodo / CERN أو ما يظهر في الشهادة).</div>
+          <div class="meta-row"><strong>رقم التسجيل (DOI):</strong> 10.5281/zenodo.1770701 (أو انظر داخل الشهادة للتحقق).</div>
+          <div class="meta-row"><strong>مالك المحتوى:</strong> SudEgy — صاحب المشروع كما هو مذكور في الشهادة.</div>
+          <div class="meta-row"><strong>نطاق الحماية:</strong> جميع النصوص، التصاميم، الأكواد، الصور، والوثائق المنشورة على الموقع.</div>
+
+          <div class="actions" role="group" aria-label="أزرار الشهادة">
+            <button class="btn btn-primary" onclick="downloadCert()" aria-label="تحميل الشهادة">تحميل الشهادة</button>
+            <a class="btn btn-outline" href="images/certificate.jpg" download aria-label="تحميل ملف الشهادة">ملف JPG</a>
+            <button class="btn" onclick="verifyDoiPrompt()" aria-label="التحقق من DOI">التحقق عبر DOI</button>
+            <span class="pill" title="حالة الحماية">محمي دولياً</span>
+          </div>
+
+          <div style="margin-top:16px;">
+            <strong style="color:var(--navy)">إشعار مهم:</strong>
+            <p style="margin:6px 0;color:var(--muted)">نسخة الشهادة أعلاه معروضة كدليل؛ للوثائق الرسمية راجع سجل الـ DOI أو تواصل مع الفريق القانوني.</p>
+          </div>
+
+          <!-- Accordion للقوانين والإجراءات -->
+          <div class="accordion" id="legalAcc">
+            <div class="acc-item">
+              <div class="acc-head" tabindex="0" role="button" aria-expanded="false" data-target="acc1">
+                <h3>حقوق النشر والملكية الفكرية</h3>
+                <span class="arrow">+</span>
+              </div>
+              <div id="acc1" class="acc-body" aria-hidden="true">
+                <p>جميع المواد في هذا الموقع محمية ولا يجوز إعادة نشرها أو إعادة استخدامها بدون إذن صريح. يتم تطبيق القوانين الدولية والمحلية على أي انتهاك.</p>
+              </div>
+            </div>
+
+            <div class="acc-item">
+              <div class="acc-head" tabindex="0" role="button" aria-expanded="false" data-target="acc2">
+                <h3>كيفية الإبلاغ عن انتهاك</h3>
+                <span class="arrow">+</span>
+              </div>
+              <div id="acc2" class="acc-body" aria-hidden="true">
+                <p>أرسل بلاغاً إلى: <a href="mailto:legal@sudegy.example">legal@sudegy.example</a> متضمناً رابط المحتوى المخالف، وصف الانتهاك، ونسخة من الشهادة إذا أمكن.</p>
+              </div>
+            </div>
+
+            <div class="acc-item">
+              <div class="acc-head" tabindex="0" role="button" aria-expanded="false" data-target="acc3">
+                <h3>التحقق من الملكية عبر DOI</h3>
+                <span class="arrow">+</span>
+              </div>
+              <div id="acc3" class="acc-body" aria-hidden="true">
+                <p>يمكن التحقق من صحة التسجيل باستخدام DOI الموجود في الشهادة عبر doi.org.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer card small -->
+      <div style="margin-top:20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
+        <small style="color:var(--muted)">هذه المواد أُسِّسَت وسُجِّلت دولياً لضمان حماية كاملة. للمزيد تواصل مع الفريق القانوني.</small>
+        <div>
+          <a class="btn btn-outline" href="terms.html" aria-label="شروط الخدمة">شروط الخدمة</a>
+          <a class="btn btn-outline" href="privacy-details.html" aria-label="سياسة الخصوصية المفصلة">سياسة الخصوصية</a>
+        </div>
+      </div>
+
+    </section>
+  </main>
+
+  <!-- الفوتر يتم تحميله من ملف footer.html (نفس القالب) -->
+  <div include-html="footer.html"></div>
+
+  <!-- سكربت لجلب header/footer إذا كنت تستخدم include-html.js -->
+  <script src="include-html.js"></script>
+
+  <!-- سكربتات الصفحة: تنزيل، DOI، accordion، تمييز رابط الهيدر -->
+  <script>
+    // تنزيل الشهادة (يفتح الرابط في نافذة جديدة ثم يبدأ تحميل)
+    function downloadCert(){
+      const url = 'images/certificate.jpg';
+      // فتح في تاب جديد ثم تحميل
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'certificate-sudegy.jpg';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    }
+
+    // التحقق من DOI - يطلب من المستخدم رابط أو DOI ثم يفتحه
+    function verifyDoiPrompt(){
+      const input = prompt('ألصق رابط DOI أو معرّف التسجيل (مثال: 10.5281/zenodo.1770701):');
+      if(!input) return;
+      const doi = input.trim();
+      const url = doi.startsWith('http') ? doi : ('https://doi.org/' + doi);
+      window.open(url, '_blank');
+    }
+
+    // Accordion سهل الوصول
+    document.addEventListener('click', function(e){
+      const head = e.target.closest('.acc-head');
+      if(!head) return;
+      const targetId = head.getAttribute('data-target');
+      toggleAcc(targetId, head);
+    });
+
+    document.addEventListener('keydown', function(e){
+      if(e.key === 'Enter' || e.key === ' '){
+        const head = e.target.closest('.acc-head');
+        if(!head) return;
+        e.preventDefault();
+        const targetId = head.getAttribute('data-target');
+        toggleAcc(targetId, head);
+      }
+    });
+
+    function toggleAcc(id, headEl){
+      const body = document.getElementById(id);
+      if(!body) return;
+      const expanded = headEl.getAttribute('aria-expanded') === 'true';
+      headEl.setAttribute('aria-expanded', !expanded);
+      body.style.display = expanded ? 'none' : 'block';
+      body.setAttribute('aria-hidden', expanded);
+      // toggle arrow
+      const arrow = headEl.querySelector('.arrow');
+      if(arrow) arrow.textContent = expanded ? '+' : '−';
+    }
+
+    // تمييز رابط الهيدر النشط (لو تم تحميل الهيدر عبر include-html.js)
+    window.addEventListener('load', function(){
+      try {
+        const navLinks = document.querySelectorAll('nav a');
+        navLinks.forEach(a => {
+          if(a.getAttribute('href') && location.pathname.endsWith('privacy.html') && a.getAttribute('href').includes('privacy')){
+            a.classList.add('text-orange-600','font-extrabold');
+          }
+        });
+      } catch(e){}
+    });
+  </script>
+</body>
+</html>
