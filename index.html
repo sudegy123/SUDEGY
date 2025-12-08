@@ -317,33 +317,18 @@
   <!-- FOOTER -->
   <div data-include="footer.html"></div>
 
-  <!-- SCRIPTS -->
-  <!-- أولاً: common.js عشان يعرّف setupNavbar -->
-  <!-- Firebase -->
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
-
-<!-- Firebase v8 (التي يستخدمها common.js) -->
+<!-- Firebase SDKs (نسخة v8 — تحميل مرة واحدة فقط) -->
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
 
-<script>
-  // تهيئة Firebase (مرة واحدة فقط)
-  const firebaseConfig = {
-    apiKey: "AIzaSyBvnFMuXY_d5PKrKV-4Vp_fYyKD2c428Yw",
-    authDomain: "sudegy-4c4e5.firebaseapp.com",
-    projectId: "sudegy-4c4e5",
-    storageBucket: "sudegy-4c4e5.appspot.com",
-    messagingSenderId: "865758231874",
-    appId: "1:865758231874:web:d1959356198ca1f809dcdb"
-  };
-
-  firebase.initializeApp(firebaseConfig);
-</script>
-
-<!-- تحميل الكود الأساسي -->
+<!-- common.js يجب أن يحتوي التهيئة (initialization) -->
 <script src="common.js"></script>
+
+<!-- include-html لو بتضمّن الهيدر والفوتر -->
 <script src="include-html.js"></script>
+
+<!-- سكربت الموقع الرئيسي -->
 <script src="script.js"></script>
+
