@@ -435,123 +435,97 @@ setInterval(() => {
 // =============================
 //   جاهز 100% للاستخدام
 // =============================
-async function appendFirestoreProductsFirst() {
-  try {
-    if (!window.firebase || !firebase.firestore) {
-      console.warn("Firebase غير متوفر أو لم يتم تهيئته بعد. تأكد من common.js يهيئ Firebase.");
-      return;
-    }
+// === Safe loadProductGrid: لا يمسح المنتجات الثابتة إن كانت موجودة ===
+function loadProductGrid() {
+  const grid = document.getElementById("product-grid");
+  if (!grid) return;
 
-    const FETCH_LIMIT = 200;
-    const originalGrid = document.getElementById("product-grid") || document.getElementById("product-row");
-
-    let firestoreContainer = document.getElementById("firestore-products");
-    if (!firestoreContainer) {
-      firestoreContainer = document.createElement("div");
-      firestoreContainer.id = "firestore-products";
-      firestoreContainer.className = "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-6";
-      if (originalGrid && originalGrid.parentNode) {
-        originalGrid.parentNode.insertBefore(firestoreContainer, originalGrid);
-      } else {
-        document.body.insertBefore(firestoreContainer, document.body.firstChild);
-      }
-    }
-
-    const existingNames = new Set();
-    document.querySelectorAll('#product-grid .product-name, #product-row .product-name, .product-card .product-name, .product-title').forEach(el => {
-      const name = (el.textContent || '').trim().toLowerCase();
-      if (name) existingNames.add(name);
-    });
-    document.querySelectorAll('#firestore-products .product-name, #firestore-products .product-title').forEach(el => {
-      const name = (el.textContent || '').trim().toLowerCase();
-      if (name) existingNames.add(name);
-    });
-
-    const snap = await firebase.firestore().collection("products").limit(FETCH_LIMIT).get();
-    if (snap.empty) {
-      console.info("لا توجد منتجات في Firestore لعرضها.");
-      return;
-    }
-
-    // small inline SVG placeholder (fast, no external request)
-    const svgPlaceholder = "data:image/svg+xml;utf8," + encodeURIComponent(
-      `<svg xmlns='http://www.w3.org/2000/svg' width='640' height='480'>
-         <rect width='100%' height='100%' fill='#f3f4f6'/>
-         <text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' fill='#9ca3af' font-size='20'>No Image</text>
-       </svg>`
-    );
-
-    snap.forEach(doc => {
-      const d = doc.data();
-      const pname = ((d.name || d.title || '') + '').trim().toLowerCase();
-      if (pname && existingNames.has(pname)) return;
-
-      const imgUrlCandidate = (d.image || d.imageUrl || "").trim();
-      // choose image: prefer provided URL, else try server path, else use svgPlaceholder
-      const imgUrl = imgUrlCandidate
-        || ("/images/default-product.jpg")   // keep server path attempt (if you upload file later)
-        || svgPlaceholder;
-
-      const card = document.createElement('div');
-      card.className = 'product-card';
-      card.style.minWidth = '200px';
-      card.style.background = 'white';
-      card.style.padding = '12px';
-      card.style.borderRadius = '8px';
-      card.style.boxShadow = '0 6px 18px rgba(0,0,0,0.06)';
-      card.style.cursor = 'pointer';
-      card.style.display = 'flex';
-      card.style.flexDirection = 'column';
-
-      const displayName = d.name || d.title || 'منتج';
-      const displayPrice = d.price || d.priceText || '';
-      const displayCategory = d.category || '';
-      const displaySeller = d.ownerEmail || d.owner || d.sellerName || '';
-      const displayLocation = d.origin || d.location || '';
-
-      card.innerHTML = `
-        <img src="${escapeHtml(imgUrl)}" alt="${escapeHtml(displayName)}"
-             style="width:100%;height:140px;object-fit:cover;border-radius:6px;" onerror="this.onerror=null;this.src='${svgPlaceholder}';" />
-        <div style="margin-top:8px;display:flex;justify-content:space-between;align-items:center;">
-          <small style="background:#f3f4f6;padding:4px 8px;border-radius:6px;font-size:12px;">${escapeHtml(displayCategory)}</small>
-          <small style="color:#6b7280;font-size:12px;">#${doc.id.slice(0,6)}</small>
-        </div>
-        <h3 class="product-name" style="margin:8px 0 4px;font-weight:600;">${escapeHtml(displayName)}</h3>
-        <div style="font-weight:700;color:#E8491D;margin-bottom:6px;">${escapeHtml(displayPrice)}</div>
-        <div style="margin-top:8px;font-size:13px;color:#374151;flex:1;">
-          <div>👤 ${escapeHtml(displaySeller)}</div>
-          <div>📍 ${escapeHtml(displayLocation)}</div>
-        </div>
-        <div style="display:flex;gap:8px;margin-top:8px;">
-          <button class="btn-details" style="flex:1;padding:8px;border-radius:6px;border:1px solid #e5e7eb;background:white;">عرض التفاصيل</button>
-          <button class="btn-message" style="flex:1;padding:8px;border-radius:6px;border:0;background:#F97316;color:white;">تواصل</button>
-        </div>
-      `;
-
-      const detailsBtn = card.querySelector('.btn-details');
-      const messageBtn = card.querySelector('.btn-message');
-
-      detailsBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        window.location.href = `product-details.html?id=${encodeURIComponent(doc.id)}`;
-      });
-
-      messageBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const to = encodeURIComponent(d.owner || d.ownerEmail || '');
-        window.location.href = `messages.html?to=${to}&product=${encodeURIComponent(doc.id)}`;
-      });
-
-      card.addEventListener('click', () => {
-        window.location.href = `product-details.html?id=${encodeURIComponent(doc.id)}`;
-      });
-
-      firestoreContainer.appendChild(card);
-      if (pname) existingNames.add(pname);
-    });
-
-    console.info("تمت إضافة منتجات Firestore (أعلى الصفحة) بنجاح.");
-  } catch (err) {
-    console.error("خطأ أثناء جلب أو عرض منتجات Firestore:", err);
+  // إذا كان في عناصر داخل الـ grid بالفعل (HTML ثابت أو كروت سابقة)، 
+  // لا نمسحها ولا نعيد رسمها — حفاظاً على التنسيق القديم.
+  if (grid.children && grid.children.length > 0) {
+    console.log("loadProductGrid: وجدنا عناصر ثابتة في DOM — لن نعيد رسم الشبكة للحفاظ على المحتوى الثابت.");
+    return;
   }
+
+  // وإلا إذا مافي عناصر، نرسم من المصفوفة products (كما في الكود القديم)
+  grid.innerHTML = "";
+
+  if (!Array.isArray(products) || products.length === 0) {
+    grid.innerHTML = '<div class="col-span-full text-center py-6 text-gray-500">لا توجد منتجات متاحة حالياً.</div>';
+    return;
+  }
+
+  products.forEach(p => {
+    const card = document.createElement("div");
+    card.className = "product-card";
+
+    card.innerHTML = `
+      <img src="${p.image || 'images/default-product.jpg'}" alt="${p.name || ''}" class="product-img" />
+      <div class="flex items-center justify-between mb-1">
+        <span class="product-badge">${p.category || ''}</span>
+        <span class="text-[0.65rem] text-gray-400">#${p.id ? p.id.toString().slice(0,6) : ''}</span>
+      </div>
+      <div class="product-name">${p.name || ''}</div>
+      <div class="product-price">${p.price || ''}</div>
+      <div class="product-meta mt-1">
+        <span>👤 التاجر: ${p.seller || ''}</span>
+        <span>📍 ${p.location || ''}</span>
+      </div>
+      <div class="product-actions">
+        <button class="btn-details">عرض التفاصيل</button>
+        <button class="btn-message">تواصل عبر الرسائل</button>
+      </div>
+    `;
+
+    // Events
+    const detailsBtn = card.querySelector(".btn-details");
+    if (detailsBtn) detailsBtn.addEventListener("click", e => {
+      e.stopPropagation();
+      window.location.href = `product-details.html?id=${p.id}`;
+    });
+
+    const messageBtn = card.querySelector(".btn-message");
+    if (messageBtn) messageBtn.addEventListener("click", e => {
+      e.stopPropagation();
+      window.location.href = `messages.html?to=${encodeURIComponent(p.seller || '')}&product=${p.id}`;
+    });
+
+    card.addEventListener("click", () => {
+      window.location.href = `product-details.html?id=${p.id}`;
+    });
+
+    grid.appendChild(card);
+  });
+}
+// run: أضف منتجات Firestore أولاً ثم دَع تحميل شبكة المنتجات الأصلية يتصرف بأمان
+async function initAllProducts() {
+  // ننتظر انتهاء محاولة إضافة منتجات Firestore (هي آمنة حتى لو firebase غير جاهز)
+  await new Promise(resolve => {
+    // runAppendWhenReady هي الدالة التي سبق وضعها في السكربت النهائي - تأكد أنها موجودة
+    if (typeof runAppendWhenReady === 'function') {
+      // runAppendWhenReady تنتظر firebase ثم تستدعي appendFirestoreProductsFirst
+      runAppendWhenReady();
+      // ننتظر 800ms لكي يكتمل الـ DOM update (خيار عملي بسيط)
+      setTimeout(resolve, 800);
+    } else {
+      // لو الدالة مش موجودة (نسخة قديمة من السكربت) فقط نكمل
+      resolve();
+    }
+  });
+
+  // الآن ننادي loadProductGrid — هذه الدالة الآن آمنة (لن تمس الأعمال الثابتة)
+  if (typeof loadProductGrid === 'function') {
+    try {
+      loadProductGrid();
+    } catch (e) {
+      console.warn("loadProductGrid failed:", e);
+    }
+  }
+}
+
+// نفّذ بعد DOM
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initAllProducts);
+} else {
+  initAllProducts();
 }
