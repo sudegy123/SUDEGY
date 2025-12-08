@@ -1,438 +1,235 @@
-// =============================
-//  سكربت الصفحة الرئيسية SudEgy
-// =============================
+/* ============================
+   script.js - Sudegy (merged)
+   - Merge local products + Firestore products
+   - Render featured slider + product grid
+   - Minor UI helpers (smooth scroll, language toggle)
+   ============================ */
 
-// --- عدّاد التجارة الحديث ---
-let tradeValue = 1465344000;                 // الرقم الابتدائي
-const tradeIncreasePerSecond = 53;           // الزيادة في الثانية (قابلة للتعديل)
+/* --------------------------
+   1) Smooth scrolling for anchor links
+   -------------------------- */
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+  anchor.addEventListener('click', function (e) {
+    // ensure target exists
+    const target = document.querySelector(this.getAttribute('href'));
+    if (!target) return;
+    e.preventDefault();
+    target.scrollIntoView({ behavior: 'smooth' });
+  });
+});
 
-const counterElement = document.getElementById("counter-value");
-const tradeDateElement = document.getElementById("trade-date");
-
-// تحديث الرقم كل ثانية
-function updateTradeCounter() {
-  tradeValue += tradeIncreasePerSecond;
-  if (counterElement) {
-    counterElement.textContent = tradeValue.toLocaleString();
-  }
+/* --------------------------
+   2) Language toggle (basic)
+   -------------------------- */
+const languageToggle = document.getElementById('language-toggle');
+if (languageToggle) {
+  languageToggle.addEventListener('click', () => {
+    alert('English version coming soon!');
+  });
 }
 
-if (counterElement) {
-  // أول مرة
-  counterElement.textContent = tradeValue.toLocaleString();
-  // تكرار
-  setInterval(updateTradeCounter, 1000);
-}
+/* ===========================
+   3) Products: local + Firestore merge & render
+   =========================== */
 
-// ضبط التاريخ بالعربي
-if (tradeDateElement) {
-  const today = new Date();
-  const options = { year: 'numeric', month: 'long', day: 'numeric' };
-  tradeDateElement.textContent = "بتاريخ: " + today.toLocaleDateString('ar-EG', options);
-}
-
-// --- منتجات تجريبية مع تفاصيل ---
-// --- منتجات تجريبية مع تفاصيل (20 منتج) ---
-const products = [
-  {
-    id: 1,
-    name: "سكر أبيض معبأ",
-    price: "12,500 جنيه / طن",
-    image: "images/سكر.jpg",
-    category: "الزراعة والأغذية",
-    seller: "شركة وادي النيل",
-    location: "القاهرة - مصر",
-    minOrder: "20 طن",
-    shipping: "إلى السودان خلال 5-7 أيام عمل"
-  },
-  {
-    id: 2,
-    name: "أسمنت مقاوم للملوحة",
-    price: "5,700 جنيه / طن",
-    image: "images/اسمنت.jpg",
-    category: "مواد البناء",
-    seller: "مصانع النيل للأسمنت",
-    location: "عطبرة - السودان",
-    minOrder: "30 طن",
-    shipping: "إلى مصر خلال 7-10 أيام"
-  },
-  {
-    id: 3,
-    name: "تمور سودانية فاخرة",
-    price: "22,000 جنيه / طن",
-    image: "images/تمور.jpg",
-    category: "الزراعة والأغذية",
-    seller: "مزارع الجزيرة للتمور",
-    location: "الجزيرة - السودان",
-    minOrder: "5 طن",
-    shipping: "تصدير مباشر إلى مصر"
-  },
-  {
-    id: 4,
-    name: "عسل نحل طبيعي",
-    price: "30,000 جنيه / طن",
-    image: "images/عسل.jpg",
-    category: "الزراعة والأغذية",
-    seller: "شركة وادي النحل",
-    location: "أسوان - مصر",
-    minOrder: "500 كجم",
-    shipping: "شحن مبرد إلى السودان"
-  },
-  {
-    id: 5,
-    name: "حديد تسليح",
-    price: "45,000 جنيه / طن",
-    image: "images/حديد.jpg",
-    category: "مواد البناء",
-    seller: "مجموعة النور للحديد",
-    location: "الخرطوم - السودان",
-    minOrder: "50 طن",
-    shipping: "اتفاق حسب العقد"
-  },
-  {
-    id: 6,
-    name: "زيت طعام نباتي",
-    price: "18,000 جنيه / طن",
-    image: "images/زيت.jpg",
-    category: "الزراعة والأغذية",
-    seller: "مصانع النيل للزيوت",
-    location: "القاهرة - مصر",
-    minOrder: "10 طن",
-    shipping: "شحن بري إلى السودان"
-  },
-  {
-    id: 7,
-    name: "كركدي مجفف",
-    price: "16,000 جنيه / طن",
-    image: "images/كركدي.jpg",
-    category: "الزراعة والأغذية",
-    seller: "شركة زهرة السودان",
-    location: "الأبيض - السودان",
-    minOrder: "3 طن",
-    shipping: "تصدير إلى مصر مباشرة"
-  },
-  {
-    id: 8,
-    name: "لحوم مبردة",
-    price: "60,000 جنيه / طن",
-    image: "images/لحم.jpg",
-    category: "الزراعة والأغذية",
-    seller: "مسلخ النيلين",
-    location: "الخرطوم - السودان",
-    minOrder: "2 طن",
-    shipping: "شحن مبرد للسوق المصري"
-  },
-  {
-    id: 9,
-    name: "خدمة شحن وتخليص",
-    price: "حسب الاتفاق",
-    image: "images/شحن.jpg",
-    category: "الخدمات اللوجستية",
-    seller: "SudEgy Logistics",
-    location: "مصر / السودان",
-    minOrder: "حسب الحمولة",
-    shipping: "خدمة شاملة باب لباب"
-  },
-  {
-    id: 10,
-    name: "دقيق قمح فاخر",
-    price: "14,500 جنيه / طن",
-    image: "images/سكر.jpg",
-    category: "الزراعة والأغذية",
-    seller: "مطاحن النيل الكبرى",
-    location: "القاهرة - مصر",
-    minOrder: "15 طن",
-    shipping: "إلى السودان برياً"
-  },
-  {
-    id: 11,
-    name: "سيراميك أرضيات",
-    price: "75,000 جنيه / حاوية 20 قدم",
-    image: "images/اسمنت.jpg",
-    category: "مواد البناء",
-    seller: "شركة الوادي للسيراميك",
-    location: "طنطا - مصر",
-    minOrder: "حاوية كاملة",
-    shipping: "بحري / بري حسب الطلب"
-  },
-  {
-    id: 12,
-    name: "أسلاك كهرباء نحاس",
-    price: "25,000 جنيه / طن",
-    image: "images/حديد.jpg",
-    category: "المعدات الصناعية",
-    seller: "شركة النور للكهرباء",
-    location: "الكويتية الصناعية - الخرطوم",
-    minOrder: "5 طن",
-    shipping: "إلى مصر والسودان"
-  },
-  {
-    id: 13,
-    name: "مناديل صحية معبأة",
-    price: "9,000 جنيه / طن",
-    image: "images/زيت.jpg",
-    category: "منتجات يومية",
-    seller: "مصنع الرشيد",
-    location: "الجيزة - مصر",
-    minOrder: "5 طن",
-    shipping: "إلى السودان خلال 10 أيام"
-  },
-  {
-    id: 14,
-    name: "أدوات مطبخ من الستانلس",
-    price: "حسب المنتج",
-    image: "images/عسل.jpg",
-    category: "منتجات يومية",
-    seller: "شركة البيت العصري",
-    location: "القاهرة - مصر",
-    minOrder: "100 كرتونة",
-    shipping: "تصدير للسودان / مصر"
-  },
-  {
-    id: 15,
-    name: "معدات ري محوري",
-    price: "حسب المشروع",
-    image: "images/كركدي.jpg",
-    category: "المعدات الزراعية",
-    seller: "تقنيات المزارع الحديثة",
-    location: "مدني - السودان",
-    minOrder: "نظام واحد",
-    shipping: "تركيب في الموقع"
-  },
-  {
-    id: 16,
-    name: "بذور قمح ومحاصيل",
-    price: "حسب الكمية",
-    image: "images/تمور.jpg",
-    category: "الزراعة والأغذية",
-    seller: "شركة البذور العربية",
-    location: "القاهرة - مصر",
-    minOrder: "1 طن",
-    shipping: "شحن مبرد إلى السودان"
-  },
-  {
-    id: 17,
-    name: "معدات طبية أساسية",
-    price: "حسب القائمة",
-    image: "images/شحن.jpg",
-    category: "معدات طبية",
-    seller: "ميديكال كير",
-    location: "القاهرة - مصر",
-    minOrder: "طلبية بـ 50,000 جنيه",
-    shipping: "إلى السودان خلال 14 يوم"
-  },
-  {
-    id: 18,
-    name: "كمامات طبية معبأة",
-    price: "2,500 جنيه / كرتونة 1000 قطعة",
-    image: "images/سكر.jpg",
-    category: "معدات طبية",
-    seller: "ميديكال ماسك",
-    location: "بورسعيد - مصر",
-    minOrder: "50 كرتونة",
-    shipping: "تصدير للسودان"
-  },
-  {
-    id: 19,
-    name: "معدات ورش صناعية",
-    price: "حسب التجهيز",
-    image: "images/حديد.jpg",
-    category: "معدات صناعية",
-    seller: "ورشة المستقبل",
-    location: "أم درمان - السودان",
-    minOrder: "حسب المشروع",
-    shipping: "تجهيز كامل للمصانع والورش"
-  },
-  {
-    id: 20,
-    name: "عبوات بلاستيكية للتعبئة",
-    price: "حسب المقاس والكمية",
-    image: "images/زيت.jpg",
-    category: "مواد تعبئة وتغليف",
-    seller: "شركة باك إيجي",
-    location: "القاهرة - مصر",
-    minOrder: "10,000 قطعة",
-    shipping: "إلى السودان / الداخل المصري"
-  }
+/* ---- Local products (existing static) ----
+   Replace or extend this list with your site's current local items if needed.
+*/
+const localProducts = [
+  { id: "local-1", name: "سمسم سوداني ممتاز", price: "12,000 جنيه/طن", image: "images/bag-sesame-light.jpg", category: "الزراعة", seller: "محمد أحمد", location: "القضارف - السودان", qty: "20 طن" },
+  { id: "local-2", name: "تمور بلدية مغلفة", price: "8,500 جنيه/طن", image: "images/تمور.jpg", category: "الزراعة", seller: "شركة التمور", location: "الخرطوم - السودان", qty: "5 طن" }
 ];
 
-// --- السلايدر (9 منتجات تتغير كل 3 ثواني) ---
-// --- بنر المنتجات الدائرية (7 منتجات فقط) ---
-const slider = document.getElementById("featured-slider");
+/* ---- Helper: normalize Firestore doc -> product object ---- */
+function mapDocToProduct(doc) {
+  const data = doc.data();
+  return {
+    id: doc.id || (data.id ? String(data.id) : null),
+    name: data.name || data.title || data.productName || "منتج",
+    price: data.price || data.priceText || (data.currency ? `${data.amount || ""} ${data.currency}` : ""),
+    image: data.image || data.imageUrl || "images/default-product.jpg",
+    category: data.category || "",
+    seller: data.ownerEmail || data.ownerName || data.owner || data.sellerName || "تاجر Sudegy",
+    location: data.origin || data.location || "",
+    qty: data.qty || data.minOrder || data.min_order || "",
+    raw: data
+  };
+}
 
-function loadFeaturedCircles() {
-  if (!slider) return;
+/* ---- Fetch products from Firestore (safe) ---- */
+async function fetchFirestoreProducts(limit = 100) {
+  try {
+    if (!window.firebase || !firebase.firestore) {
+      console.warn("Firebase not available - skipping Firestore fetch.");
+      return [];
+    }
+    const snap = await firebase.firestore().collection("products").limit(limit).get();
+    if (snap.empty) return [];
+    const arr = [];
+    snap.forEach(doc => arr.push(mapDocToProduct(doc)));
+    return arr;
+  } catch (err) {
+    console.error("Error fetching products from Firestore:", err);
+    return [];
+  }
+}
 
-  slider.innerHTML = "";
+/* ---- Merge local + firestore avoiding duplicates ---- */
+function mergeProducts(localList, firestoreList) {
+  const merged = [...localList]; // keep local first
+  const known = new Set();
 
-  // أول 7 منتجات من المصفوفة
-  const featured = products.slice(0, 7);
+  // register known ids and names from local list
+  localList.forEach(p => {
+    if (p.id) known.add(String(p.id));
+    if (p.name) known.add((p.name || "").toLowerCase());
+  });
 
+  firestoreList.forEach(p => {
+    const pid = p.id ? String(p.id) : "";
+    const pname = (p.name || "").toLowerCase();
+
+    // if duplicated by id or name, skip
+    if (pid && known.has(pid)) return;
+    if (pname && known.has(pname)) return;
+
+    merged.push(p);
+    if (pid) known.add(pid);
+    if (pname) known.add(pname);
+  });
+
+  return merged;
+}
+
+/* ---- Utility: escape HTML for safety ---- */
+function escapeHtml(str) {
+  if (!str) return "";
+  return String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+/* ===========================
+   4) Render functions
+   =========================== */
+
+function renderFeaturedSlider(productsList) {
+  const sliderEl = document.getElementById("featured-slider");
+  if (!sliderEl) return;
+  sliderEl.innerHTML = "";
+  const featured = productsList.slice(0, 7);
   featured.forEach(p => {
     const item = document.createElement("div");
-    item.className = "slider-item";
-
+    item.className = "featured-item";
     item.innerHTML = `
-      <div class="slider-circle">
-        <img src="${p.image}" alt="${p.name}" />
+      <div class="featured-circle">
+        <img src="${escapeHtml(p.image)}" alt="${escapeHtml(p.name)}" />
       </div>
-      <div class="slider-item-title">${p.name}</div>
+      <div class="featured-title">${escapeHtml(p.name)}</div>
     `;
-
-    // الضغط على الدائرة يفتح صفحة تفاصيل المنتج
     item.addEventListener("click", () => {
-      window.location.href = `product-details.html?id=${p.id}`;
+      const id = p.id ? encodeURIComponent(p.id) : encodeURIComponent(p.name);
+      window.location.href = `product-details.html?id=${id}`;
     });
-
-    slider.appendChild(item);
+    sliderEl.appendChild(item);
   });
 }
 
-
-// --- بنر المنتجات الدائرية (7 منتجات فقط) ---
-
-
-
-function loadFeaturedCircles() {
-  if (!slider) return;
-
-  slider.innerHTML = "";
-
-  // نختار أول 7 منتجات من المصفوفة
-  const featured = products.slice(0, 7);
-
-  featured.forEach((p) => {
-    const item = document.createElement("div");
-    item.className = "slider-item";
-
-    item.innerHTML = `
-      <div class="slider-circle">
-        <img src="${p.image}" alt="${p.name}" />
-      </div>
-      <div class="slider-item-title">${p.name}</div>
-    `;
-
-    // الضغط على الدائرة يفتح صفحة تفاصيل المنتج
-    item.addEventListener("click", () => {
-      window.location.href = `product-details.html?id=${p.id}`;
-    });
-
-    slider.appendChild(item);
-  });
-}
-
-// استدعاء مرة واحدة فقط (بنر ثابت)
-loadFeaturedCircles();
-
-
-// استدعاء مرة واحدة فقط (بنر ثابت)
-loadFeaturedCircles();
-
-
-// --- شبكة المنتجات ككروت عصرية ---
-const grid = document.getElementById("product-grid");
-
-function loadProductGrid() {
+function renderProductGrid(productsList) {
+  const grid = document.getElementById("product-grid");
   if (!grid) return;
-
   grid.innerHTML = "";
 
-  products.forEach(p => {
+  if (!productsList.length) {
+    grid.innerHTML = `<div class="col-span-full text-center py-6 text-gray-500">لا توجد منتجات متاحة حالياً.</div>`;
+    return;
+  }
+
+  productsList.forEach(p => {
     const card = document.createElement("div");
     card.className = "product-card";
-
     card.innerHTML = `
-      <img src="${p.image}" alt="${p.name}" class="product-img" />
-
-      <div class="flex items-center justify-between mb-1">
-        <span class="product-badge">${p.category}</span>
-        <span class="text-[0.65rem] text-gray-400">#${p.id.toString().padStart(3, "0")}</span>
+      <img src="${escapeHtml(p.image || 'images/default-product.jpg')}" class="product-img" alt="${escapeHtml(p.name)}">
+      <div class="meta-top" style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;">
+        <span class="badge" style="background:#f3f4f6;padding:4px 8px;border-radius:6px;font-size:12px;">${escapeHtml(p.category || '')}</span>
+        <span class="id-tag" style="font-size:11px;color:#6b7280;">#${escapeHtml((p.id||'').toString().slice(0,6))}</span>
       </div>
-
-      <div class="product-name">${p.name}</div>
-      <div class="product-price">${p.price}</div>
-
-      <div class="product-meta mt-1">
-        <span>👤 التاجر: ${p.seller}</span>
-        <span>📍 الموقع: ${p.location}</span>
-        <span>📦 أقل طلب: ${p.minOrder}</span>
-        <span>🚚 الشحن: ${p.shipping}</span>
+      <h3 class="product-title" style="margin:8px 0 4px;font-weight:600;">${escapeHtml(p.name)}</h3>
+      <div class="product-price" style="font-weight:700;color:#E8491D;">${escapeHtml(p.price || '')}</div>
+      <div class="product-meta" style="margin-top:8px;font-size:13px;color:#374151;">
+        <div>👤 ${escapeHtml(p.seller || '')}</div>
+        <div>📍 ${escapeHtml(p.location || '')}</div>
+        <div>📦 أقل طلب: ${escapeHtml(p.qty || '—')}</div>
       </div>
-
-      <div class="product-actions">
-        <button class="btn-details">عرض التفاصيل</button>
-        <button class="btn-message">تواصل عبر الرسائل</button>
+      <div class="actions" style="margin-top:10px;display:flex;gap:8px;">
+        <button class="btn btn-details" style="flex:1;padding:8px;border-radius:6px;border:1px solid #e5e7eb;background:white;">عرض التفاصيل</button>
+        <button class="btn btn-message" style="flex:1;padding:8px;border-radius:6px;border:1px solid #e5e7eb;background:#F97316;color:white;">تواصل</button>
       </div>
     `;
 
-    // الضغط على الكرت كله يفتح صفحة المنتج
-    card.addEventListener("click", () => {
-      window.location.href = `product-details.html?id=${p.id}`;
-    });
-
-    // زر عرض التفاصيل (يوقف انتشار الحدث عشان ما يتكرر)
+    // Events
     const detailsBtn = card.querySelector(".btn-details");
-    detailsBtn.addEventListener("click", (e) => {
+    const messageBtn = card.querySelector(".btn-message");
+
+    detailsBtn.addEventListener("click", e => {
       e.stopPropagation();
-      window.location.href = `product-details.html?id=${p.id}`;
+      const id = p.id ? encodeURIComponent(p.id) : encodeURIComponent(p.name);
+      window.location.href = `product-details.html?id=${id}`;
     });
 
-    // زر الرسائل
-    const messageBtn = card.querySelector(".btn-message");
-    messageBtn.addEventListener("click", (e) => {
+    messageBtn.addEventListener("click", e => {
       e.stopPropagation();
-      // تقدر لاحقاً تستخدم ID حقيقي للتاجر
-      const encodedSeller = encodeURIComponent(p.seller);
-      window.location.href = `messages.html?to=${encodedSeller}&product=${p.id}`;
+      // direct to messages with seller identifier if available
+      const to = encodeURIComponent(p.raw?.owner || p.seller || p.raw?.ownerEmail || "");
+      const pid = p.id ? encodeURIComponent(p.id) : encodeURIComponent(p.name);
+      window.location.href = `messages.html?to=${to}&product=${pid}`;
+    });
+
+    card.addEventListener("click", () => {
+      const id = p.id ? encodeURIComponent(p.id) : encodeURIComponent(p.name);
+      window.location.href = `product-details.html?id=${id}`;
     });
 
     grid.appendChild(card);
   });
 }
 
-loadProductGrid();
+/* ===========================
+   5) Initialization: render local then fetch & merge
+   =========================== */
+async function initProductsMerge() {
+  // show local products fast
+  renderFeaturedSlider(localProducts);
+  renderProductGrid(localProducts);
 
+  // fetch from Firestore
+  const fsProducts = await fetchFirestoreProducts(200);
 
-const searchInput = document.getElementById("search-input");
-const searchButton = document.getElementById("search-button");
+  // merge (local first)
+  const merged = mergeProducts(localProducts, fsProducts);
 
-if (searchButton) {
-  searchButton.addEventListener("click", () => {
-    const keyword = (searchInput?.value || "").trim();
-
-    if (!keyword) {
-      alert("برجاء كتابة كلمة للبحث");
-      return;
-    }
-
-    alert("ميزة البحث قيد التطوير — سيتم ربطها قريباً 🔍");
+  // optional: sort by created_at_local if available in raw
+  merged.sort((a, b) => {
+    const ta = a.raw && a.raw.created_at_local ? Number(a.raw.created_at_local) : 0;
+    const tb = b.raw && b.raw.created_at_local ? Number(b.raw.created_at_local) : 0;
+    return tb - ta;
   });
+
+  // re-render with merged list
+  renderFeaturedSlider(merged);
+  renderProductGrid(merged);
 }
-// نصوص البانر المتغيرة
-const promoMessages = [
-  "SudEgy تربط التاجر السوداني بالمورد المصري في منصة واحدة آمنة وموثوقة.",
-  "أضف منتجك مجاناً في المرحلة التجريبية وابدأ في استقبال الطلبات من البلدين.",
-  "دعم كامل للسلع الزراعية، الصناعية، الغذائية، وقطاع المقاولات والخدمات اللوجستية.",
-  "محادثات مباشرة بين التاجر والمورد داخل المنصة لتسهيل التفاوض وإغلاق الصفقات."
-];
 
-let promoIndex = 0;
-const promoElement = document.getElementById("promo-text");
+// Execute on load (safe guard DOM readiness)
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", initProductsMerge);
+} else {
+  initProductsMerge();
+}
 
-// تغيير النص كل 3 ثواني
-setInterval(() => {
-  promoIndex = (promoIndex + 1) % promoMessages.length;
-  promoElement.style.opacity = 0;
-
-  setTimeout(() => {
-    promoElement.textContent = promoMessages[promoIndex];
-    promoElement.style.opacity = 1;
-  }, 300);
-
-}, 3000);
-
-
-// =============================
-//   جاهز 100% للاستخدام
-// =============================
-console.log("script.js Loaded Successfully ✔️");
+/* ===========================
+   End of file
+   =========================== */
