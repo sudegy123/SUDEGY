@@ -26,11 +26,7 @@
     </p>
   </div>
 
-  <!-- Firebase (compat) - ضع بياناتك كما في الأسفل -->
-  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
-
+ 
   <script>
     // --- firebaseConfig (تأكد أن storageBucket صح: .appspot.com)
     const firebaseConfig = {
@@ -83,4 +79,9 @@
     }
   });
 </script>
+
+<script src="common.js"></script>
+<script src="include-html.js"></script>
+<!-- لو الصفحة تعتمد سكربت محلي (مثلاً auth.js) ضعه بعد common.js -->
+<script src="auth.js"></script>
 
