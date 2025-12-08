@@ -229,6 +229,111 @@ if (document.readyState === "loading") {
 } else {
   initProductsMerge();
 }
+/* === Append Firestore products only (does NOT touch existing DOM cards) ===
+   Paste this at the END of script.js (after existing code) or in a new <script> after script.js.
+*/
+
+async function appendFirestoreProductsOnly() {
+  // تأكد أن Firebase مُهيأ
+  if (!window.firebase || !firebase.firestore) {
+    console.warn("Firebase غير متوفر - لن يتم جلب منتجات Firestore.");
+    return;
+  }
+
+  const target = document.getElementById("firestore-products");
+  if (!target) {
+    console.warn("عنصر #firestore-products غير موجود في الصفحة.");
+    return;
+  }
+
+  try {
+    // جلب المستندات
+    const snap = await firebase.firestore().collection("products").limit(200).get();
+
+    if (snap.empty) {
+      // ما في منتجات جديدة
+      console.info("لا توجد منتجات في Firestore.");
+      return;
+    }
+
+    // اجمع أسماء المنتجات الموجودة حاليًا في الـ DOM الأصلي لمنع التكرار
+    // نقرأ عناوين العناصر الأصلية (لو ظاهر فيها عناصر .product-title)
+    const existingNames = new Set();
+    document.querySelectorAll('#product-grid .product-title, #product-row .product-title, .product-card .product-title').forEach(el=>{
+      const t = (el.textContent || "").trim().toLowerCase();
+      if (t) existingNames.add(t);
+    });
+
+    // أيضاً سجّل أسماء أي منتجات أضفتها مسبقًا داخل firestore-products لتفادي الازدواج
+    document.querySelectorAll('#firestore-products .product-title').forEach(el=>{
+      const t = (el.textContent || "").trim().toLowerCase();
+      if (t) existingNames.add(t);
+    });
+
+    // Loop over Firestore docs وضمهم فقط لو مش مكرّرين
+    snap.forEach(doc => {
+      const d = doc.data();
+      const pname = ((d.name || d.title || "") + "").trim().toLowerCase();
+
+      if (pname && existingNames.has(pname)) {
+        // سبق وجوده في المنتجات الأصلية أو أُضيف سابقاً — نتجاهل
+        return;
+      }
+
+      // إنشاء كرت منتج بسيط ومتناسق
+      const card = document.createElement("div");
+      card.className = "product-card";
+      card.style.minWidth = "200px"; // بسيط عشان يظهر مرتب داخل الشبكة
+      card.innerHTML = `
+        <img src="${(d.image || d.imageUrl || 'images/default-product.jpg')}" 
+             alt="${(d.name || '')}" style="width:100%;height:150px;object-fit:cover;border-radius:6px;">
+        <div style="margin-top:8px;display:flex;justify-content:space-between;align-items:center;">
+          <small style="background:#f3f4f6;padding:4px 8px;border-radius:6px;font-size:12px;">${(d.category || '')}</small>
+          <small style="color:#6b7280;font-size:12px;">#${doc.id.slice(0,6)}</small>
+        </div>
+        <h3 class="product-title" style="margin:8px 0 4px;font-weight:600;">${(d.name || 'منتج')}</h3>
+        <div style="font-weight:700;color:#E8491D;">${(d.price || '')}</div>
+        <div style="margin-top:8px;font-size:13px;color:#374151;">
+          <div>👤 ${(d.ownerEmail || d.owner || d.sellerName || 'تاجر')}</div>
+          <div>📍 ${(d.origin || d.location || '')}</div>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:10px;">
+          <button class="btn-details" style="flex:1;padding:8px;border-radius:6px;border:1px solid #e5e7eb;background:white;">عرض التفاصيل</button>
+          <button class="btn-message" style="flex:1;padding:8px;border-radius:6px;border:0;background:#F97316;color:white;">تواصل</button>
+        </div>
+      `;
+
+      // أزرار تفاعلية — نفس سلوك الموقع
+      const detailsBtn = card.querySelector('.btn-details');
+      detailsBtn.addEventListener('click', () => {
+        window.location.href = `product-details.html?id=${encodeURIComponent(doc.id)}`;
+      });
+
+      const messageBtn = card.querySelector('.btn-message');
+      messageBtn.addEventListener('click', () => {
+        const to = encodeURIComponent(d.owner || d.ownerEmail || '');
+        window.location.href = `messages.html?to=${to}&product=${encodeURIComponent(doc.id)}`;
+      });
+
+      // اضف الكرت داخل حاوية firestore-products
+      target.appendChild(card);
+
+      // علامات لمنع تكرار مستقبلية
+      if (pname) existingNames.add(pname);
+    });
+
+    console.info("تمت إضافة منتجات Firestore داخل #firestore-products بنجاح.");
+  } catch (err) {
+    console.error("حدث خطأ عند جلب أو إضافة منتجات Firestore:", err);
+  }
+}
+
+// نفّذ الدالة بعد التحميل (آمن)
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', appendFirestoreProductsOnly);
+} else {
+  appendFirestoreProductsOnly();
+}
 
 /* ===========================
    End of file
