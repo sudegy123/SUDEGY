@@ -316,19 +316,19 @@
 
   <!-- FOOTER -->
   <div data-include="footer.html"></div>
-
-<!-- Firebase SDKs (نسخة v8 — تحميل مرة واحدة فقط) -->
+<!-- ========== Firebase SDKs (v8) — تحميل مرة واحدة فقط ========== -->
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
 
-<!-- common.js يجب أن يحتوي التهيئة (initialization) -->
+<!-- common.js يجب أن يحتوي على firebaseConfig و initializeApp -->
 <script src="common.js"></script>
 
-<!-- include-html لو بتضمّن الهيدر والفوتر -->
+<!-- include-html (لضم الـ header/footer) -->
 <script src="include-html.js"></script>
 
-<!-- سكربت الموقع الرئيسي -->
+<!-- سكربت وظائف الموقع الرئيسية (loads products, UI) -->
 <script src="script.js"></script>
+
 
