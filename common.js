@@ -82,6 +82,24 @@ function setupNavbar() {
     });
   }
 }
+// common.js — قبل firebase.initializeApp(...) ضع هذا التأكد:
+if (!window.firebase) {
+  console.error('Firebase SDK غير محمّل — تأكد من أن SDKs محمّلة قبل common.js');
+} else {
+  // حماية من التهيئة المزدوجة
+  if (!firebase.apps || !firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+    console.log('Firebase initialized.');
+  } else {
+    console.log('Firebase already initialized — skipping initializeApp().');
+  }
+
+  // ثم إعداد auth & db
+  window.auth = firebase.auth();
+  window.db = firebase.firestore();
+  window.storage = firebase.storage();
+}
 
 // نخلي الفنكشن متاحة لـ include-html.js
 window.setupNavbar = setupNavbar;
+
