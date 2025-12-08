@@ -435,109 +435,123 @@ setInterval(() => {
 // =============================
 //   جاهز 100% للاستخدام
 // =============================
-console.log("script.js Loaded Successfully ✔️");
-/* === Append Firestore products only (does NOT touch existing DOM cards) ===
-   Paste this at the END of script.js (after existing code) or in a new <script> after script.js.
-*/
-
-async function appendFirestoreProductsOnly() {
-  // تأكد أن Firebase مُهيأ
-  if (!window.firebase || !firebase.firestore) {
-    console.warn("Firebase غير متوفر - لن يتم جلب منتجات Firestore.");
-    return;
-  }
-
-  const target = document.getElementById("firestore-products");
-  if (!target) {
-    console.warn("عنصر #firestore-products غير موجود في الصفحة.");
-    return;
-  }
-
+async function appendFirestoreProductsFirst() {
   try {
-    // جلب المستندات
-    const snap = await firebase.firestore().collection("products").limit(200).get();
-
-    if (snap.empty) {
-      // ما في منتجات جديدة
-      console.info("لا توجد منتجات في Firestore.");
+    if (!window.firebase || !firebase.firestore) {
+      console.warn("Firebase غير متوفر أو لم يتم تهيئته بعد. تأكد من common.js يهيئ Firebase.");
       return;
     }
 
-    // اجمع أسماء المنتجات الموجودة حاليًا في الـ DOM الأصلي لمنع التكرار
-    // نقرأ عناوين العناصر الأصلية (لو ظاهر فيها عناصر .product-title)
+    const FETCH_LIMIT = 200;
+    const originalGrid = document.getElementById("product-grid") || document.getElementById("product-row");
+
+    let firestoreContainer = document.getElementById("firestore-products");
+    if (!firestoreContainer) {
+      firestoreContainer = document.createElement("div");
+      firestoreContainer.id = "firestore-products";
+      firestoreContainer.className = "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-6";
+      if (originalGrid && originalGrid.parentNode) {
+        originalGrid.parentNode.insertBefore(firestoreContainer, originalGrid);
+      } else {
+        document.body.insertBefore(firestoreContainer, document.body.firstChild);
+      }
+    }
+
     const existingNames = new Set();
-    document.querySelectorAll('#product-grid .product-title, #product-row .product-title, .product-card .product-title').forEach(el=>{
-      const t = (el.textContent || "").trim().toLowerCase();
-      if (t) existingNames.add(t);
+    document.querySelectorAll('#product-grid .product-name, #product-row .product-name, .product-card .product-name, .product-title').forEach(el => {
+      const name = (el.textContent || '').trim().toLowerCase();
+      if (name) existingNames.add(name);
+    });
+    document.querySelectorAll('#firestore-products .product-name, #firestore-products .product-title').forEach(el => {
+      const name = (el.textContent || '').trim().toLowerCase();
+      if (name) existingNames.add(name);
     });
 
-    // أيضاً سجّل أسماء أي منتجات أضفتها مسبقًا داخل firestore-products لتفادي الازدواج
-    document.querySelectorAll('#firestore-products .product-title').forEach(el=>{
-      const t = (el.textContent || "").trim().toLowerCase();
-      if (t) existingNames.add(t);
-    });
+    const snap = await firebase.firestore().collection("products").limit(FETCH_LIMIT).get();
+    if (snap.empty) {
+      console.info("لا توجد منتجات في Firestore لعرضها.");
+      return;
+    }
 
-    // Loop over Firestore docs وضمهم فقط لو مش مكرّرين
+    // small inline SVG placeholder (fast, no external request)
+    const svgPlaceholder = "data:image/svg+xml;utf8," + encodeURIComponent(
+      `<svg xmlns='http://www.w3.org/2000/svg' width='640' height='480'>
+         <rect width='100%' height='100%' fill='#f3f4f6'/>
+         <text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' fill='#9ca3af' font-size='20'>No Image</text>
+       </svg>`
+    );
+
     snap.forEach(doc => {
       const d = doc.data();
-      const pname = ((d.name || d.title || "") + "").trim().toLowerCase();
+      const pname = ((d.name || d.title || '') + '').trim().toLowerCase();
+      if (pname && existingNames.has(pname)) return;
 
-      if (pname && existingNames.has(pname)) {
-        // سبق وجوده في المنتجات الأصلية أو أُضيف سابقاً — نتجاهل
-        return;
-      }
+      const imgUrlCandidate = (d.image || d.imageUrl || "").trim();
+      // choose image: prefer provided URL, else try server path, else use svgPlaceholder
+      const imgUrl = imgUrlCandidate
+        || ("/images/default-product.jpg")   // keep server path attempt (if you upload file later)
+        || svgPlaceholder;
 
-      // إنشاء كرت منتج بسيط ومتناسق
-      const card = document.createElement("div");
-      card.className = "product-card";
-      card.style.minWidth = "200px"; // بسيط عشان يظهر مرتب داخل الشبكة
+      const card = document.createElement('div');
+      card.className = 'product-card';
+      card.style.minWidth = '200px';
+      card.style.background = 'white';
+      card.style.padding = '12px';
+      card.style.borderRadius = '8px';
+      card.style.boxShadow = '0 6px 18px rgba(0,0,0,0.06)';
+      card.style.cursor = 'pointer';
+      card.style.display = 'flex';
+      card.style.flexDirection = 'column';
+
+      const displayName = d.name || d.title || 'منتج';
+      const displayPrice = d.price || d.priceText || '';
+      const displayCategory = d.category || '';
+      const displaySeller = d.ownerEmail || d.owner || d.sellerName || '';
+      const displayLocation = d.origin || d.location || '';
+
       card.innerHTML = `
-        <img src="${(d.image || d.imageUrl || 'images/default-product.jpg')}" 
-             alt="${(d.name || '')}" style="width:100%;height:150px;object-fit:cover;border-radius:6px;">
+        <img src="${escapeHtml(imgUrl)}" alt="${escapeHtml(displayName)}"
+             style="width:100%;height:140px;object-fit:cover;border-radius:6px;" onerror="this.onerror=null;this.src='${svgPlaceholder}';" />
         <div style="margin-top:8px;display:flex;justify-content:space-between;align-items:center;">
-          <small style="background:#f3f4f6;padding:4px 8px;border-radius:6px;font-size:12px;">${(d.category || '')}</small>
+          <small style="background:#f3f4f6;padding:4px 8px;border-radius:6px;font-size:12px;">${escapeHtml(displayCategory)}</small>
           <small style="color:#6b7280;font-size:12px;">#${doc.id.slice(0,6)}</small>
         </div>
-        <h3 class="product-title" style="margin:8px 0 4px;font-weight:600;">${(d.name || 'منتج')}</h3>
-        <div style="font-weight:700;color:#E8491D;">${(d.price || '')}</div>
-        <div style="margin-top:8px;font-size:13px;color:#374151;">
-          <div>👤 ${(d.ownerEmail || d.owner || d.sellerName || 'تاجر')}</div>
-          <div>📍 ${(d.origin || d.location || '')}</div>
+        <h3 class="product-name" style="margin:8px 0 4px;font-weight:600;">${escapeHtml(displayName)}</h3>
+        <div style="font-weight:700;color:#E8491D;margin-bottom:6px;">${escapeHtml(displayPrice)}</div>
+        <div style="margin-top:8px;font-size:13px;color:#374151;flex:1;">
+          <div>👤 ${escapeHtml(displaySeller)}</div>
+          <div>📍 ${escapeHtml(displayLocation)}</div>
         </div>
-        <div style="display:flex;gap:8px;margin-top:10px;">
+        <div style="display:flex;gap:8px;margin-top:8px;">
           <button class="btn-details" style="flex:1;padding:8px;border-radius:6px;border:1px solid #e5e7eb;background:white;">عرض التفاصيل</button>
           <button class="btn-message" style="flex:1;padding:8px;border-radius:6px;border:0;background:#F97316;color:white;">تواصل</button>
         </div>
       `;
 
-      // أزرار تفاعلية — نفس سلوك الموقع
       const detailsBtn = card.querySelector('.btn-details');
-      detailsBtn.addEventListener('click', () => {
+      const messageBtn = card.querySelector('.btn-message');
+
+      detailsBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
         window.location.href = `product-details.html?id=${encodeURIComponent(doc.id)}`;
       });
 
-      const messageBtn = card.querySelector('.btn-message');
-      messageBtn.addEventListener('click', () => {
+      messageBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
         const to = encodeURIComponent(d.owner || d.ownerEmail || '');
         window.location.href = `messages.html?to=${to}&product=${encodeURIComponent(doc.id)}`;
       });
 
-      // اضف الكرت داخل حاوية firestore-products
-      target.appendChild(card);
+      card.addEventListener('click', () => {
+        window.location.href = `product-details.html?id=${encodeURIComponent(doc.id)}`;
+      });
 
-      // علامات لمنع تكرار مستقبلية
+      firestoreContainer.appendChild(card);
       if (pname) existingNames.add(pname);
     });
 
-    console.info("تمت إضافة منتجات Firestore داخل #firestore-products بنجاح.");
+    console.info("تمت إضافة منتجات Firestore (أعلى الصفحة) بنجاح.");
   } catch (err) {
-    console.error("حدث خطأ عند جلب أو إضافة منتجات Firestore:", err);
+    console.error("خطأ أثناء جلب أو عرض منتجات Firestore:", err);
   }
-}
-
-// نفّذ الدالة بعد التحميل (آمن)
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', appendFirestoreProductsOnly);
-} else {
-  appendFirestoreProductsOnly();
 }
