@@ -2,30 +2,143 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="utf-8" />
-  <title>إنشاء حساب - SudEgy</title>
+  <title>SudEgy — إنشاء حساب</title>
+
+  <!-- Tailwind -->
   <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Firebase compat -->
+  <script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-firestore-compat.js"></script>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+    :root {
+      --brand: #ff6a00;
+      --navy: #0b2a56;
+    }
+    body { font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; background: linear-gradient(135deg,#0b2a56 0%, #142a4a 40%, #0b2a56 100%); min-height:100vh; color: #fff; }
+    .glass { background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02)); backdrop-filter: blur(6px); border: 1px solid rgba(255,255,255,0.06); }
+    .brand-accent { background: linear-gradient(90deg, var(--brand), #ff914d); }
+  </style>
 </head>
-<body class="bg-gray-100 flex items-center justify-center h-screen">
-  <div class="bg-white p-6 rounded-xl shadow-md w-full max-w-md">
-    <h2 class="text-2xl font-bold text-center mb-4">إنشاء حساب جديد</h2>
-    <form id="registerForm" class="space-y-4">
-      <div>
-        <label class="text-sm">البريد الإلكتروني</label>
-        <input id="reg-email" type="email" class="w-full border px-3 py-2 rounded-lg">
+
+<body class="antialiased">
+
+  <div class="min-h-screen flex items-center justify-center px-6 py-12">
+    <div class="max-w-4xl w-full grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+
+      <!-- LEFT: Brand / Info -->
+      <div class="hidden md:flex flex-col gap-6 justify-center pl-8">
+        <div class="flex items-center gap-3">
+          <div class="w-12 h-12 rounded-lg brand-accent flex items-center justify-center shadow-lg">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M4 12h16" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M12 4v16" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <div>
+            <h1 class="text-2xl font-bold text-white">SudEgy</h1>
+            <p class="text-sm text-white/80">انضم الآن إلى شبكة الأعمال بين مصر والسودان — تواصل، قدم واعرض خدماتك</p>
+          </div>
+        </div>
+
+        <div class="glass p-6 rounded-2xl shadow-xl">
+          <h3 class="text-white font-semibold text-lg mb-2">مميزات الحساب</h3>
+          <ul class="text-sm text-white/80 space-y-2">
+            <li>• تواصل مباشر مع المشترين والبائعين</li>
+            <li>• نشر منتجاتك وخدماتك بسهولة</li>
+            <li>• محادثات آمنة ومسجّلة للمراجعة</li>
+          </ul>
+        </div>
+
+        <div class="text-white/70 text-sm">
+          <p class="mb-2">دعم فني</p>
+          <p class="text-xs">احتجت مساعدة؟ راسلنا: support@sudegy.com</p>
+        </div>
       </div>
-      <div>
-        <label class="text-sm">كلمة المرور</label>
-        <input id="reg-password" type="password" class="w-full border px-3 py-2 rounded-lg">
+
+      <!-- RIGHT: Register card -->
+      <div class="mx-auto w-full max-w-md">
+        <div class="glass p-8 rounded-3xl shadow-2xl">
+          <div class="flex items-center justify-between mb-6">
+            <div>
+              <h2 class="text-2xl font-bold text-white">إنشاء حساب جديد</h2>
+              <p class="mt-1 text-sm text-white/75">سجّل حسابك لتبدأ في عرض وطلب الخدمات</p>
+            </div>
+            <div class="hidden sm:flex items-center gap-2">
+              <span class="text-xs text-white/70">لديك حساب؟</span>
+              <a href="login.html" class="px-3 py-1 rounded-md bg-white text-sm text-amber-600 font-semibold shadow">سجل دخول</a>
+            </div>
+          </div>
+
+          <!-- Form -->
+          <form id="registerForm" class="space-y-4">
+            <div>
+              <label class="text-sm text-white/80">الاسم الكامل</label>
+              <input id="reg-name" type="text" required class="mt-2 w-full rounded-xl px-4 py-3 bg-white/6 border border-white/6 placeholder-white/40 text-white focus:outline-none focus:ring-2 focus:ring-amber-400" placeholder="مثال: أحمد محمد">
+            </div>
+
+            <div>
+              <label class="text-sm text-white/80">البريد الإلكتروني</label>
+              <input id="reg-email" type="email" required class="mt-2 w-full rounded-xl px-4 py-3 bg-white/6 border border-white/6 placeholder-white/40 text-white focus:outline-none focus:ring-2 focus:ring-amber-400" placeholder="example@domain.com">
+            </div>
+
+            <div>
+              <div class="flex items-center justify-between">
+                <label class="text-sm text-white/80">كلمة المرور</label>
+                <span class="text-xs text-white/60">يجب أن تكون 6 أحرف على الأقل</span>
+              </div>
+              <div class="relative mt-2">
+                <input id="reg-password" type="password" required class="w-full rounded-xl px-4 py-3 bg-white/6 border border-white/6 placeholder-white/40 text-white focus:outline-none focus:ring-2 focus:ring-amber-400" placeholder="••••••••">
+                <button type="button" id="togglePwd1" class="absolute inset-y-0 left-3 flex items-center text-white/60 px-2">
+                  <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <div>
+              <label class="text-sm text-white/80">تأكيد كلمة المرور</label>
+              <div class="relative mt-2">
+                <input id="reg-password2" type="password" required class="w-full rounded-xl px-4 py-3 bg-white/6 border border-white/6 placeholder-white/40 text-white focus:outline-none focus:ring-2 focus:ring-amber-400" placeholder="أعد كتابة كلمة المرور">
+                <button type="button" id="togglePwd2" class="absolute inset-y-0 left-3 flex items-center text-white/60 px-2">
+                  <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <div id="regError" class="hidden text-sm text-red-400 bg-red-900/30 p-3 rounded-lg"></div>
+
+            <div class="pt-2">
+              <button id="regBtn" type="submit" class="w-full rounded-xl py-3 font-semibold text-white brand-accent shadow-lg flex items-center justify-center gap-3">
+                <span id="regBtnText">إنشاء حساب</span>
+                <svg id="regSpinner" class="hidden animate-spin h-5 w-5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="white" stroke-width="3" stroke-linecap="round" stroke-dasharray="60" stroke-dashoffset="0" fill="none"></circle></svg>
+              </button>
+            </div>
+
+            <div class="pt-3 text-center text-xs text-white/60">
+              بالتسجيل أنت توافق على <a href="#" class="underline">شروط الاستخدام</a> وسياسة الخصوصية.
+            </div>
+          </form>
+
+          <div class="mt-6 border-t border-white/6 pt-4 text-center text-white/80 text-sm">
+            لديك سؤال؟ راسل الدعم: <a href="mailto:support@sudegy.com" class="text-amber-200 hover:underline">support@sudegy.com</a>
+          </div>
+        </div>
       </div>
-      <button type="submit" class="w-full bg-green-600 text-white py-2 rounded-lg">إنشاء حساب</button>
-    </form>
-    <p class="text-center mt-4 text-sm">عندك حساب؟ <a href="login.html" class="text-blue-600">سجل دخول</a></p>
+
+    </div>
   </div>
 
-  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
-
+  <!-- Firebase init (استعمل config مشروعك) -->
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyBvnFMuXY_d5PKrKV-4Vp_fYyKD2c428Yw",
@@ -35,30 +148,87 @@
       messagingSenderId: "865758231874",
       appId: "1:865758231874:web:d1959356198ca1f809dcdb"
     };
-    firebase.initializeApp(firebaseConfig);
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
     const auth = firebase.auth();
     const db = firebase.firestore();
+  </script>
 
-    console.log("Firebase compat loaded ✔ (register)");
+  <!-- Page logic -->
+  <script>
+    const regForm = document.getElementById('registerForm');
+    const regBtn = document.getElementById('regBtn');
+    const regBtnText = document.getElementById('regBtnText');
+    const regSpinner = document.getElementById('regSpinner');
+    const regError = document.getElementById('regError');
+    const pwd1 = document.getElementById('reg-password');
+    const pwd2 = document.getElementById('reg-password2');
+    const togglePwd1 = document.getElementById('togglePwd1');
+    const togglePwd2 = document.getElementById('togglePwd2');
 
-    const registerForm = document.getElementById('registerForm');
-    registerForm.addEventListener('submit', async (e) => {
+    function showRegError(msg) {
+      regError.innerText = msg;
+      regError.classList.remove('hidden');
+    }
+    function clearRegError() {
+      regError.innerText = '';
+      regError.classList.add('hidden');
+    }
+
+    togglePwd1.addEventListener('click', () => {
+      pwd1.type = pwd1.type === 'password' ? 'text' : 'password';
+    });
+    togglePwd2.addEventListener('click', () => {
+      pwd2.type = pwd2.type === 'password' ? 'text' : 'password';
+    });
+
+    regForm.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const email = document.getElementById('reg-email').value;
-      const password = document.getElementById('reg-password').value;
+      clearRegError();
+      const name = document.getElementById('reg-name').value.trim();
+      const email = document.getElementById('reg-email').value.trim();
+      const pass = pwd1.value;
+      const pass2 = pwd2.value;
+
+      if (!name || !email || !pass || !pass2) { showRegError('الرجاء ملء كل الحقول'); return; }
+      if (pass.length < 6) { showRegError('كلمة المرور يجب أن تكون 6 أحرف على الأقل'); return; }
+      if (pass !== pass2) { showRegError('كلمتا المرور غير متطابقتين'); return; }
+
+      // Loading UI
+      regBtnText.classList.add('opacity-0');
+      regSpinner.classList.remove('hidden');
+
       try {
-        const userCred = await auth.createUserWithEmailAndPassword(email, password);
-        // حفظ المستخدم في Firestore
-        await db.collection('users').doc(userCred.user.uid).set({
-          email: email,
-          created_at: Date.now()
+        const cred = await auth.createUserWithEmailAndPassword(email, pass);
+        // Update displayName in Firebase Auth
+        await cred.user.updateProfile({ displayName: name });
+        // Create users doc
+        await db.collection('users').doc(cred.user.uid).set({
+          name,
+          email,
+          created_at: firebase.firestore.FieldValue.serverTimestamp(),
+          verified: false,
+          avatar: ''
         });
-        alert('تم إنشاء الحساب!');
-        window.location.href = 'login.html';
+        // Redirect to messages or home
+        window.location.href = 'index.html';
       } catch (err) {
-        alert('خطأ: ' + err.message);
+        showRegError(err.message || 'حدث خطأ أثناء إنشاء الحساب');
+      } finally {
+        regBtnText.classList.remove('opacity-0');
+        regSpinner.classList.add('hidden');
+      }
+    });
+
+    // Optional: prevent double-initialization if page opened while logged in
+    auth.onAuthStateChanged(user => {
+      if (user) {
+        // ممكن توجه تلقائياً للصفحة الرئيسية
+        // window.location.href = 'index.html';
       }
     });
   </script>
+
 </body>
 </html>
