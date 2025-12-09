@@ -436,70 +436,38 @@ setInterval(() => {
 //   جاهز 100% للاستخدام
 // =============================
 /* =============================
-   script.js — SudEgy (final)
-   - يحافظ على كل العناصر والمنتجات الأصلية كما هي
-   - يضيف منتجات Firestore أولاً داخل عنصر #firestore-products
-   - لا يعيد رسم المنتجات الأصلية أو يغير العداد/البانر
-   - يتجنّب تكرار الأسماء
+ /* =============================
+   script.js — SudEgy (auto-retry Firestore)
+   - Appends Firestore products FIRST (above original grid)
+   - Does NOT modify original products/cards
+   - Retries until firebase is ready (limited attempts)
    ============================= */
 
-/* --------------------------
-   1) Smooth scrolling for anchor links
-   -------------------------- */
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-  anchor.addEventListener('click', function (e) {
-    // ensure target exists
-    const targetSelector = this.getAttribute('href');
-    const targetEl = document.querySelector(targetSelector);
-    if (!targetEl) return;
-    e.preventDefault();
-    targetEl.scrollIntoView({ behavior: 'smooth' });
-  });
-});
-
-/* --------------------------
-   2) Simple language toggle (if present)
-   -------------------------- */
-const languageToggle = document.getElementById('language-toggle');
-if (languageToggle) {
-  languageToggle.addEventListener('click', () => {
-    alert('English version coming soon!');
-  });
+/* ---------- Helpers: escape HTML ---------- */
+function escapeHtml(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
 }
 
 /* --------------------------
-   3) Trade counter (keeps original behavior)
+   1) Preserve original UI behaviors (smooth anchors / promo rotation / counter)
    -------------------------- */
-(function setupTradeCounter() {
-  // Default values — إذا عندك قيم أخرى في الصفحة يمكن تعديلها هنا
-  let tradeValue = 1465344000;
-  const tradeIncreasePerSecond = 53;
+/* Smooth anchors */
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+  anchor.addEventListener('click', function (e) {
+    const target = document.querySelector(this.getAttribute('href'));
+    if (!target) return;
+    e.preventDefault();
+    target.scrollIntoView({ behavior: 'smooth' });
+  });
+});
 
-  const counterElement = document.getElementById("counter-value");
-  const tradeDateElement = document.getElementById("trade-date");
-
-  function updateTradeCounter() {
-    tradeValue += tradeIncreasePerSecond;
-    if (counterElement) {
-      counterElement.textContent = tradeValue.toLocaleString();
-    }
-  }
-
-  if (counterElement) {
-    counterElement.textContent = tradeValue.toLocaleString();
-    setInterval(updateTradeCounter, 1000);
-  }
-
-  if (tradeDateElement) {
-    const today = new Date();
-    const options = { year: 'numeric', month: 'long', day: 'numeric' };
-    tradeDateElement.textContent = "بتاريخ: " + today.toLocaleDateString('ar-EG', options);
-  }
-})();
-
-/* --------------------------
-   4) Promo messages rotation (original behavior preserved)
-   -------------------------- */
+/* Promo rotation (safe if element absent) */
 (function setupPromoRotation() {
   const promoMessages = [
     "SudEgy تربط التاجر السوداني بالمورد المصري في منصة واحدة آمنة وموثوقة.",
@@ -507,11 +475,9 @@ if (languageToggle) {
     "دعم كامل للسلع الزراعية، الصناعية، الغذائية، واللوجستيات.",
     "محادثات مباشرة بين التاجر والمورد داخل المنصة."
   ];
-
-  let promoIndex = 0;
   const promoElement = document.getElementById("promo-text");
   if (!promoElement) return;
-
+  let promoIndex = 0;
   setInterval(() => {
     promoIndex = (promoIndex + 1) % promoMessages.length;
     promoElement.style.opacity = 0;
@@ -522,74 +488,149 @@ if (languageToggle) {
   }, 3000);
 })();
 
-/* =========================================================
-   5) IMPORTANT: Append Firestore products FIRST (Top)
-   - هذا الجزء يُضاف فقط ويترك بقية صفحة المنتجات الأصلية بدون تغيير
-   - سيقوم بإنشاء <div id="firestore-products"> قبل #product-grid إذا لم يكن موجوداً
-   ========================================================= */
+/* Trade counter (keeps original behavior if element exists) */
+(function setupTradeCounter() {
+  const counterElement = document.getElementById("counter-value");
+  const tradeDateElement = document.getElementById("trade-date");
+  if (!counterElement && !tradeDateElement) return;
 
-async function appendFirestoreProductsFirst() {
+  let tradeValue = 1465344000;
+  const tradeIncreasePerSecond = 53;
+
+  function updateTradeCounter() {
+    tradeValue += tradeIncreasePerSecond;
+    if (counterElement) counterElement.textContent = tradeValue.toLocaleString();
+  }
+
+  if (counterElement) {
+    counterElement.textContent = tradeValue.toLocaleString();
+    setInterval(updateTradeCounter, 1000);
+  }
+  if (tradeDateElement) {
+    const today = new Date();
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    tradeDateElement.textContent = "بتاريخ: " + today.toLocaleDateString('ar-EG', options);
+  }
+})();
+
+/* --------------------------
+   2) Safe loadProductGrid: do NOT wipe existing DOM cards
+   - If #product-grid already has children, keep them as-is
+   - Else, render from local products array (if provided)
+   -------------------------- */
+function loadProductGridSafe(productsArray) {
+  const grid = document.getElementById("product-grid");
+  if (!grid) return;
+
+  // If grid already contains children (static HTML or earlier render), do not overwrite
+  if (grid.children && grid.children.length > 0) {
+    console.log("loadProductGridSafe: found existing DOM children in #product-grid — preserving them.");
+    return;
+  }
+
+  // If no products array provided or empty, show fallback message
+  if (!Array.isArray(productsArray) || productsArray.length === 0) {
+    grid.innerHTML = '<div class="col-span-full text-center py-6 text-gray-500">لا توجد منتجات متاحة حالياً.</div>';
+    return;
+  }
+
+  // Build cards from array (this matches original style minimally)
+  grid.innerHTML = "";
+  productsArray.forEach(p => {
+    const card = document.createElement("div");
+    card.className = "product-card";
+    card.innerHTML = `
+      <img src="${escapeHtml(p.image || 'images/default-product.jpg')}" alt="${escapeHtml(p.name || '')}" class="product-img"/>
+      <div class="flex items-center justify-between mb-1">
+        <span class="product-badge">${escapeHtml(p.category || '')}</span>
+        <span class="text-[0.65rem] text-gray-400">#${escapeHtml(String(p.id || '').slice(0,6))}</span>
+      </div>
+      <div class="product-name">${escapeHtml(p.name || '')}</div>
+      <div class="product-price">${escapeHtml(p.price || '')}</div>
+      <div class="product-meta mt-1">
+        <span>👤 ${escapeHtml(p.seller || '')}</span>
+        <span>📍 ${escapeHtml(p.location || '')}</span>
+      </div>
+      <div class="product-actions">
+        <button class="btn-details">عرض التفاصيل</button>
+        <button class="btn-message">تواصل</button>
+      </div>
+    `;
+    // Events
+    const detailsBtn = card.querySelector(".btn-details");
+    if (detailsBtn) detailsBtn.addEventListener("click", e => { e.stopPropagation(); window.location.href = `product-details.html?id=${encodeURIComponent(p.id)}`; });
+    const messageBtn = card.querySelector(".btn-message");
+    if (messageBtn) messageBtn.addEventListener("click", e => { e.stopPropagation(); window.location.href = `messages.html?to=${encodeURIComponent(p.seller||'')}&product=${encodeURIComponent(p.id)}`; });
+    card.addEventListener("click", () => { window.location.href = `product-details.html?id=${encodeURIComponent(p.id)}`; });
+    grid.appendChild(card);
+  });
+}
+
+/* --------------------------
+   3) Append Firestore products FIRST (above original grid)
+   - Creates #firestore-products if missing and inserts before original grid
+   - Uses retries to wait for firebase initialization
+   -------------------------- */
+
+async function appendFirestoreProductsToTop() {
   try {
-    // تأكد أن Firebase مُهيّأ
     if (!window.firebase || !firebase.firestore) {
-      console.warn("Firebase غير متوفر أو لم يتم تهيئته بعد. تأكد من common.js يهيئ Firebase.");
-      return;
+      console.warn("appendFirestoreProductsToTop: Firebase not ready.");
+      return false;
     }
 
-    // حد أقصى لعدد المنتجات التي نعرضها من Firestore في البداية
     const FETCH_LIMIT = 200;
-
-    // إيجاد العنصر الأصلي الذي يحتوي المنتجات القديمة
     const originalGrid = document.getElementById("product-grid") || document.getElementById("product-row");
 
-    // إذا ما فيه grid أصلاً — سننشئ firestore-products داخل body كحل احتياطي
-    if (!originalGrid) {
-      console.warn("عنصر product-grid (الاصلي) غير موجود. سيتم إدراج products من Firestore في أعلى body.");
-    }
-
-    // إنشاء/تأكيد حاوية #firestore-products قبل الحاوية الأصلية
-    let firestoreContainer = document.getElementById("firestore-products");
-    if (!firestoreContainer) {
-      firestoreContainer = document.createElement("div");
-      firestoreContainer.id = "firestore-products";
-      // استخدم نفس شبكية العرض لتظهر بشكل متناسق (Tailwind classes) — يمكنك تعديل إذا لزم
-      firestoreContainer.className = "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-6";
+    // ensure top container exists (insert before original grid)
+    let topContainer = document.getElementById("firestore-products");
+    if (!topContainer) {
+      topContainer = document.createElement("div");
+      topContainer.id = "firestore-products";
+      topContainer.className = "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-6";
       if (originalGrid && originalGrid.parentNode) {
-        originalGrid.parentNode.insertBefore(firestoreContainer, originalGrid);
+        originalGrid.parentNode.insertBefore(topContainer, originalGrid);
       } else {
-        // fallback: prepend to body
-        document.body.insertBefore(firestoreContainer, document.body.firstChild);
+        document.body.insertBefore(topContainer, document.body.firstChild);
       }
     }
 
-    // اقرأ أسماء المنتجات الموجودة حالياً في الـ DOM (من المنتجات الأصلية) لمنع التكرار
+    // collect existing product names in page to prevent duplicates
     const existingNames = new Set();
-    // نبحث عن عناوين المنتجات في العناصر الشائعة
     document.querySelectorAll('#product-grid .product-name, #product-row .product-name, .product-card .product-name, .product-title').forEach(el => {
       const name = (el.textContent || '').trim().toLowerCase();
       if (name) existingNames.add(name);
     });
-    // وأيضاً الأسماء الموجودة مسبقاً داخل حاوية firestore-products (لو نفذناه قبلًا)
     document.querySelectorAll('#firestore-products .product-name, #firestore-products .product-title').forEach(el => {
       const name = (el.textContent || '').trim().toLowerCase();
       if (name) existingNames.add(name);
     });
 
-    // Fetch from Firestore
+    // fetch
     const snap = await firebase.firestore().collection("products").limit(FETCH_LIMIT).get();
     if (snap.empty) {
-      console.info("لا توجد منتجات في Firestore لعرضها.");
-      return;
+      console.info("appendFirestoreProductsToTop: no products in Firestore.");
+      return true;
     }
 
-    // For each doc, create a card and append to firestoreContainer
+    // inline svg placeholder to avoid 404s
+    const svgPlaceholder = "data:image/svg+xml;utf8," + encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' width='640' height='480'><rect width='100%' height='100%' fill='#f3f4f6'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' fill='#9ca3af' font-size='20'>No Image</text></svg>`);
+
     snap.forEach(doc => {
       const d = doc.data();
       const pname = ((d.name || d.title || '') + '').trim().toLowerCase();
-      // Skip if name already exists in page (prevents duplicates)
-      if (pname && existingNames.has(pname)) return;
+      if (pname && existingNames.has(pname)) return; // skip duplicates
 
-      // Build card element (lightweight, matches style of existing product cards)
+      const imgCandidate = (d.image || d.imageUrl || '').trim();
+      // prefer absolute/valid url, else use placeholder
+      const imgUrl = imgCandidate || svgPlaceholder;
+
+      const displayName = d.name || d.title || 'منتج';
+      const displayPrice = d.price || d.priceText || '';
+      const displayCategory = d.category || '';
+      const displaySeller = d.ownerEmail || d.owner || d.sellerName || '';
+      const displayLocation = d.origin || d.location || '';
+
       const card = document.createElement('div');
       card.className = 'product-card';
       card.style.minWidth = '200px';
@@ -601,18 +642,11 @@ async function appendFirestoreProductsFirst() {
       card.style.display = 'flex';
       card.style.flexDirection = 'column';
 
-      const imgUrl = d.image || d.imageUrl || 'images/default-product.jpg';
-      const displayName = d.name || d.title || 'منتج';
-      const displayPrice = d.price || d.priceText || '';
-      const displayCategory = d.category || '';
-      const displaySeller = d.ownerEmail || d.owner || d.sellerName || '';
-      const displayLocation = d.origin || d.location || '';
-
       card.innerHTML = `
-        <img src="${imgUrl}" alt="${escapeHtml(displayName)}" style="width:100%;height:140px;object-fit:cover;border-radius:6px;" />
+        <img src="${escapeHtml(imgUrl)}" alt="${escapeHtml(displayName)}" style="width:100%;height:140px;object-fit:cover;border-radius:6px;" onerror="this.onerror=null;this.src='${svgPlaceholder}'" />
         <div style="margin-top:8px;display:flex;justify-content:space-between;align-items:center;">
           <small style="background:#f3f4f6;padding:4px 8px;border-radius:6px;font-size:12px;">${escapeHtml(displayCategory)}</small>
-          <small style="color:#6b7280;font-size:12px;">#${doc.id.slice(0,6)}</small>
+          <small style="color:#6b7280;font-size:12px;">#${escapeHtml(String(doc.id).slice(0,6))}</small>
         </div>
         <h3 class="product-name" style="margin:8px 0 4px;font-weight:600;">${escapeHtml(displayName)}</h3>
         <div style="font-weight:700;color:#E8491D;margin-bottom:6px;">${escapeHtml(displayPrice)}</div>
@@ -626,78 +660,82 @@ async function appendFirestoreProductsFirst() {
         </div>
       `;
 
-      // Attach events that mimic existing behavior
+      // events
       const detailsBtn = card.querySelector('.btn-details');
       const messageBtn = card.querySelector('.btn-message');
 
-      detailsBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        window.location.href = `product-details.html?id=${encodeURIComponent(doc.id)}`;
-      });
+      if (detailsBtn) detailsBtn.addEventListener('click', e => { e.stopPropagation(); window.location.href = `product-details.html?id=${encodeURIComponent(doc.id)}`; });
+      if (messageBtn) messageBtn.addEventListener('click', e => { e.stopPropagation(); const to = encodeURIComponent(d.owner || d.ownerEmail || ''); window.location.href = `messages.html?to=${to}&product=${encodeURIComponent(doc.id)}`; });
+      card.addEventListener('click', () => { window.location.href = `product-details.html?id=${encodeURIComponent(doc.id)}`; });
 
-      messageBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const to = encodeURIComponent(d.owner || d.ownerEmail || '');
-        window.location.href = `messages.html?to=${to}&product=${encodeURIComponent(doc.id)}`;
-      });
-
-      card.addEventListener('click', () => {
-        window.location.href = `product-details.html?id=${encodeURIComponent(doc.id)}`;
-      });
-
-      // append product card to the top container
-      firestoreContainer.appendChild(card);
-
-      // mark name as seen to prevent duplicates
+      topContainer.appendChild(card);
       if (pname) existingNames.add(pname);
     });
 
-    console.info("تمت إضافة منتجات Firestore (أعلى الصفحة) بنجاح.");
+    console.info("appendFirestoreProductsToTop: added Firestore items successfully.");
+    return true;
+
   } catch (err) {
-    console.error("خطأ أثناء جلب أو عرض منتجات Firestore:", err);
+    console.error("appendFirestoreProductsToTop error:", err);
+    return false;
   }
 }
 
-// Utility for escaping HTML (safety)
-function escapeHtml(str) {
-  if (!str) return '';
-  return String(str)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#039;');
-}
+/* --------------------------
+   4) Retry logic until firebase ready (max tries)
+   -------------------------- */
+function tryAppendWithRetry(opts = {}) {
+  const maxAttempts = opts.maxAttempts || 15;
+  const baseDelay = opts.baseDelay || 500; // ms
+  let attempt = 0;
 
-// Run append function safely after DOM loaded and after firebase is initialized
-function runAppendWhenReady() {
-  // If firebase not yet available, wait a bit (common.js should initialize it early)
-  if (!window.firebase || !firebase.firestore) {
-    // try again shortly, but avoid infinite loop — try a few times
-    let tries = 0;
-    const maxTries = 10;
-    const interval = setInterval(() => {
-      tries++;
+  return new Promise(resolve => {
+    const timer = setInterval(async () => {
+      attempt++;
       if (window.firebase && firebase.firestore) {
-        clearInterval(interval);
-        appendFirestoreProductsFirst();
-      } else if (tries >= maxTries) {
-        clearInterval(interval);
-        console.warn("firebase not found after waiting — abort adding Firestore products.");
+        clearInterval(timer);
+        const ok = await appendFirestoreProductsToTop();
+        resolve(ok);
+        return;
       }
-    }, 700);
+      if (attempt >= maxAttempts) {
+        clearInterval(timer);
+        console.warn("tryAppendWithRetry: firebase not available after attempts");
+        resolve(false);
+      } else {
+        // exponential-ish wait (increase slightly)
+        // nothing else to do; will retry automatically
+      }
+    }, baseDelay + attempt * 200);
+  });
+}
+
+/* --------------------------
+   5) Init flow: try append first, then load local grid if needed
+   -------------------------- */
+async function initProductsFlow() {
+  // Attempt to append Firestore products with retries
+  await tryAppendWithRetry({ maxAttempts: 15, baseDelay: 400 });
+
+  // After attempting Firestore, load local grid safely (if grid empty)
+  // If you have a JS array of local products named `products` in the old script, pass it here:
+  if (typeof products !== 'undefined' && Array.isArray(products)) {
+    loadProductGridSafe(products);
   } else {
-    appendFirestoreProductsFirst();
+    // call safe loader with empty (will show fallback if grid empty)
+    loadProductGridSafe([]);
   }
 }
 
-if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", runAppendWhenReady);
+/* --------------------------
+   Run on DOM ready
+   -------------------------- */
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initProductsFlow);
 } else {
-  runAppendWhenReady();
+  initProductsFlow();
 }
 
-/* ============================
-   End of script.js
-   ============================ */
-}
+/* =============================
+   End of file
+   ============================= */
