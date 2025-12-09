@@ -435,97 +435,269 @@ setInterval(() => {
 // =============================
 //   جاهز 100% للاستخدام
 // =============================
-// === Safe loadProductGrid: لا يمسح المنتجات الثابتة إن كانت موجودة ===
-function loadProductGrid() {
-  const grid = document.getElementById("product-grid");
-  if (!grid) return;
+/* =============================
+   script.js — SudEgy (final)
+   - يحافظ على كل العناصر والمنتجات الأصلية كما هي
+   - يضيف منتجات Firestore أولاً داخل عنصر #firestore-products
+   - لا يعيد رسم المنتجات الأصلية أو يغير العداد/البانر
+   - يتجنّب تكرار الأسماء
+   ============================= */
 
-  // إذا كان في عناصر داخل الـ grid بالفعل (HTML ثابت أو كروت سابقة)، 
-  // لا نمسحها ولا نعيد رسمها — حفاظاً على التنسيق القديم.
-  if (grid.children && grid.children.length > 0) {
-    console.log("loadProductGrid: وجدنا عناصر ثابتة في DOM — لن نعيد رسم الشبكة للحفاظ على المحتوى الثابت.");
-    return;
-  }
+/* --------------------------
+   1) Smooth scrolling for anchor links
+   -------------------------- */
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+  anchor.addEventListener('click', function (e) {
+    // ensure target exists
+    const targetSelector = this.getAttribute('href');
+    const targetEl = document.querySelector(targetSelector);
+    if (!targetEl) return;
+    e.preventDefault();
+    targetEl.scrollIntoView({ behavior: 'smooth' });
+  });
+});
 
-  // وإلا إذا مافي عناصر، نرسم من المصفوفة products (كما في الكود القديم)
-  grid.innerHTML = "";
-
-  if (!Array.isArray(products) || products.length === 0) {
-    grid.innerHTML = '<div class="col-span-full text-center py-6 text-gray-500">لا توجد منتجات متاحة حالياً.</div>';
-    return;
-  }
-
-  products.forEach(p => {
-    const card = document.createElement("div");
-    card.className = "product-card";
-
-    card.innerHTML = `
-      <img src="${p.image || 'images/default-product.jpg'}" alt="${p.name || ''}" class="product-img" />
-      <div class="flex items-center justify-between mb-1">
-        <span class="product-badge">${p.category || ''}</span>
-        <span class="text-[0.65rem] text-gray-400">#${p.id ? p.id.toString().slice(0,6) : ''}</span>
-      </div>
-      <div class="product-name">${p.name || ''}</div>
-      <div class="product-price">${p.price || ''}</div>
-      <div class="product-meta mt-1">
-        <span>👤 التاجر: ${p.seller || ''}</span>
-        <span>📍 ${p.location || ''}</span>
-      </div>
-      <div class="product-actions">
-        <button class="btn-details">عرض التفاصيل</button>
-        <button class="btn-message">تواصل عبر الرسائل</button>
-      </div>
-    `;
-
-    // Events
-    const detailsBtn = card.querySelector(".btn-details");
-    if (detailsBtn) detailsBtn.addEventListener("click", e => {
-      e.stopPropagation();
-      window.location.href = `product-details.html?id=${p.id}`;
-    });
-
-    const messageBtn = card.querySelector(".btn-message");
-    if (messageBtn) messageBtn.addEventListener("click", e => {
-      e.stopPropagation();
-      window.location.href = `messages.html?to=${encodeURIComponent(p.seller || '')}&product=${p.id}`;
-    });
-
-    card.addEventListener("click", () => {
-      window.location.href = `product-details.html?id=${p.id}`;
-    });
-
-    grid.appendChild(card);
+/* --------------------------
+   2) Simple language toggle (if present)
+   -------------------------- */
+const languageToggle = document.getElementById('language-toggle');
+if (languageToggle) {
+  languageToggle.addEventListener('click', () => {
+    alert('English version coming soon!');
   });
 }
-// run: أضف منتجات Firestore أولاً ثم دَع تحميل شبكة المنتجات الأصلية يتصرف بأمان
-async function initAllProducts() {
-  // ننتظر انتهاء محاولة إضافة منتجات Firestore (هي آمنة حتى لو firebase غير جاهز)
-  await new Promise(resolve => {
-    // runAppendWhenReady هي الدالة التي سبق وضعها في السكربت النهائي - تأكد أنها موجودة
-    if (typeof runAppendWhenReady === 'function') {
-      // runAppendWhenReady تنتظر firebase ثم تستدعي appendFirestoreProductsFirst
-      runAppendWhenReady();
-      // ننتظر 800ms لكي يكتمل الـ DOM update (خيار عملي بسيط)
-      setTimeout(resolve, 800);
-    } else {
-      // لو الدالة مش موجودة (نسخة قديمة من السكربت) فقط نكمل
-      resolve();
-    }
-  });
 
-  // الآن ننادي loadProductGrid — هذه الدالة الآن آمنة (لن تمس الأعمال الثابتة)
-  if (typeof loadProductGrid === 'function') {
-    try {
-      loadProductGrid();
-    } catch (e) {
-      console.warn("loadProductGrid failed:", e);
+/* --------------------------
+   3) Trade counter (keeps original behavior)
+   -------------------------- */
+(function setupTradeCounter() {
+  // Default values — إذا عندك قيم أخرى في الصفحة يمكن تعديلها هنا
+  let tradeValue = 1465344000;
+  const tradeIncreasePerSecond = 53;
+
+  const counterElement = document.getElementById("counter-value");
+  const tradeDateElement = document.getElementById("trade-date");
+
+  function updateTradeCounter() {
+    tradeValue += tradeIncreasePerSecond;
+    if (counterElement) {
+      counterElement.textContent = tradeValue.toLocaleString();
     }
+  }
+
+  if (counterElement) {
+    counterElement.textContent = tradeValue.toLocaleString();
+    setInterval(updateTradeCounter, 1000);
+  }
+
+  if (tradeDateElement) {
+    const today = new Date();
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    tradeDateElement.textContent = "بتاريخ: " + today.toLocaleDateString('ar-EG', options);
+  }
+})();
+
+/* --------------------------
+   4) Promo messages rotation (original behavior preserved)
+   -------------------------- */
+(function setupPromoRotation() {
+  const promoMessages = [
+    "SudEgy تربط التاجر السوداني بالمورد المصري في منصة واحدة آمنة وموثوقة.",
+    "أضف منتجك مجاناً في المرحلة التجريبية وابدأ في استقبال الطلبات.",
+    "دعم كامل للسلع الزراعية، الصناعية، الغذائية، واللوجستيات.",
+    "محادثات مباشرة بين التاجر والمورد داخل المنصة."
+  ];
+
+  let promoIndex = 0;
+  const promoElement = document.getElementById("promo-text");
+  if (!promoElement) return;
+
+  setInterval(() => {
+    promoIndex = (promoIndex + 1) % promoMessages.length;
+    promoElement.style.opacity = 0;
+    setTimeout(() => {
+      promoElement.textContent = promoMessages[promoIndex];
+      promoElement.style.opacity = 1;
+    }, 300);
+  }, 3000);
+})();
+
+/* =========================================================
+   5) IMPORTANT: Append Firestore products FIRST (Top)
+   - هذا الجزء يُضاف فقط ويترك بقية صفحة المنتجات الأصلية بدون تغيير
+   - سيقوم بإنشاء <div id="firestore-products"> قبل #product-grid إذا لم يكن موجوداً
+   ========================================================= */
+
+async function appendFirestoreProductsFirst() {
+  try {
+    // تأكد أن Firebase مُهيّأ
+    if (!window.firebase || !firebase.firestore) {
+      console.warn("Firebase غير متوفر أو لم يتم تهيئته بعد. تأكد من common.js يهيئ Firebase.");
+      return;
+    }
+
+    // حد أقصى لعدد المنتجات التي نعرضها من Firestore في البداية
+    const FETCH_LIMIT = 200;
+
+    // إيجاد العنصر الأصلي الذي يحتوي المنتجات القديمة
+    const originalGrid = document.getElementById("product-grid") || document.getElementById("product-row");
+
+    // إذا ما فيه grid أصلاً — سننشئ firestore-products داخل body كحل احتياطي
+    if (!originalGrid) {
+      console.warn("عنصر product-grid (الاصلي) غير موجود. سيتم إدراج products من Firestore في أعلى body.");
+    }
+
+    // إنشاء/تأكيد حاوية #firestore-products قبل الحاوية الأصلية
+    let firestoreContainer = document.getElementById("firestore-products");
+    if (!firestoreContainer) {
+      firestoreContainer = document.createElement("div");
+      firestoreContainer.id = "firestore-products";
+      // استخدم نفس شبكية العرض لتظهر بشكل متناسق (Tailwind classes) — يمكنك تعديل إذا لزم
+      firestoreContainer.className = "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-6";
+      if (originalGrid && originalGrid.parentNode) {
+        originalGrid.parentNode.insertBefore(firestoreContainer, originalGrid);
+      } else {
+        // fallback: prepend to body
+        document.body.insertBefore(firestoreContainer, document.body.firstChild);
+      }
+    }
+
+    // اقرأ أسماء المنتجات الموجودة حالياً في الـ DOM (من المنتجات الأصلية) لمنع التكرار
+    const existingNames = new Set();
+    // نبحث عن عناوين المنتجات في العناصر الشائعة
+    document.querySelectorAll('#product-grid .product-name, #product-row .product-name, .product-card .product-name, .product-title').forEach(el => {
+      const name = (el.textContent || '').trim().toLowerCase();
+      if (name) existingNames.add(name);
+    });
+    // وأيضاً الأسماء الموجودة مسبقاً داخل حاوية firestore-products (لو نفذناه قبلًا)
+    document.querySelectorAll('#firestore-products .product-name, #firestore-products .product-title').forEach(el => {
+      const name = (el.textContent || '').trim().toLowerCase();
+      if (name) existingNames.add(name);
+    });
+
+    // Fetch from Firestore
+    const snap = await firebase.firestore().collection("products").limit(FETCH_LIMIT).get();
+    if (snap.empty) {
+      console.info("لا توجد منتجات في Firestore لعرضها.");
+      return;
+    }
+
+    // For each doc, create a card and append to firestoreContainer
+    snap.forEach(doc => {
+      const d = doc.data();
+      const pname = ((d.name || d.title || '') + '').trim().toLowerCase();
+      // Skip if name already exists in page (prevents duplicates)
+      if (pname && existingNames.has(pname)) return;
+
+      // Build card element (lightweight, matches style of existing product cards)
+      const card = document.createElement('div');
+      card.className = 'product-card';
+      card.style.minWidth = '200px';
+      card.style.background = 'white';
+      card.style.padding = '12px';
+      card.style.borderRadius = '8px';
+      card.style.boxShadow = '0 6px 18px rgba(0,0,0,0.06)';
+      card.style.cursor = 'pointer';
+      card.style.display = 'flex';
+      card.style.flexDirection = 'column';
+
+      const imgUrl = d.image || d.imageUrl || 'images/default-product.jpg';
+      const displayName = d.name || d.title || 'منتج';
+      const displayPrice = d.price || d.priceText || '';
+      const displayCategory = d.category || '';
+      const displaySeller = d.ownerEmail || d.owner || d.sellerName || '';
+      const displayLocation = d.origin || d.location || '';
+
+      card.innerHTML = `
+        <img src="${imgUrl}" alt="${escapeHtml(displayName)}" style="width:100%;height:140px;object-fit:cover;border-radius:6px;" />
+        <div style="margin-top:8px;display:flex;justify-content:space-between;align-items:center;">
+          <small style="background:#f3f4f6;padding:4px 8px;border-radius:6px;font-size:12px;">${escapeHtml(displayCategory)}</small>
+          <small style="color:#6b7280;font-size:12px;">#${doc.id.slice(0,6)}</small>
+        </div>
+        <h3 class="product-name" style="margin:8px 0 4px;font-weight:600;">${escapeHtml(displayName)}</h3>
+        <div style="font-weight:700;color:#E8491D;margin-bottom:6px;">${escapeHtml(displayPrice)}</div>
+        <div style="margin-top:8px;font-size:13px;color:#374151;flex:1;">
+          <div>👤 ${escapeHtml(displaySeller)}</div>
+          <div>📍 ${escapeHtml(displayLocation)}</div>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:8px;">
+          <button class="btn-details" style="flex:1;padding:8px;border-radius:6px;border:1px solid #e5e7eb;background:white;">عرض التفاصيل</button>
+          <button class="btn-message" style="flex:1;padding:8px;border-radius:6px;border:0;background:#F97316;color:white;">تواصل</button>
+        </div>
+      `;
+
+      // Attach events that mimic existing behavior
+      const detailsBtn = card.querySelector('.btn-details');
+      const messageBtn = card.querySelector('.btn-message');
+
+      detailsBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        window.location.href = `product-details.html?id=${encodeURIComponent(doc.id)}`;
+      });
+
+      messageBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const to = encodeURIComponent(d.owner || d.ownerEmail || '');
+        window.location.href = `messages.html?to=${to}&product=${encodeURIComponent(doc.id)}`;
+      });
+
+      card.addEventListener('click', () => {
+        window.location.href = `product-details.html?id=${encodeURIComponent(doc.id)}`;
+      });
+
+      // append product card to the top container
+      firestoreContainer.appendChild(card);
+
+      // mark name as seen to prevent duplicates
+      if (pname) existingNames.add(pname);
+    });
+
+    console.info("تمت إضافة منتجات Firestore (أعلى الصفحة) بنجاح.");
+  } catch (err) {
+    console.error("خطأ أثناء جلب أو عرض منتجات Firestore:", err);
   }
 }
 
-// نفّذ بعد DOM
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initAllProducts);
+// Utility for escaping HTML (safety)
+function escapeHtml(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
+// Run append function safely after DOM loaded and after firebase is initialized
+function runAppendWhenReady() {
+  // If firebase not yet available, wait a bit (common.js should initialize it early)
+  if (!window.firebase || !firebase.firestore) {
+    // try again shortly, but avoid infinite loop — try a few times
+    let tries = 0;
+    const maxTries = 10;
+    const interval = setInterval(() => {
+      tries++;
+      if (window.firebase && firebase.firestore) {
+        clearInterval(interval);
+        appendFirestoreProductsFirst();
+      } else if (tries >= maxTries) {
+        clearInterval(interval);
+        console.warn("firebase not found after waiting — abort adding Firestore products.");
+      }
+    }, 700);
+  } else {
+    appendFirestoreProductsFirst();
+  }
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", runAppendWhenReady);
 } else {
-  initAllProducts();
+  runAppendWhenReady();
+}
+
+/* ============================
+   End of script.js
+   ============================ */
 }
