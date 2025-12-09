@@ -327,4 +327,119 @@ body::before {
     color: #e5e7eb;
     font-weight: 600;
   }
-  
+  /* ========== Make Firestore cards match original product cards ========== */
+
+/* card container */
+.product-card {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(15,23,42,0.06);
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 420px;            /* match original height */
+  overflow: hidden;
+}
+
+/* image */
+.product-card .product-img {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+  border-radius: 8px;
+  display: block;
+}
+
+/* top meta row */
+.product-card .meta-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 8px;
+}
+
+/* small category badge */
+.product-card .badge {
+  background: #fff5f0;
+  color: #ea580c;
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  border: 1px solid rgba(234,88,12,0.07);
+}
+
+/* id tag */
+.product-card .id-tag {
+  font-size: 11px;
+  color: #9ca3af;
+}
+
+/* title */
+.product-card .product-title {
+  margin-top: 6px;
+  font-weight: 600;
+  font-size: 15px;
+  line-height: 1.2;
+  color: #111827;
+  min-height: 42px; /* keep titles aligned */
+}
+
+/* price (green like original) */
+.product-card .product-price {
+  color: #059669;
+  font-weight: 700;
+  margin-top: 6px;
+}
+
+/* meta block */
+.product-card .product-meta {
+  margin-top: 8px;
+  font-size: 13px;
+  color: #374151;
+  display: grid;
+  gap: 4px;
+}
+
+/* icons in meta (we use small dot or emoji) */
+.product-card .meta-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+/* action buttons row */
+.product-card .actions {
+  margin-top: 8px;
+  display: flex;
+  gap: 8px;
+}
+
+/* orange primary button (تواصل) */
+.product-card .btn-contact {
+  flex: 1;
+  background: #F97316;
+  color: white;
+  border: 0;
+  padding: 9px 10px;
+  border-radius: 8px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* outline secondary button (عرض التفاصيل) */
+.product-card .btn-details {
+  flex: 1;
+  background: white;
+  color: #1f2937;
+  border: 1px solid #e5e7eb;
+  padding: 9px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+/* small responsive tweak */
+@media (max-width: 640px) {
+  .product-card { height: auto; }
+  .product-card .product-img { height: 140px; }
+}
