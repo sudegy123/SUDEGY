@@ -572,6 +572,7 @@ function loadProductGridSafe(productsArray) {
    - Uses retries to wait for firebase initialization
    -------------------------- */
 
+// استبدل الدالة appendFirestoreProductsToTop الحالية بهذه النسخة
 async function appendFirestoreProductsToTop() {
   try {
     if (!window.firebase || !firebase.firestore) {
@@ -595,7 +596,7 @@ async function appendFirestoreProductsToTop() {
       }
     }
 
-    // collect existing product names in page to prevent duplicates
+    // collect existing product names to prevent duplicates
     const existingNames = new Set();
     document.querySelectorAll('#product-grid .product-name, #product-row .product-name, .product-card .product-name, .product-title').forEach(el => {
       const name = (el.textContent || '').trim().toLowerCase();
@@ -606,14 +607,13 @@ async function appendFirestoreProductsToTop() {
       if (name) existingNames.add(name);
     });
 
-    // fetch
     const snap = await firebase.firestore().collection("products").limit(FETCH_LIMIT).get();
     if (snap.empty) {
       console.info("appendFirestoreProductsToTop: no products in Firestore.");
       return true;
     }
 
-    // inline svg placeholder to avoid 404s
+    // placeholder svg if no image
     const svgPlaceholder = "data:image/svg+xml;utf8," + encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' width='640' height='480'><rect width='100%' height='100%' fill='#f3f4f6'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' fill='#9ca3af' font-size='20'>No Image</text></svg>`);
 
     snap.forEach(doc => {
@@ -621,58 +621,62 @@ async function appendFirestoreProductsToTop() {
       const pname = ((d.name || d.title || '') + '').trim().toLowerCase();
       if (pname && existingNames.has(pname)) return; // skip duplicates
 
-      const imgCandidate = (d.image || d.imageUrl || '').trim();
-      // prefer absolute/valid url, else use placeholder
-      const imgUrl = imgCandidate || svgPlaceholder;
+      // create card element using same structure/classes as original
+      const card = document.createElement('div');
+      card.className = 'product-card';
 
+      const imgUrl = (d.image || d.imageUrl || '').trim() || svgPlaceholder;
       const displayName = d.name || d.title || 'منتج';
       const displayPrice = d.price || d.priceText || '';
       const displayCategory = d.category || '';
       const displaySeller = d.ownerEmail || d.owner || d.sellerName || '';
       const displayLocation = d.origin || d.location || '';
 
-      const card = document.createElement('div');
-      card.className = 'product-card';
-      card.style.minWidth = '200px';
-      card.style.background = 'white';
-      card.style.padding = '12px';
-      card.style.borderRadius = '8px';
-      card.style.boxShadow = '0 6px 18px rgba(0,0,0,0.06)';
-      card.style.cursor = 'pointer';
-      card.style.display = 'flex';
-      card.style.flexDirection = 'column';
-
       card.innerHTML = `
-        <img src="${escapeHtml(imgUrl)}" alt="${escapeHtml(displayName)}" style="width:100%;height:140px;object-fit:cover;border-radius:6px;" onerror="this.onerror=null;this.src='${svgPlaceholder}'" />
-        <div style="margin-top:8px;display:flex;justify-content:space-between;align-items:center;">
-          <small style="background:#f3f4f6;padding:4px 8px;border-radius:6px;font-size:12px;">${escapeHtml(displayCategory)}</small>
-          <small style="color:#6b7280;font-size:12px;">#${escapeHtml(String(doc.id).slice(0,6))}</small>
+        <img src="${escapeHtml(imgUrl)}" alt="${escapeHtml(displayName)}" class="product-img" onerror="this.onerror=null;this.src='${svgPlaceholder}';" />
+        <div class="meta-top">
+          <span class="badge">${escapeHtml(displayCategory)}</span>
+          <span class="id-tag">#${escapeHtml(String(doc.id).slice(0,6))}</span>
         </div>
-        <h3 class="product-name" style="margin:8px 0 4px;font-weight:600;">${escapeHtml(displayName)}</h3>
-        <div style="font-weight:700;color:#E8491D;margin-bottom:6px;">${escapeHtml(displayPrice)}</div>
-        <div style="margin-top:8px;font-size:13px;color:#374151;flex:1;">
-          <div>👤 ${escapeHtml(displaySeller)}</div>
-          <div>📍 ${escapeHtml(displayLocation)}</div>
+        <div class="product-title">${escapeHtml(displayName)}</div>
+        <div class="product-price">${escapeHtml(displayPrice)}</div>
+        <div class="product-meta">
+          <div class="meta-row">👤 ${escapeHtml(displaySeller)}</div>
+          <div class="meta-row">📍 ${escapeHtml(displayLocation)}</div>
         </div>
-        <div style="display:flex;gap:8px;margin-top:8px;">
-          <button class="btn-details" style="flex:1;padding:8px;border-radius:6px;border:1px solid #e5e7eb;background:white;">عرض التفاصيل</button>
-          <button class="btn-message" style="flex:1;padding:8px;border-radius:6px;border:0;background:#F97316;color:white;">تواصل</button>
+        <div class="actions">
+          <button class="btn-contact">تواصل</button>
+          <button class="btn-details">عرض التفاصيل</button>
         </div>
       `;
 
-      // events
+      // events: details & contact
       const detailsBtn = card.querySelector('.btn-details');
-      const messageBtn = card.querySelector('.btn-message');
+      const contactBtn = card.querySelector('.btn-contact');
 
-      if (detailsBtn) detailsBtn.addEventListener('click', e => { e.stopPropagation(); window.location.href = `product-details.html?id=${encodeURIComponent(doc.id)}`; });
-      if (messageBtn) messageBtn.addEventListener('click', e => { e.stopPropagation(); const to = encodeURIComponent(d.owner || d.ownerEmail || ''); window.location.href = `messages.html?to=${to}&product=${encodeURIComponent(doc.id)}`; });
-      card.addEventListener('click', () => { window.location.href = `product-details.html?id=${encodeURIComponent(doc.id)}`; });
+      if (detailsBtn) {
+        detailsBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          window.location.href = `product-details.html?id=${encodeURIComponent(doc.id)}`;
+        });
+      }
+      if (contactBtn) {
+        contactBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const to = encodeURIComponent(d.owner || d.ownerEmail || '');
+          window.location.href = `messages.html?to=${to}&product=${encodeURIComponent(doc.id)}`;
+        });
+      }
+
+      card.addEventListener('click', () => {
+        window.location.href = `product-details.html?id=${encodeURIComponent(doc.id)}`;
+      });
 
       topContainer.appendChild(card);
       if (pname) existingNames.add(pname);
     });
 
-    console.info("appendFirestoreProductsToTop: added Firestore items successfully.");
+    console.info("appendFirestoreProductsToTop: added Firestore items successfully (styled).");
     return true;
 
   } catch (err) {
