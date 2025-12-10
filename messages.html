@@ -115,103 +115,239 @@
 <script>
   feather.replace();
 
-  /********* ====== ضع هنا firebaseConfig الخاص بمشروعك من Firebase Console ====== *********/
+<!-- ======= وضع هذا الكود داخل ملف messages.html (استبدال سكربت القديم) ======= -->
+<script src="/firebase/firebase-app-compat.js"></script>
+<script src="/firebase/firebase-auth-compat.js"></script>
+<script src="/firebase/firebase-firestore-compat.js"></script>
+
+<script>
+/* --- ضع نفس firebaseConfig الموجود في login.html هنا --- */
 const firebaseConfig = {
-    apiKey: "AIzaSyBvnFMvXY_d5PKrKV-4Vp_fYKD2c428Yw",
-    authDomain: "sudegy-4c4e5.firebaseapp.com",
-    projectId: "sudegy-4c4e5",
-    storageBucket: "sudegy-4c4e5.appspot.com",
-    messagingSenderId: "8675758231874",
-    appId: "1:8675758231874:web:d19509356198ca1f809dcb"
+  apiKey: "AIzaSyBvnFMuXY_d5PKrKV-4Vp_fYyKD2c428Yw",
+  authDomain: "sudegy-4c4e5.firebaseapp.com",
+  projectId: "sudegy-4c4e5",
+  storageBucket: "sudegy-4c4e5.appspot.com",
+  messagingSenderId: "865758231874",
+  appId: "1:865758231874:web:d1959356198ca1f809dcdb"
 };
 
-  };
+if (!window.firebase || !firebase.initializeApp) {
+  console.error("Firebase SDK غير محمّل أو غير صحيح. تأكد من ملفات /firebase/*.js");
+} else if (!firebase.apps.length) {
   firebase.initializeApp(firebaseConfig);
-  const auth = firebase.auth();
-  const db = firebase.firestore();
-  const storage = firebase.storage();
+}
 
-  /********* حالة التطبيق *********/
-  let currentUser = null;
-  let currentConversationId = null;
-  let convsUnsub = null;
-  let msgsUnsub = null;
+const auth = firebase.auth();
+const db = firebase.firestore();
 
-  // عناصر UI
-  const openLoginBtn = document.getElementById('openLoginBtn');
-  const logoutBtn = document.getElementById('logoutBtn');
-  const authModal = document.getElementById('authModal');
-  const closeAuth = document.getElementById('closeAuth');
-  const showRegister = document.getElementById('showRegister');
-  const showLogin = document.getElementById('showLogin');
-  const loginForm = document.getElementById('loginForm');
-  const registerForm = document.getElementById('registerForm');
-  const msgInput = document.getElementById('msgInput');
-  const sendBtn = document.getElementById('sendBtn');
+console.log("Firebase initialized for messages ✔");
 
-  // Modal toggles
-  openLoginBtn.addEventListener('click', () => { authModal.classList.remove('hidden'); authModal.classList.add('flex'); });
-  closeAuth.addEventListener('click', () => { authModal.classList.add('hidden'); authModal.classList.remove('flex'); });
-  showRegister.addEventListener('click', () => { loginForm.classList.add('hidden'); registerForm.classList.remove('hidden'); document.getElementById('authTitle').innerText = 'إنشاء حساب'; });
-  showLogin.addEventListener('click', () => { registerForm.classList.add('hidden'); loginForm.classList.remove('hidden'); document.getElementById('authTitle').innerText = 'تسجيل الدخول'; });
+/* عناصر DOM */
+const chatListEl = document.getElementById('chatList');
+const messagesEl = document.getElementById('messages');
+const chatNameEl = document.getElementById('chatName');
+const chatStatusEl = document.getElementById('chatStatus');
+const statusDot = document.getElementById('statusDot');
+const msgInput = document.getElementById('msgInput');
+const sendBtn = document.getElementById('sendBtn');
 
-  // Auth handlers (Firebase)
-  registerForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    try {
-      const name = document.getElementById('regName').value.trim();
-      const email = document.getElementById('regEmail').value.trim();
-      const password = document.getElementById('regPass').value;
-      const cred = await auth.createUserWithEmailAndPassword(email, password);
-      await cred.user.updateProfile({ displayName: name });
-      // create profile doc
-      await db.collection('users').doc(cred.user.uid).set({
-        name, email, created_at: Date.now(), verified: false
+let currentUser = null;
+let convsUnsub = null;
+let msgsUnsub = null;
+let currentConversationId = null;
+
+/* Helpers */
+function escapeHtml(text = '') {
+  return String(text).replace(/[&<>"']/g, function(m){ return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"})[m]; });
+}
+
+/* Render conversations list */
+function renderConversations(items = []) {
+  if (!chatListEl) return;
+  chatListEl.innerHTML = '';
+  if (!items.length) {
+    chatListEl.innerHTML = '<div class="p-4 text-center text-sm text-gray-500">لا توجد محادثات حتى الآن</div>';
+    return;
+  }
+  items.forEach(c => {
+    const el = document.createElement('div');
+    el.className = 'flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100 cursor-pointer';
+    el.dataset.id = c.id;
+    el.innerHTML = `
+      <img src="${c.partner?.avatar || 'images/user-placeholder.jpg'}" class="w-10 h-10 rounded-full object-cover">
+      <div class="flex-1">
+        <p class="font-semibold text-sm">${escapeHtml(c.partner?.name || 'مستخدم')}</p>
+        <p class="text-xs text-gray-500 truncate">${escapeHtml(c.lastMessage || '')}</p>
+      </div>
+      <span class="text-[10px] text-gray-400">${c.lastAt ? new Date(c.lastAt.seconds ? c.lastAt.seconds*1000 : c.lastAt).toLocaleString() : ''}</span>
+    `;
+    el.addEventListener('click', () => openConversation(c.id));
+    chatListEl.appendChild(el);
+  });
+}
+
+/* Load conversations realtime */
+async function loadConversations() {
+  if (!currentUser) return;
+  if (convsUnsub) convsUnsub();
+
+  convsUnsub = db.collection('conversations')
+    .where('participants', 'array-contains', currentUser.id)
+    .orderBy('lastAt', 'desc')
+    .onSnapshot(async snap => {
+      const items = [];
+      snap.forEach(doc => {
+        const d = doc.data();
+        const partnerId = Array.isArray(d.participants) ? d.participants.find(p => p !== currentUser.id) : null;
+        items.push({ id: doc.id, partnerId, lastMessage: d.lastMessage || '', lastAt: d.lastAt || null });
       });
-      authModal.classList.add('hidden'); authModal.classList.remove('flex');
-    } catch (err) {
-      alert('خطأ في التسجيل: ' + err.message);
-    }
-  });
 
-  loginForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    try {
-      const email = document.getElementById('loginEmail').value.trim();
-      const password = document.getElementById('loginPass').value;
-      await auth.signInWithEmailAndPassword(email, password);
-      authModal.classList.add('hidden'); authModal.classList.remove('flex');
-    } catch (err) {
-      alert('خطأ في الدخول: ' + err.message);
-    }
-  });
+      // build unique partnerIds array
+      const partnerIds = Array.from(new Set(items.map(i => i.partnerId).filter(Boolean)));
+      if (partnerIds.length === 0) return renderConversations(items);
 
-  logoutBtn.addEventListener('click', () => {
-    auth.signOut();
-  });
+      // fetch partner profiles in batch (Firestore 'in' supports up to 10 ids)
+      try {
+        const usersSnap = await db.collection('users').where(firebase.firestore.FieldPath.documentId(), 'in', partnerIds).get();
+        const usersMap = {};
+        usersSnap.forEach(u => usersMap[u.id] = u.data());
+        const enriched = items.map(it => ({ ...it, partner: usersMap[it.partnerId] || { name: 'مستخدم' } }));
+        renderConversations(enriched);
+      } catch (err) {
+        console.error('Error fetching partner profiles', err);
+        renderConversations(items); // fallback
+      }
+    }, err => {
+      console.error('conversations onSnapshot error', err);
+    });
+}
 
-  // Auth state change
-  auth.onAuthStateChanged(async (user) => {
-    if (user) {
-      currentUser = { id: user.uid, name: user.displayName || user.email, email: user.email };
-      openLoginBtn.classList.add('hidden');
-      logoutBtn.classList.remove('hidden');
-      logoutBtn.innerText = 'خروج — ' + (currentUser.name || currentUser.email);
-      msgInput.disabled = false; sendBtn.disabled = false;
-      await loadConversations();
-      // If convId provided in URL open it
-      const urlConv = getQueryParam('convId');
-      if (urlConv) openConversation(urlConv);
-    } else {
-      currentUser = null;
-      openLoginBtn.classList.remove('hidden');
-      logoutBtn.classList.add('hidden');
-      document.getElementById('chatList').innerHTML = '<div class="p-4 text-center text-sm text-gray-500">سجل الدخول لعرض محادثاتك.</div>';
-      document.getElementById('messages').innerHTML = '<div class="text-center text-sm text-gray-400">سجّل الدخول لعرض وبدء المحادثات.</div>';
-      msgInput.disabled = true; sendBtn.disabled = true;
-      if (convsUnsub) convsUnsub(); if (msgsUnsub) msgsUnsub();
-    }
+/* Render messages */
+function renderMessages(items = []) {
+  if (!messagesEl) return;
+  messagesEl.innerHTML = '';
+  if (!items.length) {
+    messagesEl.innerHTML = '<div class="text-center text-sm text-gray-400">لا توجد رسائل بعد.</div>';
+    return;
+  }
+  items.forEach(m => {
+    const wrapper = document.createElement('div');
+    wrapper.className = (m.from === currentUser.id) ? 'self-end max-w-[75%]' : 'self-start max-w-[75%]';
+    wrapper.innerHTML = `
+      <div class="${m.from === currentUser.id ? 'bg-orange-500 text-white' : 'bg-white'} rounded-2xl px-4 py-2 shadow-sm text-[13px] ${m.from === currentUser.id ? 'rounded-br-sm' : 'rounded-bl-sm'}">
+        ${escapeHtml(m.text)}
+      </div>
+      <div class="text-[10px] text-gray-400 mt-1 ${m.from === currentUser.id ? 'text-left' : ''}">${m.createdAt && m.createdAt.toDate ? m.createdAt.toDate().toLocaleString() : (m.createdAt ? new Date(m.createdAt).toLocaleString() : '')}</div>
+    `;
+    messagesEl.appendChild(wrapper);
   });
+  messagesEl.scrollTop = messagesEl.scrollHeight;
+}
+
+/* Open conversation and listen realtime */
+async function openConversation(convId) {
+  currentConversationId = convId;
+  if (msgsUnsub) msgsUnsub();
+
+  try {
+    const convDoc = await db.collection('conversations').doc(convId).get();
+    if (!convDoc.exists) {
+      messagesEl.innerHTML = '<div class="p-4 text-center text-sm text-red-500">محادثة غير موجودة</div>';
+      return;
+    }
+    const conv = convDoc.data();
+    const partnerId = Array.isArray(conv.participants) ? conv.participants.find(p => p !== currentUser.id) : null;
+    if (partnerId) {
+      const partnerDoc = await db.collection('users').doc(partnerId).get();
+      chatNameEl.innerText = partnerDoc.exists ? (partnerDoc.data().name || partnerDoc.data().email) : 'مستخدم';
+    } else chatNameEl.innerText = 'محادثة';
+
+    msgsUnsub = db.collection('conversations').doc(convId).collection('messages')
+      .orderBy('createdAt')
+      .onSnapshot(snap => {
+        const msgs = [];
+        snap.forEach(d => msgs.push({ id: d.id, ...d.data() }));
+        renderMessages(msgs);
+      }, err => console.error('messages onSnapshot error', err));
+  } catch (err) {
+    console.error('openConversation error', err);
+    alert('خطأ عند فتح المحادثة: ' + (err.message || err));
+  }
+}
+
+/* Send message */
+document.getElementById('sendForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  if (!currentConversationId) return alert('اختر محادثة أولاً');
+  const text = msgInput.value.trim();
+  if (!text) return;
+  try {
+    const messagesRef = db.collection('conversations').doc(currentConversationId).collection('messages');
+    await messagesRef.add({
+      from: currentUser.id,
+      text,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      read: false
+    });
+    await db.collection('conversations').doc(currentConversationId).update({
+      lastMessage: text,
+      lastAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    msgInput.value = '';
+  } catch (err) {
+    console.error('sendMessage error', err);
+    alert('فشل إرسال الرسالة: ' + (err.message || err));
+  }
+});
+
+/* Utility: deterministic conversation id */
+async function getOrCreateConversationWith(targetUid) {
+  if (!currentUser) throw new Error('Not authenticated');
+  const pair = [currentUser.id, targetUid].sort();
+  const convId = pair.join('_');
+  const convRef = db.collection('conversations').doc(convId);
+  const convSnap = await convRef.get();
+  if (!convSnap.exists) {
+    await convRef.set({
+      participants: pair,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      lastMessage: '',
+      lastAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+  }
+  return convId;
+}
+
+/* Read convId from URL */
+function getQueryParam(name) {
+  const url = new URL(window.location.href);
+  return url.searchParams.get(name);
+}
+
+/* Auth state handling */
+auth.onAuthStateChanged(async (user) => {
+  if (user) {
+    currentUser = { id: user.uid, name: user.displayName || user.email, email: user.email };
+    // UI updates
+    document.getElementById('openLoginBtn')?.classList.add('hidden');
+    document.getElementById('logoutBtn')?.classList.remove('hidden');
+    document.getElementById('logoutBtn') && (document.getElementById('logoutBtn').innerText = 'خروج — ' + (currentUser.name || currentUser.email));
+    msgInput.disabled = false; sendBtn.disabled = false;
+    await loadConversations();
+    const urlConv = getQueryParam('convId');
+    if (urlConv) openConversation(urlConv);
+  } else {
+    currentUser = null;
+    document.getElementById('openLoginBtn')?.classList.remove('hidden');
+    document.getElementById('logoutBtn')?.classList.add('hidden');
+    document.getElementById('chatList') && (document.getElementById('chatList').innerHTML = '<div class="p-4 text-center text-sm text-gray-500">سجل الدخول لعرض محادثاتك.</div>');
+    document.getElementById('messages') && (document.getElementById('messages').innerHTML = '<div class="text-center text-sm text-gray-400">سجّل الدخول لعرض وبدء المحادثات.</div>');
+    msgInput.disabled = true; sendBtn.disabled = true;
+    if (convsUnsub) convsUnsub(); if (msgsUnsub) msgsUnsub();
+  }
+});
+</script>
+<!-- ======= نهاية السكربت المنقح ======= -->
 
   /********* Conversations loading (realtime) *********/
   const chatListEl = document.getElementById('chatList');
@@ -394,6 +530,7 @@ firebase.firestore().collection('messages').limit(1).get()
 
 </body>
 </html>
+
 
 
 
