@@ -376,7 +376,21 @@
   window.getOrCreateConversationWith = getOrCreateConversationWith;
 
 </script>
+// هل firebase موجود؟
+console.log("firebase:", typeof firebase !== 'undefined');
+
+// هل auth جاهز وهل في user؟
+console.log("auth ready?:", firebase && firebase.auth ? true : false);
+if (firebase && firebase.auth) {
+  console.log("current user:", firebase.auth().currentUser);
+}
+
+// جرّب قراءة وثيقة اختبارية من messages (تغيير الاسم حسب مشروعك)
+firebase.firestore().collection('messages').limit(1).get()
+  .then(snap => console.log("messages doc count:", snap.size, snap.docs.map(d=>d.id)))
+  .catch(err => console.error("firestore read error:", err));
 
 </body>
 </html>
+
 
