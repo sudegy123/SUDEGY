@@ -116,13 +116,15 @@
   feather.replace();
 
   /********* ====== ضع هنا firebaseConfig الخاص بمشروعك من Firebase Console ====== *********/
-  const firebaseConfig = {
-    apiKey: "API_KEY",
-    authDomain: "PROJECT_ID.firebaseapp.com",
-    projectId: "PROJECT_ID",
-    storageBucket: "PROJECT_ID.appspot.com",
-    messagingSenderId: "SENDER_ID",
-    appId: "APP_ID"
+const firebaseConfig = {
+    apiKey: "AIzaSyBvnFMvXY_d5PKrKV-4Vp_fYKD2c428Yw",
+    authDomain: "sudegy-4c4e5.firebaseapp.com",
+    projectId: "sudegy-4c4e5",
+    storageBucket: "sudegy-4c4e5.appspot.com",
+    messagingSenderId: "8675758231874",
+    appId: "1:8675758231874:web:d19509356198ca1f809dcb"
+};
+
   };
   firebase.initializeApp(firebaseConfig);
   const auth = firebase.auth();
@@ -392,5 +394,6 @@ firebase.firestore().collection('messages').limit(1).get()
 
 </body>
 </html>
+
 
 
