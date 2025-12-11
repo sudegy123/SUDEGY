@@ -358,6 +358,7 @@ function loadProductGrid() {
         <span>📦 أقل طلب: ${p.minOrder}</span>
         <span>🚚 الشحن: ${p.shipping}</span>
       </div>
+<button class="contact-btn" data-email="${p.seller}">تواصل</button>
 
       <div class="product-actions">
         <button class="btn-details">عرض التفاصيل</button>
