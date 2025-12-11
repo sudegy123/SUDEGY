@@ -116,32 +116,35 @@
   feather.replace();
 </script>
 
-<!-- ======= ====== (استبدل/احتفظ بالتعليق هنا خارج سكربت) ======= -->
+<!-- Firebase compat SDKs (hosted locally under /firebase) -->
 <script src="/firebase/firebase-app-compat.js"></script>
 <script src="/firebase/firebase-auth-compat.js"></script>
 <script src="/firebase/firebase-firestore-compat.js"></script>
-
 <script>
-  /* باقي جافاسكربتك هنا — الكود المنقّح */
+  const firebaseConfig = {
+    apiKey: "AIzaSyBvnFMuXY_d5PKrKV-4Vp_fYyKD2c428Yw",
+    authDomain: "sudegy-4c4e5.firebaseapp.com",
+    projectId: "sudegy-4c4e5",
+    storageBucket: "sudegy-4c4e5.appspot.com",
+    messagingSenderId: "865758231874",
+    appId: "1:865758231874:web:d1959356198ca1f809dcdb"
+  };
 
-/* --- ضع نفس firebaseConfig الموجود في login.html هنا --- */
-const firebaseConfig = {
-  apiKey: "AIzaSyBvnFMuXY_d5PKrKV-4Vp_fYyKD2c428Yw",
-  authDomain: "sudegy-4c4e5.firebaseapp.com",
-  projectId: "sudegy-4c4e5",
-  storageBucket: "sudegy-4c4e5.appspot.com",
-  messagingSenderId: "865758231874",
-  appId: "1:865758231874:web:d1959356198ca1f809dcdb"
-};
+  // تهيئة آمنة: لو firebase محمّل، نهيئ مرة واحدة فقط
+  if (typeof firebase !== 'undefined') {
+    if (!firebase.apps || firebase.apps.length === 0) {
+      firebase.initializeApp(firebaseConfig);
+      console.log('Firebase initialized (fresh).');
+    } else {
+      console.log('Firebase already initialized (reused).');
+    }
+  } else {
+    console.error('Firebase SDK not loaded!');
+  }
 
-if (!window.firebase || !firebase.initializeApp) {
-  console.error("Firebase SDK غير محمّل أو غير صحيح. تأكد من ملفات /firebase/*.js");
-} else if (!firebase.apps.length) {
-  firebase.initializeApp(firebaseConfig);
-}
-
-const auth = firebase.auth();
-const db = firebase.firestore();
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+</script>
 
 console.log("Firebase initialized for messages ✔");
 
@@ -365,7 +368,8 @@ auth.onAuthStateChanged(async (user) => {
       el.className = 'chat-item p-3 flex items-center gap-3 cursor-pointer hover:bg-orange-50 rounded-xl transition';
       el.dataset.id = c.id;
       el.innerHTML = `
-        <img src="${c.partner?.avatar || 'images/user-placeholder.jpg'}" class="w-10 h-10 rounded-full object-cover">
+        <img src="${c.partner?.avatar || const avatar = partner?.avatar || '/images/user-placeholder.png';
+
         <div class="flex-1">
           <p class="font-semibold text-sm">${escapeHtml(c.partner?.name || 'مستخدم')}</p>
           <p class="text-xs text-gray-500 truncate">${escapeHtml(c.lastMessage || '')}</p>
@@ -533,6 +537,7 @@ firebase.firestore().collection('messages').limit(1).get()
 
 </body>
 </html>
+
 
 
 
