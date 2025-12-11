@@ -114,13 +114,16 @@
 
 <script>
   feather.replace();
+</script>
 
-<!-- ======= وضع هذا الكود داخل ملف messages.html (استبدال سكربت القديم) ======= -->
+<!-- ======= ====== (استبدل/احتفظ بالتعليق هنا خارج سكربت) ======= -->
 <script src="/firebase/firebase-app-compat.js"></script>
 <script src="/firebase/firebase-auth-compat.js"></script>
 <script src="/firebase/firebase-firestore-compat.js"></script>
 
 <script>
+  /* باقي جافاسكربتك هنا — الكود المنقّح */
+
 /* --- ضع نفس firebaseConfig الموجود في login.html هنا --- */
 const firebaseConfig = {
   apiKey: "AIzaSyBvnFMuXY_d5PKrKV-4Vp_fYyKD2c428Yw",
@@ -530,6 +533,7 @@ firebase.firestore().collection('messages').limit(1).get()
 
 </body>
 </html>
+
 
 
 
