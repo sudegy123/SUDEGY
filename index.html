@@ -363,5 +363,25 @@ document.addEventListener("click", function(e) {
 
 <!-- سكربت وظائف الموقع الرئيسية (loads products, UI) -->
 <script src="script.js"></script>
+<script>
+document.addEventListener("click", function (e) {
+    const btn = e.target.closest(".contact-btn");
+    if (!btn) return;
+
+    e.preventDefault();
+
+    // نقرأ الإيميل من data-email
+    const sellerEmail = btn.getAttribute("data-email");
+
+    if (!sellerEmail) {
+        alert("تعذّر تحديد بريد التاجر!");
+        return;
+    }
+
+    // ننتقل مباشرة لصفحة الرسائل
+    window.location.href = `/messages.html?to=${encodeURIComponent(sellerEmail)}`;
+});
+</script>
+</body>
 
 
