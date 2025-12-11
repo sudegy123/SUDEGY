@@ -2,125 +2,120 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="utf-8" />
-  <title>الرسائل - Sudegy</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>SudEgy — الرسائل</title>
 
-  <!-- Firebase (compat for simpler integration) -->
-<script src="/firebase/firebase-app-compat.js"></script>
-<script src="/firebase/firebase-auth-compat.js"></script>
-<script src="/firebase/firebase-firestore-compat.js"></script>
-<script src="/firebase/firebase-storage-compat.js"></script>
+  <!-- Tailwind CDN (سريع للتطوير). في الإنتاج يُفضّل بناء Tailwind محلياً -->
+  <script src="https://cdn.tailwindcss.com"></script>
 
   <style>
-    .scrollbar::-webkit-scrollbar { width: 6px; }
-    .scrollbar::-webkit-scrollbar-thumb { background: #e2e2e2; border-radius: 20px; }
-    body { font-family: 'Tajawal', sans-serif; background: #fff7f0; }
+    /* لمسات صغيرة متوافقة مع الهوية */
+    :root{
+      --brand-orange: #ff7a28;
+      --brand-navy: #0b2a56;
+      --panel:#0f2748;
+      --muted:#f6efe9;
+    }
+    body{font-family: Inter, system-ui, "Segoe UI", Roboto, "Helvetica Neue", Arial;}
+    .glass {
+      background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+      backdrop-filter: blur(6px);
+    }
+    /* scrollbar small */
+    ::-webkit-scrollbar{height:10px;width:8px}
+    ::-webkit-scrollbar-thumb{background:rgba(0,0,0,0.12);border-radius:8px}
   </style>
 </head>
+<body class="bg-gradient-to-b from-[#0b2a56] to-[#0a203f] min-h-screen text-gray-800">
 
-<body class="bg-[#fff7f0]">
-
-  <!-- Header (يمكن استبداله بالهيدر لديك) -->
-  <div class="bg-white p-4 shadow-sm flex items-center justify-between">
-    <div class="flex items-center gap-3">
-      <img src="images/name_user_3716.png" alt="Sudegy" class="h-10">
-      <h1 class="font-bold text-lg">الرسائل</h1>
+  <header class="max-w-6xl mx-auto p-6 flex items-center justify-between text-white">
+    <div class="flex items-center gap-4">
+      <div class="bg-white/10 p-3 rounded-lg shadow">
+        <img src="/images/logo.png" alt="SudEgy" class="h-8" onerror="this.style.display='none'"/>
+      </div>
+      <div>
+        <h1 class="text-2xl font-semibold">SudEgy</h1>
+        <p class="text-sm text-gray-200/80">منصة ربط الأعمال بين مصر والسودان</p>
+      </div>
     </div>
-    <div>
-      <button id="openLoginBtn" class="bg-orange-500 text-white px-4 py-2 rounded-lg text-sm">تسجيل / دخول</button>
-      <button id="logoutBtn" class="hidden bg-gray-200 text-gray-800 px-3 py-1 rounded-lg text-sm">تسجيل خروج</button>
+
+    <div class="flex items-center gap-4">
+      <button id="loginBtn" class="bg-white/10 text-white px-4 py-2 rounded-lg hover:bg-white/20">تسجيل / دخول</button>
+      <div id="userBadge" class="hidden bg-white/10 text-white px-4 py-2 rounded-lg flex items-center gap-2">
+        <img id="userAvatarSmall" src="/images/user-placeholder.png" class="w-8 h-8 rounded-full object-cover" />
+        <span id="userEmail" class="text-sm"></span>
+        <button id="logoutBtn" class="ml-2 text-xs underline">خروج</button>
+      </div>
     </div>
-  </div>
+  </header>
 
-  <main class="max-w-7xl mx-auto px-4 py-6">
-    <div class="grid gap-4 md:grid-cols-3">
+  <main class="max-w-6xl mx-auto grid grid-cols-12 gap-6 p-6">
+    <!-- Sidebar: المحادثات -->
+    <aside class="col-span-4">
+      <div class="glass rounded-2xl p-4 shadow-lg border border-white/5">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="font-semibold text-lg text-white">المحادثات</h2>
+          <span id="conversationsCount" class="text-sm text-gray-200/70">--</span>
+        </div>
 
-      <!-- sidebar -->
-      <aside id="sidebar" class="bg-white rounded-2xl shadow-sm border border-orange-100 p-4 h-[75vh] flex flex-col">
         <div class="mb-3">
-          <input id="searchChats" type="text" placeholder="ابحث في المحادثات..."
-            class="w-full text-sm border border-gray-300 rounded-full px-3 py-2 focus:ring-orange-400 focus:border-orange-400">
+          <input id="searchConvos" placeholder="ابحث في المحادثات..." class="w-full rounded-full px-3 py-2 bg-white/5 text-white placeholder:text-white/60 focus:outline-none"/>
         </div>
 
-        <div id="chatList" class="flex-1 overflow-y-auto scrollbar divide-y"></div>
-
-        <div class="mt-3 text-center text-xs text-gray-500">
-          يمكنك فقط التواصل مع مستخدمين مسجلين فقط.
+        <div id="conversationsList" class="space-y-3 max-h-[60vh] overflow-auto pr-2">
+          <!-- عناصر المحادثات تُضاف هنا -->
+          <div class="text-center text-white/50 py-12">جارٍ التحميل...</div>
         </div>
-      </aside>
+      </div>
+    </aside>
 
-      <!-- chat area -->
-      <section class="bg-white rounded-2xl shadow-sm border border-orange-100 p-4 h-[75vh] flex flex-col md:col-span-2">
-
-        <header class="pb-3 mb-3 border-b border-gray-100 flex items-center justify-between">
+    <!-- Main: نافذة الدردشة -->
+    <section class="col-span-8">
+      <div class="glass rounded-2xl p-6 shadow-lg border border-white/5 min-h-[60vh] flex flex-col">
+        <div id="chatHeader" class="flex items-center justify-between mb-4">
           <div>
-            <h2 id="chatName" class="font-bold text-sm text-gray-900">-- اختر محادثة --</h2>
-            <span id="chatStatus" class="text-[11px] text-gray-400">غير متصل</span>
+            <h3 id="chatTitle" class="text-xl text-white font-semibold">اختر محادثة لبدء الدردشة</h3>
+            <p id="chatSubtitle" class="text-sm text-white/60">يمكنك التواصل فقط مع مستخدمين مُسجلين</p>
           </div>
-          <div class="flex items-center gap-2">
-            <span id="statusDot" class="w-2 h-2 rounded-full bg-gray-400"></span>
-            <span class="text-[11px] text-gray-500">دردشة آمنة</span>
-          </div>
-        </header>
-
-        <div id="messages" class="flex-1 overflow-y-auto scrollbar p-3 space-y-3 bg-orange-50/40 rounded-xl">
-          <div class="text-center text-sm text-gray-400">اختر محادثة من القائمة أو ابدأ محادثة جديدة.</div>
+          <div id="chatStatus" class="text-sm text-white/60">غير متصل</div>
         </div>
 
-        <form id="sendForm" class="mt-3 pt-3 border-t border-gray-200 flex items-center gap-2">
-          <input id="msgInput" type="text" placeholder="اكتب رسالتك..."
-            class="flex-1 border border-gray-300 rounded-full px-4 py-2.5 text-sm focus:ring-orange-400 focus:border-orange-400"
-            disabled>
-          <button id="sendBtn" class="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2.5 rounded-full text-sm font-semibold"
-            disabled>إرسال</button>
-        </form>
-      </section>
+        <div id="messagesContainer" class="flex-1 overflow-auto p-2 space-y-4 bg-white/5 rounded-lg">
+          <!-- رسائل المحادثة -->
+          <div class="text-center text-white/50 mt-20">لا توجد محادثات حتى الآن.</div>
+        </div>
 
-    </div>
+        <form id="sendForm" class="mt-4 flex gap-3 items-center" onsubmit="return false;">
+          <input id="messageInput" placeholder="اكتب رسالتك..." class="flex-1 rounded-full px-4 py-3 bg-white/10 placeholder:text-white/60 text-white focus:outline-none" />
+          <button id="sendBtn" class="bg-gradient-to-r from-[#ff8a4d] to-[#ff5b8a] text-white px-5 py-3 rounded-full shadow hover:opacity-95">إرسال</button>
+        </form>
+      </div>
+    </section>
   </main>
 
-  <!-- Auth Modal -->
-  <div id="authModal" class="fixed inset-0 bg-black/40 hidden items-center justify-center p-4 z-50">
-    <div class="bg-white w-full max-w-md rounded-xl shadow-lg p-6">
-      <div class="flex items-center justify-between mb-4">
-        <h3 id="authTitle" class="text-lg font-bold">تسجيل الدخول</h3>
-        <button id="closeAuth" class="text-gray-500 hover:text-gray-700"><i data-feather="x"></i></button>
+  <!-- تسجيل الدخول مودال (مبسط) -->
+  <div id="loginModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50">
+    <div class="bg-white rounded-xl p-6 w-[420px]">
+      <h3 class="text-lg font-semibold mb-2">تسجيل الدخول</h3>
+      <p class="text-sm text-gray-500 mb-4">سجّل دخولك للتواصل مع المسجلين</p>
+      <input id="emailField" placeholder="البريد الإلكتروني" class="w-full rounded-md p-3 mb-3 border" />
+      <input id="passField" placeholder="كلمة المرور" type="password" class="w-full rounded-md p-3 mb-4 border" />
+      <div class="flex gap-3">
+        <button id="modalLoginBtn" class="bg-[#ff7a28] text-white px-4 py-2 rounded-md">تسجيل دخول</button>
+        <button id="modalCloseBtn" class="bg-gray-100 px-4 py-2 rounded-md">إغلاق</button>
       </div>
-
-      <div id="authForms" class="space-y-4">
-        <form id="loginForm" class="space-y-3">
-          <div><label class="block text-sm text-gray-600">البريد الإلكتروني</label><input type="email" id="loginEmail" required class="w-full border rounded-lg px-3 py-2"></div>
-          <div><label class="block text-sm text-gray-600">كلمة المرور</label><input type="password" id="loginPass" required class="w-full border rounded-lg px-3 py-2"></div>
-          <div class="flex gap-2">
-            <button type="submit" class="flex-1 bg-orange-500 text-white py-2 rounded-lg">دخول</button>
-            <button type="button" id="showRegister" class="flex-1 border rounded-lg py-2">إنشاء حساب</button>
-          </div>
-        </form>
-
-        <form id="registerForm" class="space-y-3 hidden">
-          <div><label class="block text-sm text-gray-600">الاسم الكامل</label><input type="text" id="regName" required class="w-full border rounded-lg px-3 py-2"></div>
-          <div><label class="block text-sm text-gray-600">البريد الإلكتروني</label><input type="email" id="regEmail" required class="w-full border rounded-lg px-3 py-2"></div>
-          <div><label class="block text-sm text-gray-600">كلمة المرور</label><input type="password" id="regPass" required class="w-full border rounded-lg px-3 py-2"></div>
-          <div class="flex gap-2">
-            <button type="submit" class="flex-1 bg-orange-500 text-white py-2 rounded-lg">إنشاء حساب</button>
-            <button type="button" id="showLogin" class="flex-1 border rounded-lg py-2">لدي حساب</button>
-          </div>
-        </form>
-      </div>
+      <p id="loginError" class="text-sm text-red-500 mt-3 hidden"></p>
     </div>
   </div>
 
-<script>
-  feather.replace();
-</script>
+  <!-- Firebase SDKs (compat) - ملفات محلية كما في repo -->
+  <script src="/firebase/firebase-app-compat.js"></script>
+  <script src="/firebase/firebase-auth-compat.js"></script>
+  <script src="/firebase/firebase-firestore-compat.js"></script>
 
-<!-- Firebase compat SDKs (hosted locally under /firebase) -->
-<script src="/firebase/firebase-app-compat.js"></script>
-<script src="/firebase/firebase-auth-compat.js"></script>
-<script src="/firebase/firebase-firestore-compat.js"></script>
-<script>
+  <!-- التطبيق / منطق الرسائل -->
+  <script>
+  /* ======= إعداد Firebase آمن (لا تهيئ أكثر من مرة) ======= */
   const firebaseConfig = {
     apiKey: "AIzaSyBvnFMuXY_d5PKrKV-4Vp_fYyKD2c428Yw",
     authDomain: "sudegy-4c4e5.firebaseapp.com",
@@ -130,7 +125,6 @@
     appId: "1:865758231874:web:d1959356198ca1f809dcdb"
   };
 
-  // تهيئة آمنة: لو firebase محمّل، نهيئ مرة واحدة فقط
   if (typeof firebase !== 'undefined') {
     if (!firebase.apps || firebase.apps.length === 0) {
       firebase.initializeApp(firebaseConfig);
@@ -142,404 +136,254 @@
     console.error('Firebase SDK not loaded!');
   }
 
-  const auth = firebase.auth();
-  const db = firebase.firestore();
-</script>
+  const auth = (typeof firebase !== 'undefined' && firebase.auth) ? firebase.auth() : null;
+  const db = (typeof firebase !== 'undefined' && firebase.firestore) ? firebase.firestore() : null;
 
-console.log("Firebase initialized for messages ✔");
+  /* ======= UI handles ======= */
+  const loginBtn = document.getElementById('loginBtn');
+  const loginModal = document.getElementById('loginModal');
+  const modalCloseBtn = document.getElementById('modalCloseBtn');
+  const modalLoginBtn = document.getElementById('modalLoginBtn');
+  const emailField = document.getElementById('emailField');
+  const passField = document.getElementById('passField');
+  const loginError = document.getElementById('loginError');
 
-/* عناصر DOM */
-const chatListEl = document.getElementById('chatList');
-const messagesEl = document.getElementById('messages');
-const chatNameEl = document.getElementById('chatName');
-const chatStatusEl = document.getElementById('chatStatus');
-const statusDot = document.getElementById('statusDot');
-const msgInput = document.getElementById('msgInput');
-const sendBtn = document.getElementById('sendBtn');
+  const userBadge = document.getElementById('userBadge');
+  const userEmailEl = document.getElementById('userEmail');
+  const userAvatarSmall = document.getElementById('userAvatarSmall');
+  const logoutBtn = document.getElementById('logoutBtn');
 
-let currentUser = null;
-let convsUnsub = null;
-let msgsUnsub = null;
-let currentConversationId = null;
+  const convosListEl = document.getElementById('conversationsList');
+  const conversationsCount = document.getElementById('conversationsCount');
+  const searchConvos = document.getElementById('searchConvos');
 
-/* Helpers */
-function escapeHtml(text = '') {
-  return String(text).replace(/[&<>"']/g, function(m){ return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"})[m]; });
-}
+  const chatTitle = document.getElementById('chatTitle');
+  const chatSubtitle = document.getElementById('chatSubtitle');
+  const chatStatus = document.getElementById('chatStatus');
 
-/* Render conversations list */
-function renderConversations(items = []) {
-  if (!chatListEl) return;
-  chatListEl.innerHTML = '';
-  if (!items.length) {
-    chatListEl.innerHTML = '<div class="p-4 text-center text-sm text-gray-500">لا توجد محادثات حتى الآن</div>';
-    return;
+  const messagesContainer = document.getElementById('messagesContainer');
+  const messageInput = document.getElementById('messageInput');
+  const sendBtn = document.getElementById('sendBtn');
+
+  let currentUser = null;
+  let currentConversationId = null;
+  let convsUnsub = null;
+  let msgsUnsub = null;
+
+  /* helper: safe avatar url */
+  function avatarUrlFor(partner){
+    if(!partner) return '/images/user-placeholder.png';
+    if(partner.avatar && partner.avatar.length) return partner.avatar;
+    return '/images/user-placeholder.png';
   }
-  items.forEach(c => {
-    const el = document.createElement('div');
-    el.className = 'flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100 cursor-pointer';
-    el.dataset.id = c.id;
-    el.innerHTML = `
-      <img src="${c.partner?.avatar || 'images/user-placeholder.jpg'}" class="w-10 h-10 rounded-full object-cover">
-      <div class="flex-1">
-        <p class="font-semibold text-sm">${escapeHtml(c.partner?.name || 'مستخدم')}</p>
-        <p class="text-xs text-gray-500 truncate">${escapeHtml(c.lastMessage || '')}</p>
-      </div>
-      <span class="text-[10px] text-gray-400">${c.lastAt ? new Date(c.lastAt.seconds ? c.lastAt.seconds*1000 : c.lastAt).toLocaleString() : ''}</span>
-    `;
-    el.addEventListener('click', () => openConversation(c.id));
-    chatListEl.appendChild(el);
+
+  /* ======= Authentication ======= */
+  loginBtn.addEventListener('click', ()=> loginModal.classList.remove('hidden'));
+  modalCloseBtn.addEventListener('click', ()=> loginModal.classList.add('hidden'));
+
+  modalLoginBtn.addEventListener('click', async () => {
+    loginError.classList.add('hidden');
+    const email = emailField.value.trim();
+    const pass = passField.value;
+    if(!email || !pass){ loginError.textContent = 'أدخل البريد وكلمة المرور.'; loginError.classList.remove('hidden'); return; }
+    try{
+      await auth.signInWithEmailAndPassword(email, pass);
+      loginModal.classList.add('hidden');
+      emailField.value=''; passField.value='';
+    }catch(e){
+      loginError.textContent = e.message || 'خطأ في تسجيل الدخول';
+      loginError.classList.remove('hidden');
+    }
   });
-}
 
-/* Load conversations realtime */
-async function loadConversations() {
-  if (!currentUser) return;
-  if (convsUnsub) convsUnsub();
+  logoutBtn?.addEventListener('click', async ()=> {
+    await auth.signOut();
+  });
 
-  convsUnsub = db.collection('conversations')
-    .where('participants', 'array-contains', currentUser.id)
-    .orderBy('lastAt', 'desc')
-    .onSnapshot(async snap => {
+  /* ======= Auth state ======= */
+  auth.onAuthStateChanged(async user => {
+    currentUser = user;
+    if(user){
+      userBadge.classList.remove('hidden');
+      loginBtn.classList.add('hidden');
+      userEmailEl.textContent = user.email || 'مستخدم';
+      userAvatarSmall.src = '/images/user-placeholder.png';
+      // لو ترغب في جلب بروفايل مستخدم من users collection ضع هنا
+      // load conversations
+      startConversationsRealtime();
+    } else {
+      userBadge.classList.add('hidden');
+      loginBtn.classList.remove('hidden');
+      conversationsCount.textContent = '--';
+      convosListEl.innerHTML = '<div class="text-center text-white/50 py-12">سجل دخول لعرض المحادثات</div>';
+      // unsubs
+      if(convsUnsub){ convsUnsub(); convsUnsub = null; }
+      if(msgsUnsub){ msgsUnsub(); msgsUnsub = null; }
+      chatTitle.textContent = 'اختر محادثة لبدء الدردشة';
+      messagesContainer.innerHTML = '<div class="text-center text-white/50 mt-20">لا توجد محادثات حتى الآن.</div>';
+    }
+  });
+
+  /* ======= Conversations realtime ======= */
+  function startConversationsRealtime(){
+    if(!currentUser) return;
+    // Unsubscribe old
+    if(convsUnsub) convsUnsub();
+
+    const q = db.collection('conversations')
+                .where('participants', 'array-contains', currentUser.uid)
+                .orderBy('lastAt', 'desc');
+
+    convsUnsub = q.onSnapshot(snapshot => {
       const items = [];
-      snap.forEach(doc => {
-        const d = doc.data();
-        const partnerId = Array.isArray(d.participants) ? d.participants.find(p => p !== currentUser.id) : null;
-        items.push({ id: doc.id, partnerId, lastMessage: d.lastMessage || '', lastAt: d.lastAt || null });
+      snapshot.forEach(d => {
+        items.push({ id: d.id, ...d.data() });
       });
-
-      // build unique partnerIds array
-      const partnerIds = Array.from(new Set(items.map(i => i.partnerId).filter(Boolean)));
-      if (partnerIds.length === 0) return renderConversations(items);
-
-      // fetch partner profiles in batch (Firestore 'in' supports up to 10 ids)
-      try {
-        const usersSnap = await db.collection('users').where(firebase.firestore.FieldPath.documentId(), 'in', partnerIds).get();
-        const usersMap = {};
-        usersSnap.forEach(u => usersMap[u.id] = u.data());
-        const enriched = items.map(it => ({ ...it, partner: usersMap[it.partnerId] || { name: 'مستخدم' } }));
-        renderConversations(enriched);
-      } catch (err) {
-        console.error('Error fetching partner profiles', err);
-        renderConversations(items); // fallback
-      }
+      renderConversations(items);
     }, err => {
       console.error('conversations onSnapshot error', err);
-    });
-}
-
-/* Render messages */
-function renderMessages(items = []) {
-  if (!messagesEl) return;
-  messagesEl.innerHTML = '';
-  if (!items.length) {
-    messagesEl.innerHTML = '<div class="text-center text-sm text-gray-400">لا توجد رسائل بعد.</div>';
-    return;
-  }
-  items.forEach(m => {
-    const wrapper = document.createElement('div');
-    wrapper.className = (m.from === currentUser.id) ? 'self-end max-w-[75%]' : 'self-start max-w-[75%]';
-    wrapper.innerHTML = `
-      <div class="${m.from === currentUser.id ? 'bg-orange-500 text-white' : 'bg-white'} rounded-2xl px-4 py-2 shadow-sm text-[13px] ${m.from === currentUser.id ? 'rounded-br-sm' : 'rounded-bl-sm'}">
-        ${escapeHtml(m.text)}
-      </div>
-      <div class="text-[10px] text-gray-400 mt-1 ${m.from === currentUser.id ? 'text-left' : ''}">${m.createdAt && m.createdAt.toDate ? m.createdAt.toDate().toLocaleString() : (m.createdAt ? new Date(m.createdAt).toLocaleString() : '')}</div>
-    `;
-    messagesEl.appendChild(wrapper);
-  });
-  messagesEl.scrollTop = messagesEl.scrollHeight;
-}
-
-/* Open conversation and listen realtime */
-async function openConversation(convId) {
-  currentConversationId = convId;
-  if (msgsUnsub) msgsUnsub();
-
-  try {
-    const convDoc = await db.collection('conversations').doc(convId).get();
-    if (!convDoc.exists) {
-      messagesEl.innerHTML = '<div class="p-4 text-center text-sm text-red-500">محادثة غير موجودة</div>';
-      return;
-    }
-    const conv = convDoc.data();
-    const partnerId = Array.isArray(conv.participants) ? conv.participants.find(p => p !== currentUser.id) : null;
-    if (partnerId) {
-      const partnerDoc = await db.collection('users').doc(partnerId).get();
-      chatNameEl.innerText = partnerDoc.exists ? (partnerDoc.data().name || partnerDoc.data().email) : 'مستخدم';
-    } else chatNameEl.innerText = 'محادثة';
-
-    msgsUnsub = db.collection('conversations').doc(convId).collection('messages')
-      .orderBy('createdAt')
-      .onSnapshot(snap => {
-        const msgs = [];
-        snap.forEach(d => msgs.push({ id: d.id, ...d.data() }));
-        renderMessages(msgs);
-      }, err => console.error('messages onSnapshot error', err));
-  } catch (err) {
-    console.error('openConversation error', err);
-    alert('خطأ عند فتح المحادثة: ' + (err.message || err));
-  }
-}
-
-/* Send message */
-document.getElementById('sendForm').addEventListener('submit', async (e) => {
-  e.preventDefault();
-  if (!currentConversationId) return alert('اختر محادثة أولاً');
-  const text = msgInput.value.trim();
-  if (!text) return;
-  try {
-    const messagesRef = db.collection('conversations').doc(currentConversationId).collection('messages');
-    await messagesRef.add({
-      from: currentUser.id,
-      text,
-      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-      read: false
-    });
-    await db.collection('conversations').doc(currentConversationId).update({
-      lastMessage: text,
-      lastAt: firebase.firestore.FieldValue.serverTimestamp()
-    });
-    msgInput.value = '';
-  } catch (err) {
-    console.error('sendMessage error', err);
-    alert('فشل إرسال الرسالة: ' + (err.message || err));
-  }
-});
-
-/* Utility: deterministic conversation id */
-async function getOrCreateConversationWith(targetUid) {
-  if (!currentUser) throw new Error('Not authenticated');
-  const pair = [currentUser.id, targetUid].sort();
-  const convId = pair.join('_');
-  const convRef = db.collection('conversations').doc(convId);
-  const convSnap = await convRef.get();
-  if (!convSnap.exists) {
-    await convRef.set({
-      participants: pair,
-      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-      lastMessage: '',
-      lastAt: firebase.firestore.FieldValue.serverTimestamp()
+      convosListEl.innerHTML = '<div class="text-red-400 p-3">خطأ في تحميل المحادثات.</div>';
     });
   }
-  return convId;
-}
 
-/* Read convId from URL */
-function getQueryParam(name) {
-  const url = new URL(window.location.href);
-  return url.searchParams.get(name);
-}
-
-/* Auth state handling */
-auth.onAuthStateChanged(async (user) => {
-  if (user) {
-    currentUser = { id: user.uid, name: user.displayName || user.email, email: user.email };
-    // UI updates
-    document.getElementById('openLoginBtn')?.classList.add('hidden');
-    document.getElementById('logoutBtn')?.classList.remove('hidden');
-    document.getElementById('logoutBtn') && (document.getElementById('logoutBtn').innerText = 'خروج — ' + (currentUser.name || currentUser.email));
-    msgInput.disabled = false; sendBtn.disabled = false;
-    await loadConversations();
-    const urlConv = getQueryParam('convId');
-    if (urlConv) openConversation(urlConv);
-  } else {
-    currentUser = null;
-    document.getElementById('openLoginBtn')?.classList.remove('hidden');
-    document.getElementById('logoutBtn')?.classList.add('hidden');
-    document.getElementById('chatList') && (document.getElementById('chatList').innerHTML = '<div class="p-4 text-center text-sm text-gray-500">سجل الدخول لعرض محادثاتك.</div>');
-    document.getElementById('messages') && (document.getElementById('messages').innerHTML = '<div class="text-center text-sm text-gray-400">سجّل الدخول لعرض وبدء المحادثات.</div>');
-    msgInput.disabled = true; sendBtn.disabled = true;
-    if (convsUnsub) convsUnsub(); if (msgsUnsub) msgsUnsub();
-  }
-});
-</script>
-<!-- ======= نهاية السكربت المنقح ======= -->
-
-  /********* Conversations loading (realtime) *********/
-  const chatListEl = document.getElementById('chatList');
-  function renderConversations(items=[]) {
-    chatListEl.innerHTML = '';
-    if (!items.length) {
-      chatListEl.innerHTML = '<div class="p-4 text-center text-sm text-gray-500">لا توجد محادثات حتى الآن</div>';
+  function renderConversations(items = []){
+    convosListEl.innerHTML = '';
+    conversationsCount.textContent = items.length + ' ';
+    if(!items.length){
+      convosListEl.innerHTML = '<div class="text-center text-white/50 py-12">لا توجد محادثات حتى الآن.</div>';
       return;
     }
     items.forEach(c => {
       const el = document.createElement('div');
-      el.className = 'chat-item p-3 flex items-center gap-3 cursor-pointer hover:bg-orange-50 rounded-xl transition';
+      el.className = 'flex items-center gap-3 p-3 rounded-lg hover:bg-white/5 cursor-pointer';
       el.dataset.id = c.id;
+
+      // partner is the other user info {name, avatar}
+      // determine partner object (assumes conversation doc has partner data or participants info)
+      const partner = c.partner || {};
+      const avatar = avatarUrlFor(partner);
+
+      // build inner
       el.innerHTML = `
-        <img src="${c.partner?.avatar || const avatar = partner?.avatar || '/images/user-placeholder.png';
-
+        <img src="${avatar}" onerror="this.onerror=null;this.src='/images/user-placeholder.png'" class="w-12 h-12 rounded-full object-cover" />
         <div class="flex-1">
-          <p class="font-semibold text-sm">${escapeHtml(c.partner?.name || 'مستخدم')}</p>
-          <p class="text-xs text-gray-500 truncate">${escapeHtml(c.lastMessage || '')}</p>
+          <div class="flex items-center justify-between">
+            <div class="text-white font-medium">${escapeHtml(partner.name || 'مستخدم')}</div>
+            <div class="text-xs text-white/60">${formatTime(c.lastAt)}</div>
+          </div>
+          <div class="text-sm text-white/60 mt-1">${escapeHtml(c.lastMessage || 'بدء محادثة')}</div>
         </div>
-        <span class="text-[10px] text-gray-400">${c.lastAt ? new Date(c.lastAt.seconds ? c.lastAt.seconds*1000 : c.lastAt).toLocaleString() : ''}</span>
       `;
-      el.addEventListener('click', () => openConversation(c.id));
-      chatListEl.appendChild(el);
+
+      el.addEventListener('click', ()=> openConversation(c.id, c));
+      convosListEl.appendChild(el);
     });
   }
 
-  async function loadConversations() {
-    if (!currentUser) return;
-    if (convsUnsub) convsUnsub();
-    convsUnsub = db.collection('conversations')
-      .where('participants', 'array-contains', currentUser.id)
-      .orderBy('lastAt', 'desc')
-      .onSnapshot(async snap => {
-        const items = [];
-        snap.forEach(doc => {
-          const d = doc.data();
-          const partnerId = Array.isArray(d.participants) ? d.participants.find(p => p !== currentUser.id) : null;
-          items.push({ id: doc.id, partnerId, lastMessage: d.lastMessage || '', lastAt: d.lastAt || null });
-        });
-        // fetch partner profiles (small batch)
-        const partnerIds = [...new Set(items.map(i => i.partnerId).filter(Boolean))];
-        if (partnerIds.length === 0) return renderConversations(items);
-        // Firestore 'in' supports up to 10 ids; for >10 you can batch
-        const usersSnap = await db.collection('users').where(firebase.firestore.FieldPath.documentId(), 'in', partnerIds).get();
-        const usersMap = {};
-        usersSnap.forEach(u => usersMap[u.id] = u.data());
-        const enriched = items.map(it => ({ ...it, partner: usersMap[it.partnerId] || { name: 'مستخدم' } }));
-        renderConversations(enriched);
-      }, err => {
-        console.error('conversations onSnapshot error', err);
-      });
-  }
+  /* ======= Open conversation, load messages realtime ======= */
+  function openConversation(convId, convData){
+    // unsubscribe previous messages
+    if(msgsUnsub) msgsUnsub();
 
-  /********* Open conversation & listen messages realtime *********/
-  const messagesEl = document.getElementById('messages');
-  const chatNameEl = document.getElementById('chatName');
-  const chatStatusEl = document.getElementById('chatStatus');
-  const statusDot = document.getElementById('statusDot');
-
-  function renderMessages(items=[]) {
-    messagesEl.innerHTML = '';
-    if (!items.length) {
-      messagesEl.innerHTML = '<div class="text-center text-sm text-gray-400">لا توجد رسائل بعد.</div>';
-      return;
-    }
-    items.forEach(m => {
-      const wrapper = document.createElement('div');
-      wrapper.className = (m.from === currentUser.id) ? 'self-end max-w-[75%]' : 'self-start max-w-[75%]';
-      wrapper.innerHTML = `
-        <div class="${m.from === currentUser.id ? 'bg-orange-500 text-white' : 'bg-white'} rounded-2xl px-4 py-2 shadow-sm text-[13px] ${m.from === currentUser.id ? 'rounded-br-sm' : 'rounded-bl-sm'}">
-          ${escapeHtml(m.text)}
-        </div>
-        <div class="text-[10px] text-gray-400 mt-1 ${m.from === currentUser.id ? 'text-left' : ''}">${m.createdAt && m.createdAt.toDate ? m.createdAt.toDate().toLocaleString() : (m.createdAt ? new Date(m.createdAt).toLocaleString() : '')}</div>
-      `;
-      messagesEl.appendChild(wrapper);
-    });
-    messagesEl.scrollTop = messagesEl.scrollHeight;
-  }
-
-  async function openConversation(convId) {
     currentConversationId = convId;
-    // unsubscribe previous
-    if (msgsUnsub) msgsUnsub();
-    // get partner name
-    const convDoc = await db.collection('conversations').doc(convId).get();
-    if (!convDoc.exists) {
-      messagesEl.innerHTML = '<div class="p-4 text-center text-sm text-red-500">محادثة غير موجودة</div>';
-      return;
-    }
-    const conv = convDoc.data();
-    const partnerId = Array.isArray(conv.participants) ? conv.participants.find(p => p !== currentUser.id) : null;
-    if (partnerId) {
-      const partnerDoc = await db.collection('users').doc(partnerId).get();
-      chatNameEl.innerText = partnerDoc.exists ? (partnerDoc.data().name || partnerDoc.data().email) : 'مستخدم';
-    } else chatNameEl.innerText = 'محادثة';
+    chatTitle.textContent = convData.partner?.name || 'محادثة';
+    chatSubtitle.textContent = 'تواصل مباشر';
 
-    // listen to messages subcollection
-    msgsUnsub = db.collection('conversations').doc(convId).collection('messages')
-      .orderBy('createdAt')
-      .onSnapshot(snap => {
-        const msgs = [];
-        snap.forEach(d => msgs.push({ id: d.id, ...d.data() }));
-        renderMessages(msgs);
-      }, err => console.error('messages onSnapshot error', err));
+    // mark unread? (اختياري)
+    chatStatus.textContent = 'متصل';
+    messagesContainer.innerHTML = '<div class="text-center text-white/50 py-8">جارٍ تحميل المحادثة...</div>';
+
+    const msgsRef = db.collection('messages')
+                      .where('conversationId','==',convId)
+                      .orderBy('createdAt','asc');
+
+    msgsUnsub = msgsRef.onSnapshot(snapshot => {
+      const msgs = [];
+      snapshot.forEach(d => msgs.push({ id: d.id, ...d.data() }));
+      renderMessages(msgs);
+    }, err => {
+      console.error('messages onSnapshot error', err);
+      messagesContainer.innerHTML = '<div class="text-red-400 p-3">خطأ في تحميل الرسائل.</div>';
+    });
   }
 
-  /********* Send message *********/
-  document.getElementById('sendForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    if (!currentConversationId) return alert('اختر محادثة أولاً');
-    const text = msgInput.value.trim();
-    if (!text) return;
-    try {
-      const messagesRef = db.collection('conversations').doc(currentConversationId).collection('messages');
-      await messagesRef.add({
-        from: currentUser.id,
-        text,
-        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-        read: false
-      });
-      // update conversation summary
-      await db.collection('conversations').doc(currentConversationId).update({
-        lastMessage: text,
-        lastAt: firebase.firestore.FieldValue.serverTimestamp()
-      });
-      msgInput.value = '';
-    } catch (err) {
-      console.error('sendMessage error', err);
-      alert('فشل إرسال الرسالة: ' + err.message);
+  function renderMessages(msgs = []){
+    messagesContainer.innerHTML = '';
+    if(!msgs.length){
+      messagesContainer.innerHTML = '<div class="text-center text-white/50 py-12">لا توجد رسائل حتى الآن. ابدأ المحادثة بقول مرحباً.</div>';
+      return;
     }
+    msgs.forEach(m => {
+      const me = (m.from === currentUser.uid);
+      const wrapper = document.createElement('div');
+      wrapper.className = me ? 'flex justify-end' : 'flex justify-start';
+      const bubble = document.createElement('div');
+      bubble.className = (me ? 'bg-[#ff8a4d] text-white' : 'bg-white/10 text-white') + ' p-3 rounded-lg max-w-[70%]';
+      bubble.innerHTML = `<div class="text-sm">${escapeHtml(m.text || '')}</div>
+                          <div class="text-xs text-white/60 mt-2 text-left">${formatTime(m.createdAt)}</div>`;
+      wrapper.appendChild(bubble);
+      messagesContainer.appendChild(wrapper);
+    });
+    // scroll to bottom
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+  }
+
+  /* ======= Send message ======= */
+  sendBtn.addEventListener('click', sendMessage);
+  messageInput.addEventListener('keydown', e => { if(e.key === 'Enter') sendMessage(); });
+
+  async function sendMessage(){
+    const txt = messageInput.value.trim();
+    if(!txt || !currentUser || !currentConversationId) return;
+    const payload = {
+      conversationId: currentConversationId,
+      from: currentUser.uid,
+      text: txt,
+      createdAt: new Date()
+    };
+    try{
+      await db.collection('messages').add(payload);
+      // update last message and lastAt in conversation doc
+      await db.collection('conversations').doc(currentConversationId).update({
+        lastMessage: txt,
+        lastAt: new Date()
+      });
+      messageInput.value = '';
+    }catch(e){
+      console.error('send failed', e);
+    }
+  }
+
+  /* ======= small utilities ======= */
+  function escapeHtml(str){
+    if(!str) return '';
+    return String(str).replace(/[&<>"'`]/g, function(s){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;', '`':'&#96;'}[s]; });
+  }
+  function formatTime(value){
+    try{
+      if(!value) return '';
+      // value might be Firestore Timestamp or Date
+      let d = value.toDate ? value.toDate() : (value instanceof Date ? value : new Date(value));
+      return d.toLocaleString('ar-EG', {hour: '2-digit', minute:'2-digit'});
+    }catch(e){ return ''; }
+  }
+
+  /* ======= helper: safe start ======= */
+  // small safeguard: if page loads and user already authed, start conversations
+  // auth.onAuthStateChanged above already calls startConversationsRealtime when user exists
+
+  /* ======= search filter (local) ======= */
+  searchConvos.addEventListener('input', e => {
+    const q = e.target.value.trim().toLowerCase();
+    const nodes = convosListEl.querySelectorAll('[data-id]');
+    nodes.forEach(n => {
+      const txt = n.textContent.toLowerCase();
+      n.style.display = txt.includes(q) ? '' : 'none';
+    });
   });
 
-  /********* Utility: create or get conversation between two users (deterministic id) *********/
-  // استخدام هذا من صفحة المنتج: getOrCreateConversationWith(sellerUid) ثم إعادة توجيه إلى messages.html?convId=...
-  async function getOrCreateConversationWith(targetUid) {
-    if (!currentUser) throw new Error('Not authenticated');
-    const pair = [currentUser.id, targetUid].sort();
-    const convId = pair.join('_'); // deterministic conv id
-    const convRef = db.collection('conversations').doc(convId);
-    const convSnap = await convRef.get();
-    if (!convSnap.exists) {
-      await convRef.set({
-        participants: pair,
-        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-        lastMessage: '',
-        lastAt: firebase.firestore.FieldValue.serverTimestamp()
-      });
-    }
-    return convId;
-  }
-
-  /********* Helper: read convId from URL *********/
-  function getQueryParam(name) {
-    const url = new URL(window.location.href);
-    return url.searchParams.get(name);
-  }
-
-  /********* Small helpers *********/
-  function escapeHtml(text = '') {
-    return String(text).replace(/[&<>"']/g, function(m){ return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"})[m]; });
-  }
-
-  // Expose getOrCreateConversationWith to global so user-profile can call it if loaded on same domain
-  window.getOrCreateConversationWith = getOrCreateConversationWith;
-
-</script>
-// هل firebase موجود؟
-console.log("firebase:", typeof firebase !== 'undefined');
-
-// هل auth جاهز وهل في user؟
-console.log("auth ready?:", firebase && firebase.auth ? true : false);
-if (firebase && firebase.auth) {
-  console.log("current user:", firebase.auth().currentUser);
-}
-
-// جرّب قراءة وثيقة اختبارية من messages (تغيير الاسم حسب مشروعك)
-firebase.firestore().collection('messages').limit(1).get()
-  .then(snap => console.log("messages doc count:", snap.size, snap.docs.map(d=>d.id)))
-  .catch(err => console.error("firestore read error:", err));
-
+  // Optional: quick init display when SDK not ready
+  console.log('Messages UI ready.');
+  </script>
 </body>
 </html>
-
-
-
-
-
-
