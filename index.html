@@ -331,6 +331,35 @@
 
 <!-- include-html (لضم الـ header/footer) -->
 <script src="include-html.js"></script>
+<!-- ===== زر تواصل: يعمل فوراً نسخ/لصق ===== -->
+<script>
+document.addEventListener("click", function(e) {
+    const btn = e.target.closest(".contact-btn");
+    if (!btn) return;
+
+    // نمنع السلوك الافتراضي
+    e.preventDefault?.();
+
+    // نبحث عن كرت المنتج
+    const card = btn.closest(".product-card");
+
+    // نقرأ إيميل البائع من داخل الكرت
+    // <-- عدل اسم الصنف هنا لو الإيميل موجود في عنصر مختلف -->
+    const sellerEmail =
+        (card && card.querySelector(".seller-email")?.textContent.trim()) ||
+        (card && card.querySelector(".owner-email")?.textContent.trim()) ||
+        "";
+
+    if (!sellerEmail) {
+        alert("تعذّر العثور على بائع المنتج!");
+        return;
+    }
+
+    // ننتقل لصفحة الرسائل مع إيميل البائع
+    window.location.href = `/messages.html?to=${encodeURIComponent(sellerEmail)}`;
+});
+</script>
+<!-- ===== نهاية كود تواصل ===== -->
 
 <!-- سكربت وظائف الموقع الرئيسية (loads products, UI) -->
 <script src="script.js"></script>
