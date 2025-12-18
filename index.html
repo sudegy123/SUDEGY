@@ -388,6 +388,19 @@ document.addEventListener("click", function (e) {
         return;
     }
 
+<script>
+document.querySelectorAll('.request-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const productName = btn.getAttribute('data-product') || 'Unknown Product';
+
+    // Google Analytics Event
+    gtag('event', 'request_product', {
+      event_category: 'Product',
+      event_label: productName
+    });
+  });
+});
+</script>
 
 
 
