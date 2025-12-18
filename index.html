@@ -402,6 +402,20 @@ document.querySelectorAll('.request-btn').forEach(btn => {
 });
 </script>
 
+<script>
+document.querySelectorAll('.contact-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const product = btn.getAttribute('data-product') || 'Unknown';
+    const category = btn.getAttribute('data-category') || 'Unknown';
+
+    gtag('event', 'contact_supplier', {
+      event_category: 'Lead',
+      event_label: product,
+      product_category: category
+    });
+  });
+});
+</script>
 
 
 </body>
