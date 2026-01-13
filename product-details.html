@@ -15,32 +15,28 @@
   <div data-include="partials/header.html"></div>
 
   <!-- Breadcrumb -->
-  <section class="max-w-6xl mx-auto px-4 mt-4 text-sm text-gray-500">
+  <div class="max-w-6xl mx-auto px-4 mt-4 text-sm text-gray-500">
     <a href="index.html" class="hover:text-orange-600">الرئيسية</a>
     <span class="mx-2">›</span>
     <span>تفاصيل المنتج</span>
-  </section>
+  </div>
 
   <!-- Product Details -->
-  <main class="max-w-6xl mx-auto px-4 py-6">
+  <main class="max-w-6xl mx-auto px-4 py-8">
     <div id="productDetails"
          class="bg-white rounded-2xl shadow-lg p-6 grid md:grid-cols-2 gap-8">
-      <!-- المحتوى بيتولد بالـ JS -->
     </div>
   </main>
-
-  <!-- Related Products -->
-  <section class="max-w-6xl mx-auto px-4 pb-10">
-    <h2 class="text-xl font-bold mb-4">منتجات مشابهة</h2>
-    <div id="related-products"
-         class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-    </div>
-  </section>
 
   <!-- Footer -->
   <div data-include="partials/footer.html"></div>
 
   <script src="include-html.js"></script>
+
+  <!-- مهم: نحمّل نفس script.js -->
+  <script src="script.js"></script>
+
+  <!-- سكربت التفاصيل -->
   <script src="product-details.js"></script>
 
 </body>
