@@ -443,3 +443,82 @@ body::before {
   .product-card { height: auto; }
   .product-card .product-img { height: 140px; }
 }
+/* ===============================
+   Sudegy – Final UI Merge (SAFE)
+   Design only – no logic changes
+   =============================== */
+
+/* تحسين نعومة الكرت */
+.product-card {
+  transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+}
+
+.product-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 18px 40px rgba(15,23,42,.18);
+}
+
+/* الصورة */
+.product-img {
+  transition: transform .25s ease;
+}
+
+.product-card:hover .product-img {
+  transform: scale(1.04);
+}
+
+/* اسم المنتج */
+.product-name {
+  line-height: 1.35;
+}
+
+/* السعر */
+.product-price {
+  color: #16a34a; /* أخضر واضح */
+}
+
+/* بيانات المنتج */
+.product-meta {
+  opacity: .9;
+}
+
+/* الأزرار */
+.product-actions button,
+.product-actions a {
+  transition: all .18s ease;
+}
+
+.btn-details {
+  border: 1px solid #2563eb;
+}
+
+.btn-details:hover {
+  background-color: #eff6ff;
+}
+
+.btn-message,
+.btn-contact {
+  background-color: #f97316;
+}
+
+.btn-message:hover,
+.btn-contact:hover {
+  background-color: #ea580c;
+  box-shadow: 0 6px 16px rgba(234,88,12,.35);
+}
+
+/* شارة موثوق */
+.product-badge,
+.verified-badge {
+  box-shadow: 0 4px 10px rgba(0,0,0,.15);
+}
+
+/* توازن الموبايل */
+@media (max-width: 640px) {
+  .product-name {
+    font-size: .9rem;
+  }
+  .product-price {
+    font-size: .85rem;
+  }
+}
