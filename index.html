@@ -245,7 +245,9 @@ document.querySelectorAll('a[href*="join"]').forEach(btn => {
 <script>
 
 });
-</script>/* ================= PRODUCT CARDS ================= */
+</script>/
+
+/* ================= PRODUCT CARDS ================= */
 
 const homeProducts = [
   { name: "سمسم سوداني", category: "زراعة", price: 12000, img: "images/bag-sesame-light.jpg" },
@@ -263,6 +265,9 @@ const homeProducts = [
 ];
 
 const grid = document.getElementById('product-grid');
+if (!grid) {
+  console.error('product-grid not found');
+}
 
 homeProducts.forEach(p => {
   const card = document.createElement('div');
@@ -279,16 +284,21 @@ homeProducts.forEach(p => {
   `;
 
   card.addEventListener('click', () => {
-    trackProductView(p.name, p.category, p.price);
+    if (typeof trackProductView === 'function') {
+      trackProductView(p.name, p.category, p.price);
+    }
   });
 
   card.querySelector('button').addEventListener('click', (e) => {
     e.stopPropagation();
-    trackContact(p.name);
+    if (typeof trackContact === 'function') {
+      trackContact(p.name);
+    }
   });
 
   grid.appendChild(card);
 });
+</script>
 
 
 </body>
