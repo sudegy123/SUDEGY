@@ -11,12 +11,21 @@
   <!-- Tailwind -->
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- Your main stylesheet -->
+  <!-- Main stylesheet -->
   <link rel="stylesheet" href="style.css" />
 
   <style>
     body { font-family: 'Cairo', sans-serif; }
   </style>
+
+  <!-- ================= GOOGLE ANALYTICS GA4 ================= -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-XXXXXXXXXX', { send_page_view: true });
+  </script>
 </head>
 
 <body class="bg-[#fff9f4] text-gray-800">
@@ -33,15 +42,15 @@
     </nav>
   </div>
 </header>
+
+<!-- ================= TRADE COUNTER ================= -->
 <section class="max-w-7xl mx-auto px-4 mt-4">
   <div class="bg-gradient-to-r from-green-700 via-green-600 to-green-500
               text-white rounded-xl shadow-lg p-6
               flex flex-col md:flex-row items-center justify-between gap-4">
 
     <div>
-      <h2 class="text-xl md:text-2xl font-bold mb-1">
-        💹 حجم التجارة بين مصر والسودان
-      </h2>
+      <h2 class="text-xl md:text-2xl font-bold mb-1">💹 حجم التجارة بين مصر والسودان</h2>
       <p id="trade-date" class="text-sm opacity-90"></p>
     </div>
 
@@ -49,9 +58,9 @@
       <span id="counter-value">1,465,344,000</span>
       <span class="text-lg">دولار</span>
     </div>
-
   </div>
 </section>
+
 <script>
   let value = 1465344000;
   let perSecond = 53;
@@ -62,9 +71,8 @@
       value.toLocaleString("ar-EG");
   }, 1000);
 
-  const today = new Date();
   document.getElementById("trade-date").textContent =
-    "بتاريخ: " + today.toLocaleDateString("ar-EG");
+    "بتاريخ: " + new Date().toLocaleDateString("ar-EG");
 </script>
 
 <!-- ================= HERO ================= -->
@@ -74,40 +82,34 @@
       جسر التجارة بين مصر 🇪🇬 والسودان 🇸🇩
     </h1>
     <p class="text-lg text-gray-600 mb-6">
-      منصة B2B موثوقة لربط الموردين والمشترين، عرض المنتجات، وبناء شراكات تجارية حقيقية.
+      منصة B2B موثوقة لربط الموردين والمشترين وبناء شراكات تجارية حقيقية.
     </p>
 
-    <!-- Search -->
     <div class="flex gap-2 mb-6">
-      <input
-        id="search-input"
-        type="text"
-        placeholder="ابحث عن منتج أو مورد..."
-        class="flex-grow border rounded-lg px-4 py-2 focus:ring-2 focus:ring-orange-400 outline-none"
-      />
-      <button
-        id="search-button"
+      <input id="search-input" type="text" placeholder="ابحث عن منتج أو مورد..."
+        class="flex-grow border rounded-lg px-4 py-2 focus:ring-2 focus:ring-orange-400 outline-none" />
+      <button id="search-button"
         class="bg-orange-500 text-white px-6 py-2 rounded-lg hover:bg-orange-600">
         بحث
       </button>
     </div>
 
     <div class="flex gap-4">
-      <a href="add-product.html" class="bg-orange-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-orange-600">
+      <a href="add-product.html"
+        class="bg-orange-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-orange-600">
         أضف منتجك
       </a>
-      <a href="#product-grid" class="border border-orange-500 text-orange-600 px-6 py-3 rounded-lg font-semibold hover:bg-orange-50">
+      <a href="#product-grid"
+        class="border border-orange-500 text-orange-600 px-6 py-3 rounded-lg font-semibold hover:bg-orange-50">
         تصفح المنتجات
       </a>
     </div>
   </div>
 
   <div>
-    <img
-      src="https://images.unsplash.com/photo-1606761568499-6d2451b23cdd?auto=format&fit=crop&w=900&q=80"
+    <img src="images/WhatsApp Image 2025-11-11 at 2.43.20 PM.jpg"
       alt="Egypt Sudan Trade"
-      class="rounded-2xl shadow-lg"
-    />
+      class="rounded-2xl shadow-lg">
   </div>
 </section>
 
@@ -122,50 +124,12 @@
   </div>
 </section>
 
-<!-- ================= FEATURED PRODUCTS ================= -->
+<!-- ================= PRODUCTS ================= -->
 <section id="featured" class="max-w-7xl mx-auto px-4 py-12">
-  <div class="flex justify-between items-center mb-4">
-    <h2 class="text-2xl font-bold">المنتجات المتاحة</h2>
-    <a href="add-product.html" class="text-sm text-orange-600 hover:underline">
-      هل أنت تاجر؟ أضف منتجك
-    </a>
-  </div>
-
-  <!-- 🔥 Firestore will fill this -->
-  <div
-    id="product-grid"
+  <h2 class="text-2xl font-bold mb-6">المنتجات المتاحة</h2>
+  <div id="product-grid"
     class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
   </div>
-</section>
-
-<!-- ================= HOW IT WORKS ================= -->
-<section id="how-it-works" class="bg-white py-16">
-  <div class="max-w-7xl mx-auto px-4">
-    <h2 class="text-3xl font-bold text-center mb-10">كيف يعمل Sudegy؟</h2>
-    <div class="grid md:grid-cols-3 gap-6">
-      <div class="p-6 rounded-xl shadow text-center">
-        <h3 class="font-bold mb-2">سجّل حسابك</h3>
-        <p class="text-sm text-gray-600">أنشئ حسابك وابدأ فورًا</p>
-      </div>
-      <div class="p-6 rounded-xl shadow text-center">
-        <h3 class="font-bold mb-2">تواصل مباشرة</h3>
-        <p class="text-sm text-gray-600">شات مباشر مع الموردين</p>
-      </div>
-      <div class="p-6 rounded-xl shadow text-center">
-        <h3 class="font-bold mb-2">صفقات آمنة</h3>
-        <p class="text-sm text-gray-600">موردين موثوقين فقط</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ================= CTA ================= -->
-<section class="bg-orange-500 text-white py-16 text-center">
-  <h2 class="text-3xl font-bold mb-4">ابدأ تجارتك الآن</h2>
-  <p class="mb-6">أول إعلان لك مجاني 100%</p>
-  <a href="join.html" class="bg-white text-orange-600 px-8 py-3 rounded-lg font-bold hover:bg-orange-50">
-    إنشاء حساب
-  </a>
 </section>
 
 <!-- ================= FOOTER ================= -->
@@ -173,133 +137,46 @@
   © 2026 Sudegy — جميع الحقوق محفوظة
 </footer>
 
-<!-- ================= SCRIPTS (UNCHANGED) ================= -->
-<script src="common.js"></script>
-<script src="include-html.js"></script>
-<script src="script.js"></script>
-<!-- ================= GOOGLE ANALYTICS GA4 ================= -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<!-- ================= PRODUCT SCRIPT ================= -->
 <script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+document.addEventListener("DOMContentLoaded", function () {
 
-  gtag('config', 'G-XXXXXXXXXX', {
-    send_page_view: true
-  });
-</script>
-<script>
-/* ================= GA4 EVENTS ================= */
+  const homeProducts = [
+    { name: "سمسم سوداني", category: "زراعة", price: 12000, img: "images/bag-sesame-light.jpg" },
+    { name: "سكر أبيض", category: "غذائي", price: 12500, img: "images/سكر.jpg" },
+    { name: "أسمنت مقاوم", category: "مواد بناء", price: 5700, img: "images/اسمنت.jpg" },
+    { name: "تمور بلدية", category: "غذائي", price: 8500, img: "images/تمور.jpg" },
+    { name: "كركديه مجفف", category: "زراعي", price: 6000, img: "images/كركدي.jpg" },
+    { name: "عسل طبيعي", category: "غذائي", price: 15000, img: "images/عسل.jpg" },
+    { name: "أرز", category: "حبوب", price: 6200, img: "images/افضل_انواع_الارز.jpg" },
+    { name: "قطن خام", category: "منسوجات", price: 11000, img: "images/معلومات-نبات-القطن.jpg" },
+    { name: "زيوت نباتية", category: "غذائي", price: 14500, img: "images/زيت.jpg" },
+    { name: "حديد تسليح", category: "مواد بناء", price: 18000, img: "images/حديد.jpg" },
+    { name: "لحوم", category: "غذائي", price: 20000, img: "images/لحم.jpg" },
+    { name: "منتجات بترولية", category: "طاقة", price: 30000, img: "images/بترول.jpg" }
+  ];
 
-// 1️⃣ Search Event
-const searchBtn = document.getElementById('search-button');
-if (searchBtn) {
-  searchBtn.addEventListener('click', () => {
-    const keyword = document.getElementById('search-input')?.value || '';
-    gtag('event', 'search', {
-      search_term: keyword
-    });
-  });
-}
+  const grid = document.getElementById("product-grid");
+  if (!grid) return;
 
-// 2️⃣ Add Product Click
-document.querySelectorAll('a[href*="add-product"]').forEach(btn => {
-  btn.addEventListener('click', () => {
-    gtag('event', 'add_product_click', {
-      event_category: 'engagement',
-      event_label: 'add_product_button'
-    });
-  });
-});
+  homeProducts.forEach(p => {
+    const card = document.createElement("div");
+    card.className = "bg-white rounded-xl shadow hover:shadow-lg transition p-3";
 
-// 3️⃣ Product View (card click)
-function trackProductView(name, category, price) {
-  gtag('event', 'view_item', {
-    currency: 'USD',
-    value: price,
-    items: [{
-      item_name: name,
-      item_category: category,
-      price: price
-    }]
-  });
-}
+    card.innerHTML = `
+      <img src="${p.img}" class="h-32 w-full object-cover rounded-lg mb-2">
+      <h3 class="font-bold text-sm">${p.name}</h3>
+      <p class="text-xs text-gray-500">${p.category}</p>
+      <p class="text-orange-600 font-semibold mt-1">${p.price.toLocaleString()} جنيه</p>
+      <button class="mt-2 w-full bg-orange-500 text-white py-1 rounded-lg">
+        تواصل
+      </button>
+    `;
 
-// 4️⃣ Contact Supplier (WhatsApp / Call)
-function trackContact(productName) {
-  gtag('event', 'contact_supplier', {
-    event_category: 'conversion',
-    event_label: productName
-  });
-}
-
-// 5️⃣ CTA Click
-document.querySelectorAll('a[href*="join"]').forEach(btn => {
-  btn.addEventListener('click', () => {
-    gtag('event', 'begin_signup', {
-      event_category: 'conversion'
-    });
+    grid.appendChild(card);
   });
 });
 </script>
-<script>
-
-});
-</script>/
-
-/* ================= PRODUCT CARDS ================= */
-
-const homeProducts = [
-  { name: "سمسم سوداني", category: "زراعة", price: 12000, img: "images/bag-sesame-light.jpg" },
-  { name: "سكر أبيض", category: "غذائي", price: 12500, img: "images/سكر.jpg" },
-  { name: "أسمنت مقاوم", category: "مواد بناء", price: 5700, img: "images/اسمنت.jpg" },
-  { name: "تمور بلدية", category: "غذائي", price: 8500, img: "images/تمور.jpg" },
-  { name: "كركديه مجفف", category: "زراعي", price: 6000, img: "images/كركدي.jpg" },
-  { name: "عسل طبيعي", category: "غذائي", price: 15000, img: "images/عسل.jpg" },
-  { name: "أرز", category: "حبوب", price: 6200, img: "images/افضل_انواع_الارز.jpg" },
-  { name: "قطن خام", category: "منسوجات", price: 11000, img: "images/معلومات-نبات-القطن.jpg" },
-  { name: "زيوت نباتية", category: "غذائي", price: 14500, img: "images/زيت.jpg" },
-  { name: "حديد تسليح", category: "مواد بناء", price: 18000, img: "images/حديد.jpg" },
-  { name: "لحوم", category: "غذائي", price: 20000, img: "images/لحم.jpg" },
-  { name: "منتجات بترولية", category: "طاقة", price: 30000, img: "images/بترول.jpg" }
-];
-
-const grid = document.getElementById('product-grid');
-if (!grid) {
-  console.error('product-grid not found');
-}
-
-homeProducts.forEach(p => {
-  const card = document.createElement('div');
-  card.className = "bg-white rounded-xl shadow hover:shadow-lg transition p-3 cursor-pointer";
-
-  card.innerHTML = `
-    <img src="${p.img}" class="h-32 w-full object-cover rounded-lg mb-2">
-    <h3 class="font-bold text-sm">${p.name}</h3>
-    <p class="text-xs text-gray-500">${p.category}</p>
-    <p class="text-orange-600 font-semibold mt-1">${p.price.toLocaleString()} جنيه</p>
-    <button class="mt-2 w-full bg-orange-500 text-white py-1 rounded-lg hover:bg-orange-600">
-      تواصل مع المورد
-    </button>
-  `;
-
-  card.addEventListener('click', () => {
-    if (typeof trackProductView === 'function') {
-      trackProductView(p.name, p.category, p.price);
-    }
-  });
-
-  card.querySelector('button').addEventListener('click', (e) => {
-    e.stopPropagation();
-    if (typeof trackContact === 'function') {
-      trackContact(p.name);
-    }
-  });
-
-  grid.appendChild(card);
-});
-</script>
-
 
 </body>
 </html>
