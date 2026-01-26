@@ -177,6 +177,125 @@
 <script src="common.js"></script>
 <script src="include-html.js"></script>
 <script src="script.js"></script>
+<!-- ================= GOOGLE ANALYTICS GA4 ================= -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-XXXXXXXXXX', {
+    send_page_view: true
+  });
+</script>
+<script>
+/* ================= GA4 EVENTS ================= */
+
+// 1️⃣ Search Event
+const searchBtn = document.getElementById('search-button');
+if (searchBtn) {
+  searchBtn.addEventListener('click', () => {
+    const keyword = document.getElementById('search-input')?.value || '';
+    gtag('event', 'search', {
+      search_term: keyword
+    });
+  });
+}
+
+// 2️⃣ Add Product Click
+document.querySelectorAll('a[href*="add-product"]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    gtag('event', 'add_product_click', {
+      event_category: 'engagement',
+      event_label: 'add_product_button'
+    });
+  });
+});
+
+// 3️⃣ Product View (card click)
+function trackProductView(name, category, price) {
+  gtag('event', 'view_item', {
+    currency: 'USD',
+    value: price,
+    items: [{
+      item_name: name,
+      item_category: category,
+      price: price
+    }]
+  });
+}
+
+// 4️⃣ Contact Supplier (WhatsApp / Call)
+function trackContact(productName) {
+  gtag('event', 'contact_supplier', {
+    event_category: 'conversion',
+    event_label: productName
+  });
+}
+
+// 5️⃣ CTA Click
+document.querySelectorAll('a[href*="join"]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    gtag('event', 'begin_signup', {
+      event_category: 'conversion'
+    });
+  });
+});
+</script>
+<script>
+/* ================= PRODUCT CARDS ================= */
+
+const products = [
+  { name: "سمسم سوداني", category: "زراعة", price: 12000, img: "images/product1.jpg" },
+  { name: "سكر أبيض", category: "غذائي", price: 12500, img: "images/product2.jpg" },
+  { name: "أسمنت مقاوم", category: "مواد بناء", price: 5700, img: "images/product3.jpg" },
+  { name: "تمور بلدية", category: "غذائي", price: 8500, img: "images/product4.jpg" },
+  { name: "كركديه مجفف", category: "زراعي", price: 6000, img: "images/product5.jpg" },
+  { name: "فول سوداني", category: "زراعي", price: 9800, img: "images/product6.jpg" },
+  { name: "عسل طبيعي", category: "غذائي", price: 15000, img: "images/product7.jpg" },
+  { name: "ذرة صفراء", category: "حبوب", price: 7200, img: "images/product8.jpg" },
+  { name: "قطن خام", category: "منسوجات", price: 11000, img: "images/product9.jpg" },
+  { name: "جلود طبيعية", category: "صناعة", price: 13500, img: "images/product10.jpg" },
+  { name: "زيوت نباتية", category: "غذائي", price: 14500, img: "images/product11.jpg" },
+  { name: "أعلاف", category: "زراعة", price: 5000, img: "images/product12.jpg" },
+  { name: "بهارات", category: "غذائي", price: 9000, img: "images/product13.jpg" },
+  { name: "فواكه مجففة", category: "غذائي", price: 13000, img: "images/product14.jpg" },
+  { name: "حبوب قهوة", category: "غذائي", price: 16000, img: "images/product15.jpg" },
+  { name: "مكرونة", category: "غذائي", price: 4000, img: "images/product16.jpg" },
+  { name: "أرز", category: "حبوب", price: 6200, img: "images/product17.jpg" },
+  { name: "سكر بني", category: "غذائي", price: 11800, img: "images/product18.jpg" },
+  { name: "ملح صناعي", category: "مواد خام", price: 3000, img: "images/product19.jpg" },
+  { name: "طحين", category: "غذائي", price: 4500, img: "images/product20.jpg" }
+];
+
+const grid = document.getElementById('product-grid');
+
+products.forEach(p => {
+  const card = document.createElement('div');
+  card.className = "bg-white rounded-xl shadow hover:shadow-lg transition p-3 cursor-pointer";
+
+  card.innerHTML = `
+    <img src="${p.img}" class="h-32 w-full object-cover rounded-lg mb-2">
+    <h3 class="font-bold text-sm">${p.name}</h3>
+    <p class="text-xs text-gray-500">${p.category}</p>
+    <p class="text-orange-600 font-semibold mt-1">${p.price.toLocaleString()} جنيه</p>
+    <button class="mt-2 w-full bg-orange-500 text-white py-1 rounded-lg hover:bg-orange-600">
+      تواصل مع المورد
+    </button>
+  `;
+
+  card.addEventListener('click', () => {
+    trackProductView(p.name, p.category, p.price);
+  });
+
+  card.querySelector('button').addEventListener('click', (e) => {
+    e.stopPropagation();
+    trackContact(p.name);
+  });
+
+  grid.appendChild(card);
+});
+</script>
 
 </body>
 </html>
