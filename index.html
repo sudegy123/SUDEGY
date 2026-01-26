@@ -243,34 +243,28 @@ document.querySelectorAll('a[href*="join"]').forEach(btn => {
 });
 </script>
 <script>
-/* ================= PRODUCT CARDS ================= */
 
-const products = [
-  { name: "سمسم سوداني", category: "زراعة", price: 12000, img: "images/product1.jpg" },
-  { name: "سكر أبيض", category: "غذائي", price: 12500, img: "images/product2.jpg" },
-  { name: "أسمنت مقاوم", category: "مواد بناء", price: 5700, img: "images/product3.jpg" },
-  { name: "تمور بلدية", category: "غذائي", price: 8500, img: "images/product4.jpg" },
-  { name: "كركديه مجفف", category: "زراعي", price: 6000, img: "images/product5.jpg" },
-  { name: "فول سوداني", category: "زراعي", price: 9800, img: "images/product6.jpg" },
-  { name: "عسل طبيعي", category: "غذائي", price: 15000, img: "images/product7.jpg" },
-  { name: "ذرة صفراء", category: "حبوب", price: 7200, img: "images/product8.jpg" },
-  { name: "قطن خام", category: "منسوجات", price: 11000, img: "images/product9.jpg" },
-  { name: "جلود طبيعية", category: "صناعة", price: 13500, img: "images/product10.jpg" },
-  { name: "زيوت نباتية", category: "غذائي", price: 14500, img: "images/product11.jpg" },
-  { name: "أعلاف", category: "زراعة", price: 5000, img: "images/product12.jpg" },
-  { name: "بهارات", category: "غذائي", price: 9000, img: "images/product13.jpg" },
-  { name: "فواكه مجففة", category: "غذائي", price: 13000, img: "images/product14.jpg" },
-  { name: "حبوب قهوة", category: "غذائي", price: 16000, img: "images/product15.jpg" },
-  { name: "مكرونة", category: "غذائي", price: 4000, img: "images/product16.jpg" },
-  { name: "أرز", category: "حبوب", price: 6200, img: "images/product17.jpg" },
-  { name: "سكر بني", category: "غذائي", price: 11800, img: "images/product18.jpg" },
-  { name: "ملح صناعي", category: "مواد خام", price: 3000, img: "images/product19.jpg" },
-  { name: "طحين", category: "غذائي", price: 4500, img: "images/product20.jpg" }
+});
+</script>/* ================= PRODUCT CARDS ================= */
+
+const homeProducts = [
+  { name: "سمسم سوداني", category: "زراعة", price: 12000, img: "images/bag-sesame-light.jpg" },
+  { name: "سكر أبيض", category: "غذائي", price: 12500, img: "images/سكر.jpg" },
+  { name: "أسمنت مقاوم", category: "مواد بناء", price: 5700, img: "images/اسمنت.jpg" },
+  { name: "تمور بلدية", category: "غذائي", price: 8500, img: "images/تمور.jpg" },
+  { name: "كركديه مجفف", category: "زراعي", price: 6000, img: "images/كركدي.jpg" },
+  { name: "عسل طبيعي", category: "غذائي", price: 15000, img: "images/عسل.jpg" },
+  { name: "أرز", category: "حبوب", price: 6200, img: "images/افضل_انواع_الارز.jpg" },
+  { name: "قطن خام", category: "منسوجات", price: 11000, img: "images/معلومات-نبات-القطن.jpg" },
+  { name: "زيوت نباتية", category: "غذائي", price: 14500, img: "images/زيت.jpg" },
+  { name: "حديد تسليح", category: "مواد بناء", price: 18000, img: "images/حديد.jpg" },
+  { name: "لحوم", category: "غذائي", price: 20000, img: "images/لحم.jpg" },
+  { name: "منتجات بترولية", category: "طاقة", price: 30000, img: "images/بترول.jpg" }
 ];
 
 const grid = document.getElementById('product-grid');
 
-products.forEach(p => {
+homeProducts.forEach(p => {
   const card = document.createElement('div');
   card.className = "bg-white rounded-xl shadow hover:shadow-lg transition p-3 cursor-pointer";
 
@@ -295,7 +289,7 @@ products.forEach(p => {
 
   grid.appendChild(card);
 });
-</script>
+
 
 </body>
 </html>
